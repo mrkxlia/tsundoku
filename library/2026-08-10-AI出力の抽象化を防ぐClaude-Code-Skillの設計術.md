@@ -1,4 +1,17 @@
-[NCDC テックブログ](https://zenn.dev/p/ncdc) Publication Pro
+---
+url: https://zenn.dev/p/ncdc
+created: '2026-08-10T23:41:22'
+tags:
+- claude
+- 生成ai
+- プロンプト
+- skill
+summary: 'AIに解説させると具体性に欠け「それっぽいだけ」になる問題の解決策を解説。
+
+  Skillの指示文に良い例と悪い例の実例を埋め込んで出力レベルを規定する。
+
+  流れや関係性の説明には文章ではなくmermaidなどの図出力を必須とする。'
+---
 
 ## はじめに
 
