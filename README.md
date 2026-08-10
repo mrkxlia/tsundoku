@@ -57,8 +57,8 @@ flowchart LR
 
 | Variable | 既定値 | 説明 |
 |---|---|---|
-| `LLM_MODEL_CHAIN` | `gemini-2.5-flash,gemini-2.5-flash-lite,gemma-3-27b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
-| `LLM_SLEEP_SECONDS` | `7` | API呼び出し間のスリープ秒数(無料枠のRPM対策) |
+| `LLM_MODEL_CHAIN` | `gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
+| `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 
 ### 4. iPhone(Obsidian)側の推奨設定
@@ -78,9 +78,11 @@ flowchart LR
 - **手動実行**: GitHubの **Actions → Organize inbox → Run workflow**
 - **並行実行防止**: `concurrency` 設定済み。実行が重なることはありません
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
-  (gemini-2.5-flash は目安 10RPM / 250RPD)に収まるよう、呼び出し間スリープと
-  処理件数上限を設けています。枠を使い切った場合はGemma系モデルへ自動フォールバックし、
-  それも失敗したノートは `inbox/` に残って次回再試行されます
+  (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
+  [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)
+  に収まるよう、呼び出し間スリープと処理件数上限を設けています。
+  枠を使い切った場合はチェーン後段のモデルへ自動フォールバックし、
+  それでも失敗したノートは `inbox/` に残って次回再試行されます
 
 ### ローカルでの動作確認
 
