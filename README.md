@@ -28,6 +28,7 @@ flowchart LR
 - 1行目: 元URL(bare URLでも `[タイトル](URL)` 形式でもよい)
 - 空行を挟んで以降が本文
 - x.com のURLだけで本文が空の場合、`publish.twitter.com/oembed`(認証不要)で本文取得を試みます
+- 保存先フォルダ名は大文字小文字を区別しません(`Inbox/` でも `inbox/` と同様に処理対象になります)
 
 ### 整理処理の内容
 
