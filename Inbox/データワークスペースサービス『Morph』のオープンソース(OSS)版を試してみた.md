@@ -1,0 +1,166 @@
+https://dev.classmethod.jp/articles/getting-started-morph-oss/
+# データワークスペースサービス『Morph』のオープンソース(OSS)版を試してみた
+2026-08-11
+![データワークスペースサービス『Morph』のオープンソース(OSS)版を試してみた](https://devio2024-media.developers.io/image/upload/f_auto,q_auto,w_3840/v1735597251/user-gen-eyecatch/dfykfvjgwgbyzjxpj1ge.png)
+
+この記事は公開されてから1年以上経過しています。情報が古い可能性がありますので、ご注意ください。
+
+小ネタです。
+
+先に公開したデータアプリケーションサービスのMorphに関するブログですが、
+
+<iframe src="https://embed.zenn.studio/card#zenn-embedded__fae4d8e86b4c08" frameborder="0"></iframe>
+
+<iframe src="https://embed.zenn.studio/card#zenn-embedded__b1422a532d2278" frameborder="0"></iframe>
+
+このサービスについては最近オープンソース(OSS)版もリリースされています。
+
+<iframe src="https://embed.zenn.studio/card#zenn-embedded__5fd6f428e046d8" frameborder="0"></iframe><iframe src="https://embed.zenn.studio/tweet#zenn-embedded__da1ccc6910ca98" frameborder="0"></iframe>
+
+当エントリではそのオープンソース版を手元の個人環境起動させてみた、という内容を紹介致します。
+
+## 下準備
+
+MorphのOSS版については、基本的にはpipで必要なライブラリをインストールした後はコマンドを幾つか打つだけであら簡単、あっという間に出来上がり...！という流れなのですが、手元の端末でPython/pip実行環境を整える必要があったのでその部分もメモとして記載しておきます。
+
+```shell
+## Mac OSのバージョン確認
+% sw_vers
+ProductName:        macOS
+ProductVersion:        14.5
+BuildVersion:        23F79
+
+## Python実行環境の確認
+### pythonは入っていない
+% python --version
+zsh: command not found: python
+% pip --version
+zsh: command not found: pip
+
+### python3が入っている状況
+% python3 --version
+Python 3.9.6
+% pip3 --version
+pip 21.2.4 from /Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/site-packages/pip (python 3.9)
+% which python3
+/usr/bin/python3
+% which pip3
+/usr/bin/pip3
+
+## pyenvのインストール
+% brew -v
+Homebrew 4.4.13
+% brew install pyenv
+% pyenv --version
+pyenv 2.5.0
+
+## pyenvで任意のPythonバージョンインストール(今回は3.12.7を選択)
+% pyenv install --list
+% pyenv install 3.12.7
+% pyenv global 3.12.7
+% pyenv versions
+  system
+* 3.12.7 (set by /Users/xxxx.xxxxxx/.pyenv/version)
+
+## pyenvで指定した内容を反映させるために設定ファイルに追記＆反映実行
+### 参考：https://qiita.com/Sho-taro/items/14f1bad5b6a9cf30e1f1
+% python --version
+zsh: command not found: python
+% python3 --version
+Python 3.9.6
+% vi ~/.zshrc
+% source ~/.zshrc 
+% python --version 
+Python 3.12.7
+```
+
+ここから本編です。本編といってもコマンドを幾つか打つ程度なのでテキスト分量で行くと『下準備』よりも少ない可能性がありますが。
+
+pipコマンドで `morph-data` をインストール。
+
+```shell
+% pip install morph-data
+```
+
+インストールが出来たら所定のディレクトリで `morph new` コマンドを実行し、ワークスペースを作成します。プロジェクト名を指定することで、SaaS版と同様の構成と思われるワークスペースが用意されました。
+
+```shell
+% pwd
+/Users/xxxx.xxxxxxxx/Desktop/programs
+
+% morph new
+What is your project name? morph-quickstart
+Creating new Morph project...
+Applying template to morph-quickstart...
+Project setup completed successfully! 🎉
+
+% cd morph-quickstart
+% ls -la
+total 112
+drwxr-xr-x  9 XXXX.XXXXX  staff    288 12 28 22:00 .
+drwxr-xr-x  4 XXXX.XXXXX  staff    128 12 27 21:44 ..
+-rw-r--r--  1 XXXX.XXXXX  staff     77 12 27 21:40 .gitignore
+drwxr-xr-x  4 XXXX.XXXXX  staff    128 12 27 21:51 .morph
+-rw-r--r--  1 XXXX.XXXXX  staff    586 12 27 21:40 README.md
+-rw-r--r--  1 XXXX.XXXXX  staff    529 12 27 21:40 example.csv
+-rw-r--r--  1 XXXX.XXXXX  staff  40960 12 28 22:00 morph_project.sqlite3
+-rw-r--r--  1 XXXX.XXXXX  staff    165 12 28 22:00 morph_project.yml
+drwxr-xr-x  6 XXXX.XXXXX  staff    192 12 27 21:44 src
+```
+
+サンプルワークスペースのままで良ければこのまま `morph serve` コマンド実行でローカル環境にてアプリケーションが起動します...と思ったらnpmが入ってない！と怒られてしまいました。
+
+```shell
+% morph serve
+Starting server ...
+:
+FileNotFoundError: [Errno 2] No such file or directory: 'npm'
+```
+
+(手元の環境はMacOSでしたので)brewコマンドを使ってnode及びnpmをインストール。
+
+```shell
+## 参考：https://zenn.dev/tn_a/articles/2487073812cb12
+% brew install node
+% node -v
+v23.5.0
+ % npm -v
+10.9.2
+```
+
+改めて `morph serve` コマンド実行。今度はサーバーが起動しました。
+
+```shell
+% morph serve
+Starting server ...
+✅ Done server setup
+
+Morph is ready!🚀
+
+ ->  Local: http://localhost:9002
+
+INFO:     Will watch for changes in these directories: ['/Users/xxxx.xxxxx/Desktop/programs/morph-quickstart']
+INFO:     Uvicorn running on http://0.0.0.0:9002 (Press CTRL+C to quit)
+INFO:     Started reloader process [31656] using StatReload
+INFO:     Started server process [31660]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     127.0.0.1:56780 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56800 - "OPTIONS /cli/run/example_data/json?skip=0&limit=100 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56801 - "OPTIONS /cli/run/example_chart/html HTTP/1.1" 200 OK
+:
+:
+:
+```
+
+起動と併せてローカル環境のデータアプリケーションもポート:9002で表示されました！
+
+![morph-oss_01](https://devio2024-media.developers.io/image/upload/v1735596459/2024/12/30/vlsviqgeqfzxbz0uls7w.png)
+
+## まとめ
+
+という訳で、Morphのオープンソース(OSS)版を試してみた内容の紹介でした。実際にご覧頂けたように、サンプルアプリを起動させるだけであればコマンド数個、時間も対して掛からずに完了出来るレベルです。データがある程度揃っていたり、PythonやSQLを使える状況であれば実践的なデータアプリケーションもさして時間を掛けずに構築出来るのではと思います。
+
+アプリケーションについてはOSS版からSaaS環境へのデプロイも可能なようですし、上手く使い分けすることが出来ればデータ分析環境周りのスピードアップ、効率化も良い感じで見込めるのではないでしょうか。引き続きSaaS版と合わせて情報をキャッチアップしていこうと思います。
+
+<iframe src="https://embed.zenn.studio/tweet#zenn-embedded__52d001ae34f678" frameborder="0"></iframe>
