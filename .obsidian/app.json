@@ -1,1 +1,7 @@
-{}
+{
+  "newFileLocation": "folder",
+  "newFileFolderPath": "Inbox/",
+  "userIgnoreFilters": [
+    "/archive/*"
+  ]
+}
