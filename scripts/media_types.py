@@ -6,7 +6,9 @@ oEmbed等でタイトル・本文・要約用コンテンツを取得する。
 方針:
 - ノートに保存する本文(note_body)とLLMに渡す入力(llm_body)を分離する。
   字幕やPDFはLLM入力にのみ使い、vaultには書き込まない(リポジトリ肥大防止)
-- PDFはメモリ上のbytesのみで扱い、ディスクにも書かない
+- PDF・動画はメモリ上のbytesのみで扱い、ディスクには書かない。
+  画像(X添付・直リンク)のみ例外で、bytesをMediaInfo.imagesに載せて
+  organize.py側が assets/ に保存する
 - 外部アクセスは全てソフトフェイル: 失敗しても needs-review タグを付けて続行し、
   ワークフロー全体は落とさない
 """
@@ -15,6 +17,7 @@ from __future__ import annotations
 
 import html
 import json
+import math
 import re
 import sys
 import urllib.error
@@ -27,6 +30,8 @@ PDF_TIMEOUT = 60
 MAX_PDF_BYTES = 15 * 1024 * 1024  # これ以上のPDFは要約せず needs-review に落とす
 MAX_TRANSCRIPT_CHARS = 24000  # 字幕は本文より長くなりがちなので専用の上限を設ける
 MAX_PAGE_BYTES = 2 * 1024 * 1024
+MAX_IMAGE_BYTES = 5 * 1024 * 1024  # これ以上の画像は保存しない
+MAX_IMAGES_PER_NOTE = 4
 USER_AGENT = "Mozilla/5.0 (compatible; tsundoku-organizer)"
 
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".svg", ".heic")
@@ -37,6 +42,15 @@ SPEAKERDECK_PDF_RES = (
     re.compile(r'href="(https://files\.speakerdeck\.com/[^"]+\.pdf[^"]*)"'),
     re.compile(r'"(https://speakerd\.s3\.amazonaws\.com/[^"]+\.pdf[^"]*)"'),
 )
+PBS_MEDIA_RE = re.compile(r"https://pbs\.twimg\.com/media/[^\s)\]\"'<>]+")
+
+
+@dataclass
+class ImageAsset:
+    data: bytes
+    mime: str  # マジックバイトから判定(Content-Typeは信用しない)
+    ext: str  # jpg / png / gif / webp
+    source_url: str
 
 
 @dataclass
@@ -48,6 +62,7 @@ class MediaInfo:
     pdf: bytes | None = None  # Gemini inline入力用のPDF(ディスクには書かない)
     video_uri: str | None = None  # Gemini動画入力用のYouTube正規URL(字幕が取れない場合)
     title_hint: str = ""  # oEmbed等から得たタイトル(クリップ側にヒントが無い場合に使う)
+    images: list[ImageAsset] = field(default_factory=list)  # assets/保存用(organize.py側で書き出す)
 
 
 # ---------------------------------------------------------------- 種別判定
@@ -154,6 +169,42 @@ def _download_pdf(pdf_url: str) -> bytes | None:
         print("    [media] PDF形式でないため破棄", file=sys.stderr)
         return None
     return data
+
+
+def _sniff_image(data: bytes) -> tuple[str, str] | None:
+    """マジックバイトから (mime, ext) を判定する。対応外の形式は None。"""
+    if data.startswith(b"\xff\xd8\xff"):
+        return ("image/jpeg", "jpg")
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ("image/png", "png")
+    if data.startswith(b"GIF87a") or data.startswith(b"GIF89a"):
+        return ("image/gif", "gif")
+    if data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        return ("image/webp", "webp")
+    return None
+
+
+def _download_image(image_url: str) -> ImageAsset | None:
+    req = urllib.request.Request(image_url, headers={"User-Agent": USER_AGENT})
+    try:
+        with urllib.request.urlopen(req, timeout=FETCH_TIMEOUT) as resp:
+            length = resp.headers.get("Content-Length")
+            if length and int(length) > MAX_IMAGE_BYTES:
+                print(f"    [media] 画像がサイズ上限超過({length}バイト): {image_url}", file=sys.stderr)
+                return None
+            data = resp.read(MAX_IMAGE_BYTES + 1)
+    except Exception as e:
+        print(f"    [media] 画像取得失敗: {e}", file=sys.stderr)
+        return None
+    if len(data) > MAX_IMAGE_BYTES:
+        print(f"    [media] 画像がサイズ上限超過: {image_url}", file=sys.stderr)
+        return None
+    sniffed = _sniff_image(data)
+    if sniffed is None:
+        print(f"    [media] 対応外の画像形式のため破棄: {image_url}", file=sys.stderr)
+        return None
+    mime, ext = sniffed
+    return ImageAsset(data=data, mime=mime, ext=ext, source_url=image_url)
 
 
 def _compose(context: list[str], *sections: str) -> str:
@@ -294,6 +345,115 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
 
 # ---------------------------------------------------------------- X(Twitter)
 
+def extract_tweet_id(url: str) -> str | None:
+    m = re.search(r"/status/(\d+)", urllib.parse.urlsplit(url).path)
+    return m.group(1) if m else None
+
+
+def _scan_pbs_urls(body: str) -> list[str]:
+    """本文中の pbs.twimg.com 画像URLを原寸(?name=orig)形式に正規化して列挙する。"""
+    urls: list[str] = []
+    seen: set[str] = set()
+    for raw in PBS_MEDIA_RE.findall(body):
+        p = urllib.parse.urlsplit(raw)
+        if p.path in seen:
+            continue
+        seen.add(p.path)
+        query = dict(urllib.parse.parse_qsl(p.query))
+        if re.search(r"\.(jpg|jpeg|png|gif|webp)$", p.path, re.IGNORECASE):
+            urls.append(f"https://{p.netloc}{p.path}?name=orig")
+        else:
+            fmt = query.get("format", "jpg")
+            urls.append(f"https://{p.netloc}{p.path}?format={fmt}&name=orig")
+    return urls
+
+
+def _js_to_string_36(value: float) -> str:
+    """JSの Number.prototype.toString(36) と同一の文字列を返す。
+
+    V8のDoubleToRadixCString相当: 小数部は値の半ULPをdeltaとして持ち回り、
+    誤差の範囲に入ったら停止・丸め(繰り上がり伝播)する。
+    """
+    digits = "0123456789abcdefghijklmnopqrstuvwxyz"
+    integer = math.floor(value)
+    fraction = value - integer
+    delta = max(0.5 * math.ulp(value), 5e-324)
+
+    frac_digits: list[int] = []
+    if fraction >= delta:
+        while True:
+            fraction *= 36
+            delta *= 36
+            digit = int(fraction)
+            frac_digits.append(digit)
+            fraction -= digit
+            if fraction > 0.5 or (fraction == 0.5 and digit % 2 == 1):
+                if fraction + delta > 1:
+                    # 繰り上げ(35=最大桁が続く間は桁を落として伝播)
+                    while frac_digits and frac_digits[-1] == 35:
+                        frac_digits.pop()
+                    if frac_digits:
+                        frac_digits[-1] += 1
+                    else:
+                        integer += 1
+                    break
+            if fraction < delta:
+                break
+
+    int_str = ""
+    n = int(integer)
+    while n:
+        int_str = digits[n % 36] + int_str
+        n //= 36
+    int_str = int_str or "0"
+    if frac_digits:
+        return int_str + "." + "".join(digits[d] for d in frac_digits)
+    return int_str
+
+
+def _syndication_token(tweet_id: str) -> str:
+    """公式埋め込みウィジェットと同じ計算でsyndication API用トークンを生成する。
+
+    JS実装: ((id / 1e15) * Math.PI).toString(36).replace(/(0+|\\.)/g, '')
+    """
+    x = (int(tweet_id) / 1e15) * math.pi
+    return re.sub(r"(0+|\.)", "", _js_to_string_36(x))
+
+
+def _fetch_syndication_media(tweet_id: str) -> list[str]:
+    """無認証のsyndication API(公式埋め込みが使用)で投稿の画像URLを列挙する。"""
+    api = "https://cdn.syndication.twimg.com/tweet-result?" + urllib.parse.urlencode(
+        {"id": tweet_id, "token": _syndication_token(tweet_id), "lang": "ja"}
+    )
+    data = _fetch_json(api, "x syndication")
+    if not data:
+        return []
+    urls = []
+    for m in data.get("mediaDetails") or []:
+        if isinstance(m, dict) and m.get("type") == "photo" and m.get("media_url_https"):
+            urls.append(str(m["media_url_https"]) + "?name=orig")
+    return urls
+
+
+def _gather_post_images(url: str, info: MediaInfo) -> None:
+    """本文のpbsリンク → (無ければ)syndication API の順で添付画像を取得する。"""
+    urls = _scan_pbs_urls(info.note_body)
+    if not urls:
+        # 本文に痕跡が無くても画像付きの可能性はあるため、常にsyndicationで確認する
+        tweet_id = extract_tweet_id(url)
+        if tweet_id:
+            urls = _fetch_syndication_media(tweet_id)
+    for image_url in urls:
+        if len(info.images) >= MAX_IMAGES_PER_NOTE:
+            break
+        asset = _download_image(image_url)
+        if asset:
+            info.images.append(asset)
+    if info.images:
+        # pic.twitter.com表記が無くても実体が取れたらメディア付き扱いにする
+        _add_tag(info, "has-media")
+
+
 def fetch_x_oembed(url: str) -> dict | None:
     """publish.twitter.com/oembed(認証不要)でポスト情報の取得を試みる。"""
     query_url = re.sub(r"//(www\.|mobile\.)?x\.com/", "//twitter.com/", url)
@@ -311,19 +471,17 @@ def x_text_from_html(raw: str) -> str:
 
 
 def _enrich_post(url: str, info: MediaInfo) -> None:
-    # 本文が既にある場合はoEmbed不要(has-media判定はenrich側で本文スキャン済み)
-    if info.note_body:
-        return
-
-    oe = fetch_x_oembed(url)
-    raw = (oe or {}).get("html", "")
-    if "pic.twitter.com" in raw:
-        _add_tag(info, "has-media")
-    text = x_text_from_html(raw) if raw else ""
-    info.note_body = text
-    info.llm_body = text
-    if not text:
-        _add_tag(info, "needs-review")
+    if not info.note_body:
+        oe = fetch_x_oembed(url)
+        raw = (oe or {}).get("html", "")
+        if "pic.twitter.com" in raw:
+            _add_tag(info, "has-media")
+        text = x_text_from_html(raw) if raw else ""
+        info.note_body = text
+        info.llm_body = text
+        if not text:
+            _add_tag(info, "needs-review")
+    _gather_post_images(url, info)
 
 
 # ---------------------------------------------------------------- エントリポイント
@@ -336,9 +494,14 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
     """
     info = MediaInfo(type=detect_media_type(url), note_body=body, llm_body=body)
     if info.type == "image":
-        # URLのみ保存。実体は取得しない(LLMはURLからの推測でタイトル・タグを付ける)
+        # LLM向け本文は空(URLからの推測)。実体は取得してassets保存用に載せる。
+        # needs-review は画像説明の成功時に organize.py 側で外す
         info.llm_body = ""
         info.extra_tags = ["has-media", "needs-review"]
+        if not dry_run:
+            asset = _download_image(url)
+            if asset:
+                info.images = [asset]
         return info
     if info.type == "post" and "pic.twitter.com" in body:
         # クリップ済み本文にメディアリンクが含まれる場合はネットワーク不要で判定できる
@@ -361,5 +524,6 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
         print(f"    [media] 種別処理でエラー(needs-reviewで続行): {e}", file=sys.stderr)
         info.pdf = None
         info.video_uri = None
+        info.images = []
         _add_tag(info, "needs-review")
     return info

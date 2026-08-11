@@ -55,6 +55,17 @@ URL: {url}
 タイトルのヒント: {title_hint}
 """
 
+IMAGE_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付された{count}枚の画像について、添付順に、それぞれ次の形式で日本語で出力してください。出力はこの形式のテキストのみとし、前置きや後書きは不要です。
+
+### 画像1
+(画像の内容の説明を1〜2文。続けて、画像内に文字があればその全文を書き起こす。文字がなければ書き起こしは省略)
+
+### 画像2
+(以下同様)
+
+URL: {url}
+"""
+
 VIDEO_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付の動画の内容を確認し、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
 
 {{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "動画内容の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
@@ -85,6 +96,10 @@ class LLMClient:
 
     def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
         """YouTube動画URLを直接入力として同じ形式のメタ情報を返す。"""
+        raise NotImplementedError
+
+    def describe_images(self, url: str, images: list[tuple[bytes, str]]) -> str:
+        """画像[(bytes, mime), ...]の説明+OCR全文を日本語フリーテキストで返す。"""
         raise NotImplementedError
 
 
@@ -132,8 +147,18 @@ class GeminiClient(LLMClient):
             parts, self._multimodal_chain(), media_resolution="MEDIA_RESOLUTION_LOW"
         )
 
+    def describe_images(self, url: str, images: list[tuple[bytes, str]]) -> str:
+        prompt = IMAGE_PROMPT_TEMPLATE.format(url=url, count=len(images))
+        parts: list[dict] = [{"text": prompt}]
+        parts += [
+            {"inline_data": {"mime_type": mime, "data": base64.b64encode(data).decode("ascii")}}
+            for data, mime in images
+        ]
+        # OCRには既定解像度が必要なため mediaResolution は指定しない
+        return self._generate_text_with_parts(parts, self._multimodal_chain())
+
     def _multimodal_chain(self) -> list[str]:
-        # Gemma系はPDF・動画入力に非対応
+        # Gemma系はPDF・動画・画像入力に非対応
         return [m for m in self.model_chain if "gemma" not in m.lower()]
 
     def _generate_with_parts(
@@ -157,13 +182,42 @@ class GeminiClient(LLMClient):
                 print(f"    [llm] {model} で通信エラー — 次のモデルへフォールバック: {e}", file=sys.stderr)
         raise LLMError("全モデルで生成に失敗: " + "; ".join(errors))
 
-    def _call_model(self, model: str, parts: list[dict], media_resolution: str | None = None) -> str:
+    def _generate_text_with_parts(
+        self, parts: list[dict], chain: list[str], media_resolution: str | None = None
+    ) -> str:
+        """JSONスキーマを課さないフリーテキスト生成(画像説明用)。"""
+        if not chain:
+            raise LLMError("マルチモーダル入力に対応するモデルがチェーンにありません")
+        errors = []
+        for model in chain:
+            try:
+                text = self._call_model(
+                    model, parts, media_resolution=media_resolution, json_mode=False
+                ).strip()
+                if text:
+                    return text
+                errors.append(f"{model}: 空のレスポンス")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+                print(f"    [llm] {model} が HTTP {e.code} — 次のモデルへフォールバック", file=sys.stderr)
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+                print(f"    [llm] {model} で通信エラー — 次のモデルへフォールバック: {e}", file=sys.stderr)
+        raise LLMError("全モデルで生成に失敗: " + "; ".join(errors))
+
+    def _call_model(
+        self,
+        model: str,
+        parts: list[dict],
+        media_resolution: str | None = None,
+        json_mode: bool = True,
+    ) -> str:
         payload = {
             "contents": [{"parts": parts}],
             "generationConfig": {"temperature": 0.3},
         }
         # Gemma系はresponseMimeType(JSONモード)非対応
-        if "gemma" not in model.lower():
+        if json_mode and "gemma" not in model.lower():
             payload["generationConfig"]["responseMimeType"] = "application/json"
         if media_resolution:
             payload["generationConfig"]["mediaResolution"] = media_resolution
@@ -219,6 +273,9 @@ class MockClient(LLMClient):
     def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
         title = (title_hint or url)[:30] or "無題"
         return {"title": title, "summary": "(動画モック要約)", "tags": ["未分類", "mock-video"]}
+
+    def describe_images(self, url: str, images: list[tuple[bytes, str]]) -> str:
+        return "\n\n".join(f"### 画像{i}\n(画像モック説明)" for i in range(1, len(images) + 1))
 
 
 def _parse_meta_json(text: str) -> dict | None:
