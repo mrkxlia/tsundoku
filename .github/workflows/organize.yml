@@ -55,7 +55,10 @@ jobs:
             fi
             [ "$wait" = "0" ] && break
             sleep "$wait"
-            git pull --rebase origin main
+            # directoryRenames=false: 大量ファイルのInbox->library移動と、モバイルが
+            # 同時にInbox/へ追加した新規クリップとが、gitの「ディレクトリリネーム推測」で
+            # 曖昧な衝突として扱われるのを防ぐ(新規ファイルはInbox/に留まるのが正)
+            git -c merge.directoryRenames=false pull --rebase origin main
           done
           echo "pushに失敗しました" >&2
           exit 1

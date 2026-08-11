@@ -50,7 +50,7 @@ jobs:
             fi
             [ "$wait" = "0" ] && break
             sleep "$wait"
-            git pull --rebase origin main
+            git -c merge.directoryRenames=false pull --rebase origin main
           done
           echo "pushに失敗しました" >&2
           exit 1
