@@ -7,6 +7,7 @@ tags:
 - 数理最適化
 - 生成ai
 - claude
+- has-media
 summary: '数理最適化モデリングツール「JijModeling 2」の新版がリリースされました。
 
   Flat ASTの採用によりコンパイル時間とメモリ使用量を大幅削減しました。
@@ -24,3 +25,21 @@ summary: '数理最適化モデリングツール「JijModeling 2」の新版が
 #JijModeling #MathematicalOptimization
 
 ![](https://pbs.twimg.com/media/HPBN4AJaAAAmPQT.jpg?name=orig)
+
+## 画像の内容
+
+![](../assets/2026-08-11-JijModeling-2新版リリース-Claude活用で開発短縮-1.jpg)
+
+### 画像1
+JijModelingからOMMXへコンパイルされ、多様なソルバーに入力される仕組みを示したワークフロー図。
+JijModeling
+Compile
+OMMX
+Input
+Solvers
+JijZept Solver
+Qamomile
+OpenJij
+SCIP
+Gurobi
+...

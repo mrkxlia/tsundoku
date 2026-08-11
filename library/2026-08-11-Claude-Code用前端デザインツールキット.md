@@ -8,6 +8,7 @@ tags:
 - uiデザイン
 - 開発ツール
 - 生成ai
+- has-media
 summary: 'Claude Codeを使った前端開発でAI特有のテンプレート感をなくし、人間が作ったようなデザインを実現するためのツールキットを紹介。
 
   デザインスキルやテーマ設定、動效ツール、UI/UXインテリジェンスなど、ワーク流を補完する多彩な内容を網羅。
@@ -38,3 +39,52 @@ GitHub：[https://t.co/wh727IdTg9](https://t.co/wh727IdTg9)
 已经在用 Claude Code 做前端的人，可以把它当成一份前端审美和工作流补丁。
 
 ![](https://pbs.twimg.com/media/HJJY97Za8AAPSuX.jpg?name=orig)
+
+## 画像の内容
+
+![](../assets/2026-08-11-Claude-Code用前端デザインツールキット-1.jpg)
+
+### 画像1
+Claude Codeのフロントエンドデザインツールキットを紹介するWebページのスクリーンショットです。目次やデザインスキルに関するセクションが含まれています。
+
+Claude Code Frontend Design Toolkit
+
+Everything I've found that actually makes Claude Code output better-looking frontends. Skills, plugins, MCP servers, CLAUDE.md tricks, organized by what you're trying to do.
+
+April 2026 70+ tools 10 sections
+
+If this is useful, star it so others can find it. PRs welcome — see Contributing.
+
+Table of Contents
+
+• Design Skills - Kill the Al slop
+• Site-Wide Theming - Make everything match
+• Animation & Motion - GSAP, Framer Motion, scroll effects
+• UI/UX Intelligence - Patterns, a11y, research
+• Design-to-Code - Figma pipeline
+• Testing & Browser Automation - Give Claude eyes
+• Docs & Context - Stop hallucinating APIs
+• Framework Skills - React, Tailwind, Three.js, D3
+• Deploy & Preview - Ship it
+• Recommended Stacks - What to install together
+• Quick Reference
+• Further Reading
+• Contributing
+
+Design Skills
+
+The default Claude output looks like every other Al-generated page. Same fonts, same purple gradient, same card layout. These fix that.
+
+Frontend Design (Official)
+
+The one you install first. Anthropic's own skill that tells Claude to pick an actual aesthetic direction before writing code instead of defaulting to Inter + purple gradient + rounded cards.
+
+Author: Anthropic
+Install: claude plugin add anthropic/frontend-design
+Type: Skill (auto-activates)
+Source: anthropics/claude-code/.../frontend-design
+
+What changes:
+
+• Claude picks a direction before coding (brutalist, editorial, retro-futuristic, etc.)
+• Requires real typography pairing, not just whatever sans-serif
