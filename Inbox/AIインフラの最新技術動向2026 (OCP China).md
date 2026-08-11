@@ -1,0 +1,506 @@
+https://speakerdeck.com/markunet/aiinhuranozui-xin-ji-shu-dong-xiang-2026-ocp-china?slide=2
+# AIインフラの最新技術動向2026 (OCP China)
+2026-08-11
+技術動向説明会（日本語）
+
+## More Decks by Masayuki Kobayashi
+
+[
+
+Multipath Reliable Connection (MRC) 大規模AI学習ファブリックのためのマルチパスRoCEv2拡張トランスポート
+
+](https://speakerdeck.com/markunet/multipath-reliable-connection-mrc-da-gui-mo-aixue-xi-huaburitukutamemarutipasurocev2kuo-zhang-toransupoto "Multipath Reliable Connection (MRC) 大規模AI学習ファブリックのためのマルチパスRoCEv2拡張トランスポート")
+
+0
+
+260
+
+[
+
+マルチプレーンGPUネットワークを実現するシャッフルアーキテクチャの整理と考察
+
+](https://speakerdeck.com/markunet/marutipurengpunetutowakuwoshi-xian-surusiyatuhuruakitekutiyanozheng-li-tokao-cha "マルチプレーンGPUネットワークを実現するシャッフルアーキテクチャの整理と考察")
+
+2
+
+650
+
+[
+
+Ultra Ethernet (UEC) v1.0 仕様概説
+
+](https://speakerdeck.com/markunet/ultra-ethernet-uec-v1-dot-0-shi-yang-gai-shuo "Ultra Ethernet (UEC) v1.0 仕様概説")
+
+3
+
+910
+
+[
+
+AIインフラを考える
+
+](https://speakerdeck.com/markunet/aiinhurawokao-eru "AIインフラを考える")
+
+10
+
+4k
+
+[
+
+GPUネットワーク設計・運用 基礎勉強会 Lossless Ethernet – PFC/ECN編
+
+](https://speakerdeck.com/markunet/ecnbian "GPUネットワーク設計・運用 基礎勉強会 Lossless Ethernet – PFC/ECN編")
+
+9
+
+1.4k
+
+[
+
+クラウドデータセンターネットワークの “いま”と “これから”
+
+](https://speakerdeck.com/markunet/kurautotetasentanetutowakuno-ima-to-korekara "クラウドデータセンターネットワークの “いま”と “これから”")
+
+8
+
+2.5k
+
+[
+
+HPCネットワーク基礎(RDMA/Infiniband/RoCE編)
+
+](https://speakerdeck.com/markunet/rocebian "HPCネットワーク基礎(RDMA/Infiniband/RoCE編)")
+
+38
+
+5.7k
+
+[
+
+Clos Network Topology 再入門
+
+](https://speakerdeck.com/markunet/clos-network-topology-zai-ru-men "Clos Network Topology 再入門")
+
+23
+
+8.3k
+
+[
+
+RIFT: THE new routing protocol for IP fabrics
+
+](https://speakerdeck.com/markunet/rift-a-new-routing-protocol-for-ip-fabrics "RIFT: THE  new routing protocol for IP fabrics")
+
+0
+
+570
+
+## Other Decks in Technology
+
+[
+
+Data Hubグループ 紹介資料
+
+](https://speakerdeck.com/sansan33/datahub-engineer "Data Hubグループ 紹介資料")
+
+[sansan33](https://speakerdeck.com/sansan33)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+3.1k
+
+[
+
+20分でわかるセキュアAPI
+
+](https://speakerdeck.com/nwiizo/20fen-dewakarusekiyuaapi "20分でわかるセキュアAPI")
+
+[nwiizo](https://speakerdeck.com/nwiizo)
+
+1
+
+190
+
+[
+
+名古屋の市バスGTFS-JPデータ×スガキヤ 最寄りバス停検索をAmazon ElastiCache Serverless for Valkeyで最適化する
+
+](https://speakerdeck.com/usanchuu/ming-gu-wu-noshi-basugtfs-jpdetaxsugakiya-zui-ji-ribasuting-jian-suo-woamazon-elasticache-serverless-for-valkeydezui-shi-hua-suru "名古屋の市バスGTFS-JPデータ×スガキヤ 最寄りバス停検索をAmazon ElastiCache Serverless for Valkeyで最適化する")
+
+[usanchuu](https://speakerdeck.com/usanchuu)
+
+1
+
+500
+
+[
+
+【CEDEC2026】『ウマ娘 プリティーダービー』 英語版のキャラクターの方言や口調をローカライズするための創造的アプローチ
+
+](https://speakerdeck.com/cygames/cygames_202607_cedec2026_05 "【CEDEC2026】『ウマ娘 プリティーダービー』 英語版のキャラクターの方言や口調をローカライズするための創造的アプローチ")
+
+[cygames](https://speakerdeck.com/cygames)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+200
+
+[
+
+モダンフロントエンド 開発研修
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_sato "モダンフロントエンド 開発研修")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+3
+
+560
+
+[
+
+グローバル基準のSREは、運用現場でどう機能したか：成熟度アセスメントの実践 ／ SRE NEXT 2026
+
+](https://speakerdeck.com/sorawatanabe/sre-next-2026-maturity-assessment "グローバル基準のSREは、運用現場でどう機能したか：成熟度アセスメントの実践 ／ SRE NEXT 2026")
+
+[sorawatanabe](https://speakerdeck.com/sorawatanabe)
+
+0
+
+140
+
+[
+
+Software Supply Chain Attackからクラウド環境を守るためにできること
+
+](https://speakerdeck.com/lhazy/software-supply-chain-attackkarakuraudohuan-jing-woshou-rutamenidekirukoto "Software Supply Chain Attackからクラウド環境を守るためにできること")
+
+[lhazy](https://speakerdeck.com/lhazy)
+
+2
+
+220
+
+[
+
+変化の早いClaude Codeを 書籍に落とし込む
+
+](https://speakerdeck.com/oikon48/bian-hua-nozao-iclaude-codewo-shu-ji-niluo-tosiip-mu "変化の早いClaude Codeを 書籍に落とし込む")
+
+[oikon48](https://speakerdeck.com/oikon48)
+
+7
+
+1.3k
+
+[
+
+Invisible to AI? Making TYPO3 Sites Quotable by AI Search Systems
+
+](https://speakerdeck.com/wolfgangwagner/invisible-to-ai-making-typo3-sites-quotable-by-ai-search-systems "Invisible to AI? Making TYPO3 Sites Quotable by AI Search Systems")
+
+[wolfgangwagner](https://speakerdeck.com/wolfgangwagner)
+
+0
+
+170
+
+[
+
+Cursor Meetup Sapporo - Cursor物語 続編
+
+](https://speakerdeck.com/cocacola917/cursorwu-yu-sok-bian-agentshi-dai-henoatupudeto "Cursor Meetup Sapporo - Cursor物語 続編")
+
+[cocacola917](https://speakerdeck.com/cocacola917)
+
+0
+
+140
+
+[
+
+【CEDEC2026】『Relink』を拡張せよ - 『GRANBLUE FANTASY: Relink - Endless Ragnarok』の開発速度と品質を守るCI運用
+
+](https://speakerdeck.com/cygames/cygames_202607_cedec2026_09 "【CEDEC2026】『Relink』を拡張せよ - 『GRANBLUE FANTASY: Relink - Endless Ragnarok』の開発速度と品質を守るCI運用")
+
+[cygames](https://speakerdeck.com/cygames)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+140
+
+[
+
+GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計
+
+](https://speakerdeck.com/yuriemori/github-copilotnofinops "GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計 ")
+
+[yuriemori](https://speakerdeck.com/yuriemori)
+
+0
+
+140
+
+## Featured
+
+[
+
+Fight the Zombie Pattern Library - RWD Summit 2016
+
+](https://speakerdeck.com/marcelosomers/fight-the-zombie-pattern-library-rwd-summit-2016 "Fight the Zombie Pattern Library - RWD Summit 2016")
+
+[marcelosomers](https://speakerdeck.com/marcelosomers)
+
+234
+
+17k
+
+[
+
+RailsConf & Balkan Ruby 2019: The Past, Present, and Future of Rails at GitHub
+
+](https://speakerdeck.com/eileencodes/railsconf-and-balkan-ruby-2019-the-past-present-and-future-of-rails-at-github "RailsConf & Balkan Ruby 2019: The Past, Present, and Future of Rails at GitHub")
+
+[eileencodes](https://speakerdeck.com/eileencodes)
+
+141
+
+35k
+
+[
+
+The Illustrated Children's Guide to Kubernetes
+
+](https://speakerdeck.com/chrisshort/the-illustrated-childrens-guide-to-kubernetes "The Illustrated Children's Guide to Kubernetes")
+
+[chrisshort](https://speakerdeck.com/chrisshort)
+
+51
+
+53k
+
+[
+
+Reflections from 52 weeks, 52 projects
+
+](https://speakerdeck.com/jeffersonlam/reflections-from-52-weeks-52-projects "Reflections from 52 weeks, 52 projects")
+
+[jeffersonlam](https://speakerdeck.com/jeffersonlam)
+
+356
+
+21k
+
+[
+
+世界の人気アプリ100個を分析して見えたペイウォール設計の心得
+
+](https://speakerdeck.com/akihiro_kokubo/key-insights-on-paywall-design "世界の人気アプリ100個を分析して見えたペイウォール設計の心得")
+
+[akihiro\_kokubo](https://speakerdeck.com/akihiro_kokubo)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+73
+
+41k
+
+[
+
+Faster Mobile Websites
+
+](https://speakerdeck.com/deanohume/faster-mobile-websites "Faster Mobile Websites")
+
+[deanohume](https://speakerdeck.com/deanohume)
+
+310
+
+32k
+
+[
+
+GraphQLの誤解/rethinking-graphql
+
+](https://speakerdeck.com/sonatard/rethinking-graphql "GraphQLの誤解/rethinking-graphql")
+
+[sonatard](https://speakerdeck.com/sonatard)
+
+75
+
+12k
+
+[
+
+How To Speak Unicorn (iThemes Webinar)
+
+](https://speakerdeck.com/marktimemedia/how-to-speak-unicorn-ithemes-webinar "How To Speak Unicorn (iThemes Webinar)")
+
+[marktimemedia](https://speakerdeck.com/marktimemedia)
+
+1
+
+520
+
+[
+
+What the history of the web can teach us about the future of AI
+
+](https://speakerdeck.com/inesmontani/what-the-history-of-the-web-can-teach-us-about-the-future-of-ai "What the history of the web can teach us about the future of AI")
+
+[inesmontani](https://speakerdeck.com/inesmontani)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+650
+
+[
+
+Agile Leadership in an Agile Organization
+
+](https://speakerdeck.com/kimpetersen/agile-leadership-in-an-agile-organization "Agile Leadership in an Agile Organization")
+
+[kimpetersen](https://speakerdeck.com/kimpetersen)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+200
+
+[
+
+Claude Code のすすめ
+
+](https://speakerdeck.com/schroneko/getting-started-with-claude-code "Claude Code のすすめ")
+
+[schroneko](https://speakerdeck.com/schroneko)
+
+67
+
+230k
+
+[
+
+Tell your own story through comics
+
+](https://speakerdeck.com/letsgokoyo/tell-your-own-story-through-comics "Tell your own story through comics")
+
+[letsgokoyo](https://speakerdeck.com/letsgokoyo)
+
+1
+
+1k
+
+## Transcript
+
+1. ### AIインフラの最新技術動向 2026 中国OCPコミュニティから読み解く6つの技術トレンド OCTS 2026（Open Compute Tech Summit 2026 /
+	OCP China Day 2026）より 2026/07 Masayuki Kobayashi 01
+2. ### Agenda • OCTS 2026とは — カンファレンスの位置づけと規模 • トレンド • ◦
+	1｜計算アーキテクチャの重心が GPU中心 → CPU–GPU協調へ ◦ 2｜ボトルネックは演算能力ではなくメモリと記憶 へ ◦ 3｜スケールアップ・ファブリック の標準化競争 ◦ 4｜給電アーキテクチャの世代交代（54V → 800VDC） ◦ 5｜液冷の「後付け」からネイティブ液冷 への転換 ◦ 6｜ファームウェアと運用管理 がOCPの正式領域に まとめ — Agentic AIがすべてを同時に再定義した年 02
+3. ### OCTS 2026とは • OCP Foundationと OCTC（中電標協 開放計算技術委員会） が共催するアジア地域の年次イベント – 2026年7月9日／Beijing
+	International Hotel. 2019年から数えて7年目 • テーマは「Intelligence Without Limits — Open, Diverse, Scalable」 • メインフォーラム（午前）＋ 分科会6トラック（午後）の構成 • 中国のオープンコンピューティング領域では最大級の技術カンファレンス 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 03
+4. ### コミュニティの共通認識となった技術課題 • 推論、とりわけ AIエージェントの実運用が主戦場になった結果、これまで GPU中心に最適化してきたインフラの前 提が崩れた • 「モデルを支えるインフラ」から「エージェント群が協調動作するインフラ 」への移行がメインテーマに 出典：OCTS
+	2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 04
+5. ### コミュニティが示した 6つの技術トレンド 1 計算 GPU中心 → CPU–GPU協調へ。CPUとGPUの数量比が1:1へ近づく 2 記憶 KV
+	Cacheの爆発。HBMの外へ出す階層化・プール化が必須に 3 接続 スーパーノード（SuperPod）がラック設計の標準単位。ファブリック標準化競争 4 電力 ラック1本あたり1,000kW時代へ。54Vから ±400V／800V高圧直流へ 5 冷却 液冷は導入是非の議論を終え、部品設計そのものを液冷前提に 6 管理 OCPが「grid to chip」へ拡張。ファームウェア／RASを正式領域に すべての起点は Agentic AIの実運用化 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 05
+6. ### トレンド 1 計算アーキテクチャの重心が 「GPU中心」から「 CPU–GPU協調」へ エージェントの自律実行による、CPUの重要性への回帰 06
+7. ### 計算パラダイムの 3世代 — CPUの復権 2012〜2025年 〜2012年 2025年〜 伝統的機械学習 深層学習 Agentic
+	AI 【CPU中心】 【GPU中心】 【CPU–GPU協調】 • • • • SVM、ランダムフォレスト 低並列度の処理設計 MB〜GBクラスのデータ規模 手動での特徴設計 • • • • AlexNet ／ Transformer GPUによる超大規模並列処理 TBクラスの巨大データ処理 アルゴリズムによる自動特徴学習 自律エージェントの処理要求により • • • • 推論処理だけでなく自律実行へ タスク分解・オーケストレーション・プランニン グ 外部ツール呼出し・実行管理 コンテキスト（記憶）の高度な管理 「CPUの重要性が回帰した」 単なる推論（GPU処理）の繰り返しではなく、タスク制御・実行の主体として CPUが高度な司令塔役割を担うパラダイムへ 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳健（Alibaba Cloud） 07
+8. ### AIエージェント・エンジニアリングの 4段階進化 • Phase 1 プロンプトエンジニアリング — 単発の要求応答。人間の関与が大きい • Phase
+	2 コンテキストエンジニアリング — RAG＋履歴圧縮。コーナーケースで停止する弱点 • Phase 3 ハーネスエンジニアリング — ツール登録・権限管理・エラー処理。異常時も継続 • Phase 4 ループエンジニアリング — Plan→Execute→Observe→Reﬂect→Replanを自律反復 • 人間をタスクフローから外すほど、 CPU利用率が上がる AIエージェント・エンジニアリングの4段階進化（Alibaba Cloud） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳健（Alibaba Cloud） 08
+9. ### エージェントの実稼働は 1日のわずか 15% • 24時間の挙動分解 — アイドル約 55%／LLM応答待ち約 25%／実アクティブ約 15%
+	• マクロ遊休：cronジョブや人間の入力待ち ／ ミクロ遊休：LLM呼出し1回 200ms〜2秒 • 解は Agent Sandboxの vCPU 4〜5倍オーバーコミット （統計的多重化＋タイムスライス） • 制約はCPUではなくメモリ容量 である、と明言 Agent Sandboxのオーバーサブスクリプション— エージェント24時間挙動の分解 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳健（Alibaba Cloud） 09
+10. ### 到達点： CPUとGPUの数量比が 1:1へ (Alibaba Cloudの構想) • Alibaba Cloud 磐久UMX（Uniﬁed Memory
+	Extension） — 計算バス上にスーパーノード内メモリ／ストレージ プールを構築 • UALink＋CXLによる Load/Store メモリセマンティクス 。DRAM／SCM／HBF／TLC・QLC SSDをナノ秒級遅延で 統一接続 • 全体構成 AL128スーパーノードクラスタ では、CPUとGPUの数量比がほぼ 1:1に近づく Alibaba Cloud 磐久UMX — 計算とストレージをバス級で相互接続するアーキテクチャ 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳健（Alibaba Cloud） 10
+11. ### 浪潮信息（ IEIT SYSTEMS）：4万Agentを収容する液冷 CPUラック • 「エージェントの規模化は本質的にシステム工学の規模化 である」 • 液冷OCM（オープン計算モジュール）標準をオープン化し、x86／ARMを同一計算基盤上で協調 •
+	1ラックで 384プロセッサ／ 4万超の同時 Agentを収容 —「メガワット級の計算能力を1ラック内で完結」 • 0.5Uの薄型計算ノードで2Uに16 CPU。ケーブルレス設計で運用効率150%以上向上 大量のAgentを支える CPU Agent 実行基盤（浪潮信息／IEIT SYSTEMS） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 趙帥（浪潮信息／IEIT SYSTEMS） 11
+12. ### 2つの基盤の協調 — トークンエンジンと Agent ホスト • SD200スーパーノード （GPU側）— OCM／OAM上に3D Meshで64枚のAIチップ。1台あたり4TB級のメモリ
+	– トークン速度を 8.9ms（2025/9）→ 4.77ms（2026/7）へ短縮。中国国内のスーパーノードとして初めて5msを突破 • 液冷ネイティブ CPU Agentホスト — Agentのスケジューリング／オーケストレーションとツール実行を担当 • 両者の上に Model Fusionと Agent Swarmを載せて融合出力を得る構想 2つの基盤の協調 — SD200スーパーノード ＋ 液冷ネイティブCPU Agentホスト 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 趙帥（浪潮信息／IEIT SYSTEMS） 12
+13. ### トレンド 2 ボトルネックは演算能力ではなく 「メモリと記憶」に移った ボトルネックの中心はKV Cacheに 13
+14. ### KV Cacheがボトルネックの中心に • 長コンテキスト・マルチターン対話・マルチAgent協調のいずれも KV Cacheを爆発的に増やす • 7Bモデル・ 64Kトークン →
+	約 64GB • 70Bモデル・ 8Kコンテキスト・バッチ 32 → 約 640GB • Agentのマルチターン（ツール呼出5個を含む）→ 実効需要が 3倍に増加 • マルチモーダル動画（高解像度・多フレーム）→ テキストの 10〜100倍 「メモリの壁」から「記憶の壁」へ 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 4 孔陽（Alibaba Cloud） 14
+15. ### HBM占有の57%を KV Cacheが占める • 64並列×32K構成での内訳 — KV Cache 57%／モデル重み 35%
+	• 実モデルでも Qwen3-235B（FP8で235GB）、DeepSeek-V3（671GB）と大きい • 結論：単一タスクで数百 GB以上。HBM外のプール化メモリによるヒット率向上が必須 HBMのメモリ占有 — KV Cacheの外部プール化（Alibaba Cloud） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 4 孔陽（Alibaba Cloud） 15
+16. ### 対策は3方向に整理される • ① ヒット率の向上 – vLLMの PagedAttention、SGLangの RadixAttention、位置非依存キャッシュ EPIC •
+	② 格納効率の向上 – KV量子化（FP16→4bit/2bitで体積約75%削減）、DeepSeek V4の CSA／HCAで約10倍圧縮 • ③ 階層化・外部プール化 – HBM → DRAM → SCM → SSD 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳健（Alibaba Cloud）ほか 16
+17. ### 沐曦（MetaX）：GPU中心の5階層ストレージピラミッド • 現行 vLLM／SGLangは3層抽象だが、L2以上はすべて CPU介在 → CPUがボトルネック • L1（GPU VRAM）／L1.5（GPU直結の拡張層）／L2（CPU
+	DRAM）／L2.5（Fabric）／L3（NVMeプール） • L1.5-Randは自社 MetaX Memory Expander（MXME）で読取り往復遅延 0.9μsを実測 GPUを中心とする5階層ストレージピラミッド（沐曦／MetaX） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 4 李兆石（沐曦／MetaX） 17
+18. ### KV Cacheの経済性 — 200倍のコスト差 • 1TB DDR5 ＝ 約2.8万ドル vs
+	1TB NANDフラッシュ ＝ 約140ドル • ヒット率 95% → 97.5%は僅差に見えるが、ミス率 5% → 2.5%は劇的な改善 – 1Mトークンで5%ミスなら5万トークンのpreﬁllが必要。2.5%なら2.5万 — 演算需要が半減 • 「トークン課金がサブスクへ移る局面では、リクエストあたりコスト低減がそのまま純利益率 」 Preﬁx Hit Rateと $/Token コストの関係（沐曦／MetaX） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 4 李兆石（沐曦／MetaX）※原資料は人民元表記。1元≈0.14ドルで換算 18
+19. ### Alibaba Cloud：CXLメモリプールの実証成果 • 磐久CXLメモリプール化サーバ — CXL Switch（帯域>10TB/s、遅延<100ns）＋ JBOM メモリプール •
+	KVキャッシュ管理アーキテクチャ Beluga — RDMAベース方式との比較で – 初回トークン遅延（ TTFT）を 89.6% 削減／vLLMスループットを 7.35倍向上 • PolarDBへの適用は SIGMOD'25 産業トラック最優秀論文 を受賞 CXLメモリプールの KV Cache 応用（Beluga：TTFT 89.6%削減） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 4 孔陽（Alibaba Cloud） 19
+20. ### サムスン電子（ Samsung）：KV Cacheはメインメモリの外へ • KV Cacheの増大は3軸で起こる — コンテキスト長／同時実行数／セッションの寿命 • 定量的には
+	1ユーザ約 10GB、1,000ユーザでシステムレベル 10TBに到達 • Agentic AIは各やり取り後にリセットされない。永続セッション・ツール出力・推論トレースが蓄積 • 解は用途別2階層 — Active KV Cache（TLC SSD）と Archive KV Cache（QLC SSD） • 製品 BM1773：E3.Sフォームファクタで単体 256TB。全液冷互換、PCIe Gen7に準備 「KV Cacheはメインメモリの外へ出なければならない」 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 田成勳（サムスン電子／Samsung） 20
+21. ### トレンド 3 スケールアップ・ファブリックの 標準化競争 「スーパーノード（SuperPod）」がラック設計の標準単位になった 21
+22. ### 「スーパーノード」がラック設計の標準単位に • 2023〜2027年にかけてスーパーノードあたりの XPU数が急増 （16〜64 → 576〜1,152カード） • 磐久（Alibaba）、天池（Baidu）、大禹（ByteDance）、NVL144/Rubin（NVIDIA）、Fusion PoD
+	AI（xFusion）、 Uni-POD、Nebula、元脳（IEIT SYSTEMS）などが並立 AI スーパーノードエコシステムの進化（慶虹電子／Qing Hong Electronics） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳宣豪（慶虹電子／Qing Hong Electronics） 22
+23. ### プロトコルと物理形態の並立 • プロトコル：UALink／CXL／PCIe／UECに加え、中国国内勢の OISA／UB-Link／C-Link 等 • 物理構成は Cable Tray／前後直交（ Orthogonal）／ミッドプレーン（
+	Midplane）の3形態 • 高速インターコネクトのハードウェア形態も BP Cable Tray／NPC／Over Board Cable／Co-Packaged Copper／Board-Level Connectorsの5分類に整理 スーパーノードアーキテクチャの形態分類と選択（慶虹電子／ Qing Hong Electronics） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 陳宣豪（慶虹電子／Qing Hong Electronics） 23
+24. ### Astera Labs：PCIe Gen6で最大512 GPU • 「どのプロトコルを選んでも、ファブリックへの要求仕様は同じである」 • Scorpio X-Series —
+	PCIe Gen6ベースの 320レーンスイッチ 。「現時点で入手可能な最大のオープンなメモリセマ ンティクス対応スイッチ」 • Compute Platform（8 GPU＋4 NIC＋2 CPU）と Switch Platformの2種類だけで最大512 GPUまで拡張 Scorpio X-Seriesによる多段ファブリック（最大512 GPU） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム Chris Petersen（Astera Labs） 24
+25. ### スイッチチップ内蔵のエンジンで集団通信を 2倍に • Hypercast（データ複製エンジン） — 1つの送信元のデータを多数の宛先へ自動で複製し、 all-gather／all-scatter／all-to-allを加速 • In-Network Compute
+	エンジン — スイッチ内で集約計算を実行し、all-reduce／reduce-scatterを加速 • 両者により集団通信を最大2倍高速化 —「計算ワークロードに使える帯域が倍になる」 • MoEはレイヤごとに専門家の部分集合へマルチキャストが必要。従来スイッチでは展開が制限された Hypercast™ と In-Network Compute（INC）エンジン 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム Chris Petersen（Astera Labs） 25
+26. ### 光インターコネクトのボトルネック • 1万GPUから10万、さらに百万GPU級クラスタへ拡大し、従来の800G／1.6T OSFP挿抜モジュールが限界に • 越えられない物理的制約は2点: ① 単チャネル200G時代のPCB配線長と信号劣化 （リタイマ追加で消費電力が急増） ②
+	1Uに最大32個というOSFPの空間的限界 • 産業界の進化方向は 3.2T → 6.4T → 12.8Tで一致。その担い手が NPO／CPO／XPOの3路線 方式 電気的距離／信号品質 消費電力 帯域ポテンシャル 保守性 CPO（Co-Packaged） 最短（<1cm）。光エンジンとASICを同一基板 に共封止 最低 長期的に最高。世代更新が可 能 最も難しい。故障時は基板ごと 交換 NPO（Near Package） 中程度。光をASIC周辺5cm以内に配置 中程度 やや制約あり 中程度。蓋を開けて交換 XPO（挿抜型） 最長（25〜35cm）。信号補償が必須 最大。200W超／ モジュール 挿抜型モジュールの高集積進 化形 最良。前面挿抜・ブラインドメイ ト対応 NPO・CPO・XPOは淘汰し合うのではなく、ユースケース別に共存する 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 彭小偉（立訊技術／Luxshare） 26
+27. ### XPO — 2026年に登場した新路線 • 2026年3月に Arista Networksが約45社と立ち上げたMSA。OFC 2026でデビューし、数週間で参加100社超に • 12.8Tbps／モジュール
+	＝ 64レーン × 200Gbps PAM4。OSFPの 8倍の帯域 • 液冷コールドプレートを内蔵し 400W超に対応。幅はOSFPの約2.7倍 • 1 Open Rack Unitで 204.8Tbps（OSFP比 4倍のフロントパネル密度）。スイッチラック占有を75%削減 XPO 1個と OSFP 8個の比較（Arista Networks, XPO White Paper Fig.1） 同一帯域でのラック占有比較：8ラック → 2ラック（同 Fig.4） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 彭小偉（立訊技術／Luxshare） ／ 図版：Arista Networks「XPO: Redeﬁning Pluggable Optics for AI Networking」White Paper（2026年3月） 27
+28. ### XPO — 2026年に登場した新路線 XPO Optics (Amphenol) XPO Optics & CPC
+	ChipLink (Foxconn) 出典：COMPUTEX Taipei 2026 (筆者撮影) 28
+29. ### ODCCの UPO 標準 — 中国国内で先行する NPO系の標準化 • UPO ＝ Ultra
+	Performance Optics — 光エンジンをASIC近傍に置く NPO系の光インターコネクト規格。 ODCC（Open Data Center Committee）が策定 • UPOは3つの形態を定義 – Type-1 超高密度 — 3Dパッケージ＋HDI基板、消費電力30W級。1万GPU級向け – Type-2 密度とコストの両立 — 2.5Dパッケージを採用し量産性を確保 – Type-3 低コスト重視 — レーザ内蔵に対応 • Alibaba Cloud・騰訊（Tencent）ら国内大手が ODCCで 6.4T UPOの標準化を推進し、仕様は2026年公開予定 • ODCCは 3.2T NPO 仕様を公開済み 、6.4T NPOは2025年12月に立項。Alibaba Cloudは世界初の3.2T NPOモジュール の動作実証に成功 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 彭小偉（立訊技術／Luxshare） ／ 補足：ODCC 公開情報。※講演音声では「Type-1/2/3」、 ODCC公開情報では「XD／HD／SD」の3区分。対応関係は未確認 29
+30. ### China Mobile ODS：標準イーサネットで組むスーパーノード • 従来型スーパーノードの課題 — 独自仕様の閉鎖的プロトコル／拡張の頭打ち／保守性の悪さ／密結合 • ODS（Open Disaggregated
+	SuperPod）は標準イーサネット と IETFドラフト FARE-in-SUNに対応 • 基礎ODS構成で消費電力約 50%削減／コスト約 50%削減／信頼性 2桁向上 基礎ODS — 消費電力・コストとも約50%削減（China Mobile） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 5 徐小虎（China Mobile） 30
+31. ### OCSを組み合わせた多段構成で 90% 削減 • カスケードODS：64チップODS空冷／128チップODS液冷 ×16 ＋ OCS 256×256 ×32
+	• 消費電力約 90%削減／コスト約 60%削減、相互接続の信頼性も向上 • 実測でも 800G AEC／ACC／DACはいずれも post-FEC BER 0でSI要求を満たすと確認 • 将来展望は CPOから MicroLEDへの全光相互接続の平滑な進化 カスケードODS＋OCS — 消費電力約90%削減（China Mobile） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 5 徐小虎（China Mobile） 31
+32. ### トレンド 4 給電アーキテクチャの世代交代 （54V → 800VDC） チップ1個あたり3,500W・ラック1本あたり1,000kW時代への備え 32
+33. ### 背景：1チップ3,500W、1ラック1,000kWへ • チップ1個あたりの電力：約500W（2016年）→ 約1,500W（2024年）→ 約3,500W（2027年） • ラック1本あたりの電力：20kW（2022年）→ 132kW（2025年）→ 200kW（2026年）→ 約1,000kW（2028年）
+	• 今回のカンファレンスで最大の講演数を集めた領域 （20件超） • 業界の答えは ±400V／800V高圧直流（ HVDC）への移行 でほぼ一致 AIチップが牽引するラック全体の消費電力の上昇（字節跳動／ ByteDance） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 3 肖現柯（字節跳動／ByteDance） 33
+34. ### 字節跳動（ ByteDance）「大禹 2.0」：1ラック264kWを実装済み • 1ラック264kWの超高給電能力、ATS二重入力対応、給電システム全冗長 • 集中式給電は2形態 — ラック内 Power
+	shelf 方式（約 500kW）とラック外 Sidecar 方式（約 1,000kW） • ATS二重入力電源は1モジュール5.5kW、Ruby級効率認証でピーク 97%超、ATSゼロ電流切替 超高電力ソリューション— ラック内Power shelfとラック外Sidecar 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 3 肖現柯（字節跳動／ByteDance） 34
+35. ### 給電ロードマップ： 264kW → 500kW → MW級 • 電力等級 264kW →
+	500kW → MW級（21インチラックの上下各4Uは維持） • 給電方式：交流ATS → 800V高圧直流 ATS ／ 放熱方式：空冷 → コールドプレート冷却 • 変換効率 97% → 98.5% • Rack Busbarも空冷54V → コールドプレート冷却800Vへ。断面積を約 60%削減（2.8倍のゲイン） 大禹アーキテクチャの給電システム進化ロードマップ 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 3 肖現柯（字節跳動／ByteDance） 35
+36. ### 字節跳動（ ByteDance）AI Rack 3.0 — 800VDCをラック入力に • AI Rack 2.0（量産段階）：1
+	POD（2ラック）で 256 GPU、1ラック240kW • AI Rack 3.0は2.0比で全体仕様が2倍以上 — 2ラックで最大576カード、Scale-Up帯域 46TB/s • 給電は 800V高圧直流をラック入力 に採用。1ラック500kW、1 PODで 1MW • 冷却はファンレスの全液冷設計 。第1段階ではバスバーは54Vを継続し液冷で放熱を解決 AI Rack 3.0 ラック機構 — 800VDC入力・54V液冷busbar・4組cable tray 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 高暁軍（字節跳動／ByteDance） 36
+37. ### Flex：2段給電から 3段給電へ • 従来のDCは48Vを主母線とする 2段構成（40〜60V入力 → 6.2〜12V → CPU/GPU） •
+	1MW級ラックの登場に伴い 800V高圧 → 50V → さらに降圧という 3段給電が新たな趨勢 – 導体の損失は P = I²R（電流の 2乗 × 抵抗）。電圧を上げて同じ電力を小さい電流で送れば損失は2乗で減り、長距離配電でも 有利になる • 1MW級では単一ラックに電源が収まらず、隣接する専用電源ラック Sidecarが解に 3段給電アーキテクチャ（Stage 1／2／3）— Flex 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 謝瑋（偉創力／Flex） 37
+38. ### 村田製作所（ Murata）：ORV3 HPRの世代ロードマップ • 480Vac buswayを前提とした HPR v1 → v4の進化を提示
+	• 33kWシェルフ／ 5.5kW PSU → 72kW／12kW → 110kW／18.5kW • あわせて母線が ±400Vdc／800Vdcへ移行する流れを提示。2026年にHVDC製品を投入 OCP ORV3 HPR ラックスケール給電のトレンド 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 1 楊寧（村田製作所／Murata） ORV3 HPR 5.5kW PSU（Ruby効率認証） 38
+39. ### 晶豊明源（ BPS）：チップ側からのコスト構造の転換 • DrMOS/SPSの Co-Package実装により Power FETに必要なマスク数を 22枚 → 11枚へ半減
+	– ダイコストが低い／Rspが低く効率が良い／実装が簡素で高周波特性が良い、という三重の優位 • デジタルCOT制御とFPGAプリシリコン検証により、新製品立ち上げを 43週 → 4週へ短縮 パッケージ革新 — Co-Packageによるマスク数半減（晶豊明源／BPS） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 何加勁（晶豊明源／BPS） 39
+40. ### トレンド 5 液冷の「後付け」から 「ネイティブ液冷」への転換 部品設計そのものを液冷前提で作り直す段階へ 40
+41. ### 液冷は「導入是非」の議論を完全に終えた • ムーアの法則の減速後、計算性能の向上はマルチダイパッケージングに依存し加速チップの電力が急拡大 • 空冷の限界はラック1本あたり 40〜50kW。一方、超高密度AIラックはラック1本あたり MW級を突破（10〜50倍の 飛躍） • 主流AIチップのTDPは
+	2020年 400W → 2026年 2,000W超。局所熱流束密度は 200W/cm²以上に達する • 議論は「液冷を入れるか」ではなく「部品設計そのものを液冷前提で作り直す」 段階へ ネイティブ液冷 — 液冷を中核に据えて計算システムを設計する 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 李進宝（中航光電／JONHON OPTRONIC）／Track 5 王羽茜（浪潮信息／IEIT SYSTEMS） 41
+42. ### 浪潮信息（ IEIT SYSTEMS）：「空冷前提の設計から脱却する」 • 「現在の主要部品の形態はすべて空冷アーキテクチャの設計に由来している」 • 液冷への適合しやすさで並べると: 不適合 ← PSU・メモリ・
+	PCIeカード・光モジュール … CPU・GPU → 適合 • CPU/GPUは元々コールドプレートに馴染むが、その手前の部品群が問題になる 空冷前提の設計から脱却する— 部品別の液冷適合度（浪潮信息／IEIT SYSTEMS） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 5 王羽茜（浪潮信息／IEIT SYSTEMS） 42
+43. ### 部品をネイティブ液冷形態へ作り直す • DIMMメモリ → 液冷メモリ（ LCMM）。水平実装＋多段導熱構造による高密度レイアウト • 挿抜式光モジュール → CPO化。熱源をチップ近傍に集中させコールドプレートへ密着
+	• PCIeカード → Mezzanine／OCPネットワークカード化 。マザーボードと熱源を同一平面に統合 • SSD → 接触導熱式コールドプレート 。全体厚を変えずに40Wまで対応 ネイティブ液冷部品への再構築（LCMM／CPO／Mezzanine／接触導熱SSD） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 5 王羽茜（浪潮信息／IEIT SYSTEMS） 43
+44. ### 次世代冷却技術の展望 — 長所と課題 • 二相流冷却 — 気化潜熱で放熱上限を引き上げ、作動流体の流量を減らせる – 課題：気液二相回路の均流性制御が難しい。局所ホットスポットの解決が困難 •
+	ダイヤモンド –銅複合集積マイクロチャネル — 高熱伝導率、横方向の均熱・拡散能力が強い – 課題：製造加工の難度が高くコストが高い。現時点で業界標準が存在しない • チップ基板埋込型マイクロ流体冷却 — 放熱限界が非常に高く、ポイント精密冷却に即効性 – 課題：チップパッケージのカスタム開発が必須。マイクロチャネルが詰まりやすい いずれも主要 CSPおよびチップメーカが注視している 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム 李進宝（中航光電／JONHON OPTRONIC） 44
+45. ### トレンド 6 ファームウェアと運用管理が OCPの正式領域に OCPのスコープが「grid to chip」へ広がった 45
+46. ### OCPのスコープが「 grid to chip」へ拡張 • George Tchaparian CEO：「サーバ、スイッチ、ストレージ等のハードウェア提供者にとどまることはできない 」 •
+	技術スコープにファシリティ・物理インフラ・ITインフラ・OTインフラ、そしてシステム管理 を追加 – 「ソフトウェアでLinux Foundationを追随するのではなく、ハードウェアに近いファームウェアを OCPの内側に持ち込む 」 • OCPの規模：会員700社超、認定製品の全世界導入額は約3,000億ドル規模 へ（地域別で中国は第2位） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ メインフォーラム George Tchaparian（OCP Foundation CEO） 46
+47. ### 字節跳動（ ByteDance）主導：オープン RAS API 標準 v0.95 • RAS ＝ Reliability・Availability・Serviceability
+	— 障害の検出・報告・回復を担う仕組み。 RAS APIはその操作を共通化するインターフェース規格 • RAS APIを Redﬁsh／PLDM／MCTP 等の既存管理プロトコルの上に載る抽象層 として定義 • 設計原則：帯域内・帯域外／階層化トポロジ／「振る舞いを規定し、バイトは規定しない」 ／同一モデル・任意階層 • データセンター・BMC・シリコンの各階層で同一の抽象モデル を使えるようにする RAS APIのシステムモデル — イニシエータ（Initiator）とエンドポイント（Endpoint） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 6 龔発強（字節跳動／ByteDance） 47
+48. ### RAS API 命令セット — 5分類で構成 • ① 発見 ② 設定
+	③ エラー報告キュー ④ プラットフォーム動作状態キュー ⑤ 動作キュー • v0.95では 3組のキュー命令集を完全定義 。発見・設定命令は後続バージョンへ • 各報告インスタンスが Info／Corr／Uncorr／Fatalの4重大度キュー を保持 RAS API エンドポイントの機能アーキテクチャ（字節跳動／ ByteDance） 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 6 龔発強（字節跳動／ByteDance） 48
+49. ### ファームウェア開発それ自体への AI適用 • 字節跳動（ ByteDance） — OpenBMC移植向けAgentフレームワーク。 「コード生成を超えて」検証まで含む枠組み • 浪潮信息（
+	IEIT SYSTEMS） — Agentic AIによるファームウェア開発・デリバリの全工程再構築 • 聯想（Lenovo） — AI時代のサーバファームウェア障害切り分けの新パラダイム • Alibaba Cloud — BMCにAIを内蔵。管理コントローラ自体が推論能力を持つ方向性 • 国産BMCチップ（凌思微電子）、高信頼BMC（飛騰）、軽量OpenBMC（崑崙太科）など実装も多数 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 6 ほか 49
+50. ### まとめ Agentic AIが 各領域の再定義を加速 計算・記憶・電力・冷却・管理が、連動して動いた 50
+51. ### 業界としての到達点： GW-Scale Open AIDC v1.0 • 今回最大の成果物。17団体が共同執筆 したGW級AIDCのリファレンスアーキテクチャ （製品説明ではない） •
+	4層構成 — ① 基盤インフラ層 ② IT設備層 ③ ネットワークと高速相互接続層 ④ 統一運用管理層 • 4つの柱（開放・高効率・グリーン・スマート ）が4層すべてを貫く • 「GW級の競争力は単点のピーク性能ではなく、システム級の信頼性・保守性・エネルギー効率・持続可能性 に依 存する」 GW-Scale Open AIDC 4層リファレンスアーキテクチャ 出典：OCTS 2026（Open Compute Tech Summit 2026 / OCP China Day 2026）公開資料 ｜ Track 5 叶毓睿（OCP中国コミュニティ） 51
+52. ### 技術領域の各トレンドは、ひとつの連鎖になっている 01 02 03 エージェントが自律実行する 長コンテキスト・マルチターン・マルチ Agent メモリをHBMの外へ出す → CPU側の仕事が増える
+	→ KV Cacheが爆発し、記憶がボトル ネックに → スーパーノードとファブリックの標準化 が要る 04 05 06 スーパーノードを高密度化する MW級を成立させる すべてを止めずに運用する → 1ラック MW級の給電が要る → 部品から液冷前提で作り直す → ファームウェアと RASの標準化が要る 計算・記憶・電力・冷却・管理が、同時に、連動し進歩している 52
+53. ### 重要なこと • これらは研究段階の構想ではない 。すでに製品・仕様として存在する具体物として提示された – 1ラック 264kW給電の実装 （ByteDance 大禹2.0） –
+	512 GPUファブリック （Astera Labs Scorpio X-Series） – TB級統合メモリのスーパーノード （Alibaba Cloud 磐久UMX／IEIT SYSTEMS SD200） – GW級データセンターのリファレンスアーキテクチャ （GW-Scale Open AIDC v1.0） • 自社にとっての最適解を先読みして判断する力 が、これまで以上に問われる 53
+54. ### 参考情報 • OCTS 2026（Open Compute Tech Summit 2026／OCP China Day
+	2026） ocpasia.org – 開催：2026年7月9日 Beijing International Hotel ／ 主催：OCP Foundation ／ OCTC（中電標協） • 本資料は、公開情報にもとづきます • スライド画像は各社の公開セッション資料からの引用であり、著作権は各社に帰属します • XPOの図版は Arista Networks「XPO: Redeﬁning Pluggable Optics for AI Networking」White Paper（2026年3月）より引 用 • UPO／NPOの標準化動向は ODCCおよびベンダ各社の公開情報にもとづく補足調査です • 主な引用元：Alibaba Cloud／浪潮信息（IEIT SYSTEMS）／沐曦（MetaX）／サムスン電子（Samsung）／Astera Labs／慶虹電子 （Qing Hong Electronics）／China Mobile／字節跳動（ByteDance）／偉創力（Flex）／村田製作所（Murata）／晶豊明源（BPS） ／中航光電（JONHON OPTRONIC）／立訊技術（Luxshare）／OCP中国コミュニティ 54
