@@ -1,4 +1,18 @@
-https://x.com/jij_inc_jp/status/2085274679615562068
+---
+url: https://x.com/jij_inc_jp/status/2085274679615562068
+created: '2026-08-11T19:04:37'
+type: post
+tags:
+- jijmodeling
+- 数理最適化
+- 生成ai
+- claude
+summary: '数理最適化モデリングツール「JijModeling 2」の新版がリリースされました。
+
+  Flat ASTの採用によりコンパイル時間とメモリ使用量を大幅削減しました。
+
+  Claude Fable 5の活用で初期実装が実働2日に短縮され約1ヶ月でリリースされました。'
+---
 
 数理最適化モデリングツール「JijModeling 2」の新バージョンをリリースしました 🚀
 
