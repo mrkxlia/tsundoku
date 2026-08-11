@@ -1,4 +1,19 @@
-https://github.com/markdown-viewer/skills
+---
+url: https://github.com/markdown-viewer/skills
+created: '2026-08-11T20:48:46'
+type: article
+tags:
+- markdown
+- ai
+- visualization
+- diagrams
+summary: 'AIコーディングエージェント向けにMarkdownで直接美しい図解や可視化を作成するスキル集を紹介しています。
+
+  ソフトウェアモデリング、クラウド・ネットワーク構成、データ分析など多様な用途に対応する14のスキルを提供します。
+
+  Claude CodeやCursorなどの複数エージェントに対応し、手動またはnpxコマンドで簡単に導入できます。'
+---
+
 # markdown-viewer/skills: Opinionated skills for AI coding agents to create stunning diagrams and visualizations directly in Markdown. These skills extend agent capabilities across diagram generation, data visualization, and technical documentation.
 2026-08-11
 ## Markdown Viewer Agent Skills

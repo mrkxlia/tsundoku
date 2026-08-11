@@ -1,4 +1,20 @@
-https://github.com/microsoft/SkillOpt
+---
+url: https://github.com/microsoft/SkillOpt
+created: '2026-08-11T20:48:46'
+type: article
+tags:
+- ai
+- microsoft
+- opensource
+- llm
+- python
+summary: 'Microsoftが開発したSkillOptは、LLMのモデル重みを変更せずに行動履歴から再利用可能なスキルを最適化するテキスト空間オプティマイザーです。
+
+  エポックや検証ゲートなどのニューラルネットワーク学習の概念を取り入れ、単一のMarkdownファイルを効率的に更新します。
+
+  多様なベンチマークやモデルにおいて、推論時のコストを増やさずにAIエージェントの性能を大幅に向上させることが可能です。'
+---
+
 # microsoft/SkillOpt: SkillOpt is a text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates, and deployable best_skill.md artifacts.
 2026-08-11
 ## SkillOpt: Executive Strategy for Self-Evolving Agent Skills

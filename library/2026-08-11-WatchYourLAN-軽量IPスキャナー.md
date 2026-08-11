@@ -1,4 +1,19 @@
-https://github.com/aceberg/WatchYourLAN
+---
+url: https://github.com/aceberg/WatchYourLAN
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- ネットワーク
+- go
+- docker
+- 監視
+summary: 'WatchYourLANはGo言語で書かれた軽量なネットワークIPスキャナーです。
+
+  Web GUIを備え、新規ホストの検知通知やオンライン履歴のモニタリングが可能です。
+
+  InfluxDBやPrometheusと連携し、Grafanaでのダッシュボード構築にも対応しています。'
+---
+
 # aceberg/WatchYourLAN: Lightweight network IP scanner written in Go. With notifications, history, export to Grafana
 2026-08-11
 ## WatchYourLAN

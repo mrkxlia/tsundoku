@@ -1,4 +1,20 @@
-https://techblog.zozo.com/entry/architecture-diagram-with-claude-code
+---
+url: https://techblog.zozo.com/entry/architecture-diagram-with-claude-code
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- claude
+- アーキテクチャ
+- 自動化
+- aws
+- CI
+summary: 'Claude Codeを活用してシステム構成図を自動生成・自動更新する仕組みについて解説しています。
+
+  ソースコードと構成図の間に「規約ファイル」と「構造ファイル」の中間ファイルを挟むことで、品質を保ちつつレンダラに依存しない管理を実現しています。
+
+  さらに、GitHub Actionsを用いたCIによる自動更新の仕組みや、Claude Codeのスキル活用について紹介しています。'
+---
+
 # システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み
 2026-08-11
 ![システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み](https://cdn-ak.f.st-hatena.com/images/fotolife/v/vasilyjp/20260703/20260703162605.png)

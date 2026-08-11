@@ -1,4 +1,20 @@
-https://github.com/wilwaldon/Claude-Code-Frontend-Design-Toolkit
+---
+url: https://github.com/wilwaldon/Claude-Code-Frontend-Design-Toolkit
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- claudecode
+- frontend
+- ai
+- design
+- github
+summary: 'Claude Codeが生成するフロントエンドのデザイン性を向上させるスキルやプラグイン、MCPサーバーをまとめたツールキット集です。
+
+  公式のFrontend Designをはじめ、UI/UXデザインスキル、デザインシステムの構築に役立つリソースが紹介されています。
+
+  ありきたりなAI生成のデザインから脱却し、多様な美学や一貫したテーマを適用するための実践的なツールが揃っています。'
+---
+
 # wilwaldon/Claude-Code-Frontend-Design-Toolkit: Everything I've found that actually makes Claude Code output better-looking frontends. Skills, plugins, MCP servers, CLAUDE.md tricks
 2026-08-11
 ## Claude Code Frontend Design Toolkit

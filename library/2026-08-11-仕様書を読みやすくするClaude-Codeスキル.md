@@ -1,4 +1,19 @@
-https://zenn.dev/spacemarket/articles/6c4992227d0b0d
+---
+url: https://zenn.dev/spacemarket/articles/6c4992227d0b0d
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- claudecode
+- ai
+- ドキュメント
+- プログラミング
+summary: '仕様書やスペック文書を人間が読みやすいHTMLレポートに変換するClaude Codeスキル「spec-to-readable-html」の紹介記事。
+
+  Markdownの代わりにHTMLを使用することで、サマリー、目次、Mermaid図などを視覚的にリッチに表現できるのが特徴。
+
+  プロンプト設計やテンプレート活用の工夫、トレーサビリティ確保のポイントなどが解説されている。'
+---
+
 # スペック文書を「読みたくなるHTML」に変換するClaude Codeスキルを作った話（スキル本文付き）
 2026-08-11
 こんにちは！スペースマーケットの jin です🐶

@@ -1,4 +1,19 @@
-https://github.com/shanraisshan/claude-code-best-practice
+---
+url: https://github.com/shanraisshan/claude-code-best-practice
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- claudecode
+- AI開発
+- プログラミング
+- ベストプラクティス
+summary: 'Claude Codeを活用した開発のエージェント的エンジニアリング手法をまとめたリポジトリです。
+
+  サブエージェント、コマンド、スキル、ワークフローなどの実践的なベストプラクティスを提供しています。
+
+  開発効率を最大化するための設定やMCPサーバーの活用方法についても解説されています。'
+---
+
 # shanraisshan/claude-code-best-practice: from vibe coding to agentic engineering - practice makes claude perfect
 2026-08-11
 ## claude-code-best-practice
