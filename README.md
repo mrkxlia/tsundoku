@@ -1,14 +1,14 @@
 # tsundoku — 記事ストック自動整理Vault
 
 iPhoneのObsidian(+ Obsidian Git)からクリップしたWeb記事・Xポストを、
-GitHub Actions + Gemini API(無料枠)で週1回自動整理するObsidian Vaultです。
+GitHub Actions + Gemini API(無料枠)で毎日自動整理するObsidian Vaultです。
 
 ## 構成
 
 ```mermaid
 flowchart LR
     A[iPhone Obsidian\nクリップ保存] -->|obsidian-git push| B[inbox/]
-    B --> C{organize.yml\n週1 + 手動実行}
+    B --> C{organize.yml\n毎日 + 手動実行}
     C -->|要約・タグ付け\nGemini API| D[library/\n整理済みノート]
     C -->|重複は統合| E[archive/\n閲覧対象外]
 ```
@@ -21,7 +21,7 @@ flowchart LR
 | `scripts/organize.py` | 整理スクリプト本体 |
 | `scripts/media_types.py` | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF) |
 | `scripts/llm_client.py` | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能) |
-| `.github/workflows/organize.yml` | 週1(日曜3:00 JST)+ 手動実行のワークフロー |
+| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー |
 
 ### クリップの形式
 
@@ -108,7 +108,7 @@ flowchart LR
 
 ## 運用
 
-- **自動実行**: 毎週日曜 3:00 JST(土曜 18:00 UTC)に `main` ブランチで実行され、結果は直接コミットされます
+- **自動実行**: 毎日 3:00 JST(18:00 UTC)に `main` ブランチで実行され、結果は直接コミットされます
 - **手動実行**: GitHubの **Actions → Organize inbox → Run workflow**
 - **並行実行防止**: `concurrency` 設定済み。実行が重なることはありません
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
@@ -116,7 +116,9 @@ flowchart LR
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)
   に収まるよう、呼び出し間スリープと処理件数上限を設けています。
   枠を使い切った場合はチェーン後段のモデルへ自動フォールバックし、
-  それでも失敗したノートは `inbox/` に残って次回再試行されます
+  それでも失敗したノートは `inbox/` に残って次回再試行されます。
+  ※ RPM以外に1日あたりのリクエスト数(RPD)上限がある場合、backlogが多い日は
+  上限に達することがあります。頻発する場合は `MAX_ITEMS_PER_RUN` を下げてください
 
 ### ローカルでの動作確認
 
