@@ -1,4 +1,19 @@
-https://speakerdeck.com/eurekaberry/active-directory-nobao-hu
+---
+url: https://speakerdeck.com/eurekaberry/active-directory-nobao-hu
+created: '2026-08-11T23:09:11'
+type: slides
+tags:
+- activedirectory
+- セキュリティ
+- microsoft
+- インシデント対応
+summary: 'Active Directoryが標的となる理由や代表的な侵害プロセスを解説しています。
+
+  従来型の境界防御やログ監視のみでは防げない攻撃の特徴と誤解を指摘しています。
+
+  最小権限管理や攻撃パスの可視化を通じた継続的なセキュリティ改善を提唱しています。'
+---
+
 # Active Directory の保護
 2026-08-11
 Active Directory の保護に関する勉強会の資料
