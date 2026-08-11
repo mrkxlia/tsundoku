@@ -1,4 +1,19 @@
-https://speakerdeck.com/nwiizo/claude-everywhere
+---
+url: https://speakerdeck.com/nwiizo/claude-everywhere
+created: '2026-08-11T20:15:40'
+type: slides
+tags:
+- claude
+- 生成ai
+- プログラミング
+- ソフトウェア開発
+summary: 'Claude Codeは実装を自動化しエンジニアの役割を設計や意図の伝達へ変化させます。
+
+  明示的な指示やCLAUDE.md、カスタムコマンドの活用で効果的な開発が可能です。
+
+  ガードレールを整えることで試行錯誤を繰り返し高品質な成果を実現します。'
+---
+
 # Claude Code どこまでも/ Claude Code Everywhere
 2026-08-11
 僕がClaude Codeに初めて触れたのは、2025年の春だった。生成AIにはすでに慣れ親しんでいた。流行に乗り遅れてはいけないと必死に勉強し、エディターの補完機能やコード生成ツールとして日常的に活用していた。ただ、当時の僕にとってそれはまだ「CLIで動く便利なコーディング支援ツール」程度の認識でしかなかった。「AIが90%のコードを自動生成」という謳い文句を見ても、半信半疑でターミナルを開いたのを覚えている。
@@ -146,9 +161,11 @@ Contract One Engineering Unit 紹介資料
 
 [
 
-GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計
+GitHub CopilotのFinOps
+- AI CreditのObservabilityと価値を生むためのエージェント設計
 
-](https://speakerdeck.com/yuriemori/github-copilotnofinops "GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計 ")
+](https://speakerdeck.com/yuriemori/github-copilotnofinops "GitHub CopilotのFinOps
+- AI CreditのObservabilityと価値を生むためのエージェント設計 ")
 
 [yuriemori](https://speakerdeck.com/yuriemori)
 

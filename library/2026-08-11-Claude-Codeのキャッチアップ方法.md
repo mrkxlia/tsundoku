@@ -1,4 +1,20 @@
-https://speakerdeck.com/oikon48/claude-codewodonoyouni-kiyatutiatupusiteiruka
+---
+url: https://speakerdeck.com/oikon48/claude-codewodonoyouni-kiyatutiatupusiteiruka
+created: '2026-08-11T20:15:40'
+type: slides
+tags:
+- claudecode
+- 生成ai
+- キャッチアップ
+- スライド
+- needs-review
+summary: 'Oikon氏によるZennfes Spring 2026での登壇スライド資料です。
+
+  変化の早いAIツール「Claude Code」の情報収集や学習手法について紹介されています。
+
+  Xでの情報発信や書籍執筆を行う著者による実践的なキャッチアップ法がまとめられています。'
+---
+
 # Claude Codeをどのように キャッチアップしているか
 2026-08-11
 Zennfes: [https://zenn.dev/events/zennfes-spring-2026](https://zenn.dev/events/zennfes-spring-2026)
