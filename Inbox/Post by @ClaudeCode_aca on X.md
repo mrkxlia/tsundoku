@@ -1,3 +1,5 @@
+https://x.com/claudecode84/status/2085281860725399593
+
 【発見】  
 あとで見ようと思ったLoomや会議の録画、溜まってませんか。  
 [https://t.co/xX11FE7vuP](https://t.co/xX11FE7vuP)

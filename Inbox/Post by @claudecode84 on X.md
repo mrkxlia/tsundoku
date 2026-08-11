@@ -1,3 +1,5 @@
+https://x.com/claudecode84/status/2087045966633578706
+
 AIでUIを作る時代、  
 さらに一段進みました。
 
