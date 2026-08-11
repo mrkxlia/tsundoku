@@ -2,9 +2,12 @@
 
 処理内容(1ファイルごと):
 1. 1行目からURLを抽出(bare URL / Markdownリンクの両対応)
-2. x.com/twitter.com で本文が空なら publish.twitter.com/oembed で本文取得を試みる
+2. URLから種別(video/slides/post/image/pdf/article)を判定し、種別に応じて
+   コンテンツを取得(media_types.py 参照。YouTube字幕・SpeakerDeck PDF・X oEmbed等)
 3. LLM(llm_client)で タイトル・3行要約・タグ(3〜5個)を生成
-4. frontmatter(url, created, tags, summary)を付与
+   (PDFはGeminiのPDF入力、字幕が取れないYouTubeは動画URL直接入力で要約)
+4. frontmatter(url, created, type, tags, summary)を付与
+   (自動取得できなかったものは needs-review、メディア添付ありは has-media タグ)
 5. library/ の既存ノートと突き合わせ、同一URL・酷似内容なら統合
    (情報量の多い方を残し、他方のURLを sources に追記、重複側は archive/ へ)
 6. library/YYYY-MM-DD-<タイトルスラッグ>.md へ移動
@@ -17,15 +20,11 @@
 
 from __future__ import annotations
 
-import html
-import json
 import os
 import re
 import subprocess
 import sys
-import urllib.error
 import urllib.parse
-import urllib.request
 from dataclasses import dataclass, field
 from datetime import datetime
 from difflib import SequenceMatcher
@@ -34,6 +33,7 @@ from pathlib import Path
 import yaml
 
 import llm_client
+import media_types
 
 ROOT = Path(__file__).resolve().parent.parent
 INBOX = ROOT / "inbox"
@@ -140,36 +140,13 @@ def parse_clip(path: Path) -> Clip | None:
     return Clip(path=path, url=url, body=body, created=resolve_created(path), title_hint=hint)
 
 
-# ---------------------------------------------------------------- X(Twitter)
-
-def is_x_url(url: str) -> bool:
-    host = urllib.parse.urlsplit(url).netloc.lower()
-    host = host.removeprefix("www.").removeprefix("mobile.")
-    return host in ("x.com", "twitter.com")
-
-
-def fetch_x_body(url: str) -> str:
-    """publish.twitter.com/oembed(認証不要)でポスト本文の取得を試みる。"""
-    query_url = re.sub(r"//(www\.|mobile\.)?x\.com/", "//twitter.com/", url)
-    api = "https://publish.twitter.com/oembed?" + urllib.parse.urlencode(
-        {"url": query_url, "omit_script": "1", "lang": "ja"}
-    )
-    try:
-        with urllib.request.urlopen(api, timeout=15) as resp:
-            data = json.load(resp)
-    except (urllib.error.URLError, TimeoutError, json.JSONDecodeError, OSError) as e:
-        print(f"    [x] oEmbed取得失敗(URLのみで続行): {e}", file=sys.stderr)
-        return ""
-    # htmlには本文と「— 投稿者 (@id) 日付」の帰属情報が含まれる
-    raw = data.get("html", "")
-    text = re.sub(r"<br\s*/?>", "\n", raw)
-    text = re.sub(r"<[^>]+>", "", text)
-    return html.unescape(text).strip()
-
-
 # ---------------------------------------------------------------- URL・重複判定
 
 def normalize_url(url: str) -> str:
+    # YouTubeは youtu.be / watch?v= / shorts 等の表記ゆれを watch URL に統一して重複統合を効かせる
+    video_id = media_types.extract_youtube_id(url)
+    if video_id:
+        return f"https://youtube.com/watch?v={video_id}"
     p = urllib.parse.urlsplit(url.strip())
     host = p.netloc.lower().removeprefix("www.").removeprefix("mobile.")
     if host == "x.com":
@@ -260,16 +237,31 @@ def unique_path(directory: Path, name: str) -> Path:
 
 def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[LibraryNote]) -> str:
     """1クリップを処理し、結果ラベル(organized/merged/absorbed)を返す。"""
-    body = clip.body
-    if not body and is_x_url(clip.url) and not is_dry_run():
-        body = fetch_x_body(clip.url)
+    info = media_types.enrich(clip.url, clip.body, dry_run=is_dry_run())
+    body = info.note_body
+    hint = clip.title_hint or info.title_hint
 
-    meta = client.generate_note_meta(clip.url, clip.title_hint, body)
+    meta = None
+    if info.pdf is not None:
+        try:
+            meta = client.generate_note_meta_from_pdf(clip.url, hint, info.pdf)
+        except llm_client.LLMError as e:
+            print(f"    [llm] PDF要約に失敗(テキスト経路へ縮退): {e}", file=sys.stderr)
+            info.extra_tags.append("needs-review")
+    elif info.video_uri:
+        try:
+            meta = client.generate_note_meta_from_video(clip.url, hint, info.video_uri)
+        except llm_client.LLMError as e:
+            print(f"    [llm] 動画要約に失敗(タイトルのみで続行): {e}", file=sys.stderr)
+            info.extra_tags.append("needs-review")
+    if meta is None:
+        meta = client.generate_note_meta(clip.url, hint, info.llm_body)
 
     fm: dict = {
         "url": clip.url,
         "created": clip.created,
-        "tags": meta["tags"],
+        "type": info.type,
+        "tags": list(dict.fromkeys(meta["tags"] + info.extra_tags)),
         "summary": meta["summary"],
     }
     date = clip.created[:10]

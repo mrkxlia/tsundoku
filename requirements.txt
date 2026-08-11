@@ -1,0 +1,2 @@
+pyyaml
+youtube-transcript-api>=1.0

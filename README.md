@@ -16,9 +16,10 @@ flowchart LR
 | パス | 役割 |
 |---|---|
 | `inbox/` | クリップの着地点。ここに溜まったノートが整理対象 |
-| `library/` | 整理済みノート。`YYYY-MM-DD-タイトル.md` に正規化され、frontmatter(url / created / tags / summary)付き |
+| `library/` | 整理済みノート。`YYYY-MM-DD-タイトル.md` に正規化され、frontmatter(url / created / type / tags / summary)付き |
 | `archive/` | 重複などで不要になったノート。閲覧対象外 |
 | `scripts/organize.py` | 整理スクリプト本体 |
+| `scripts/media_types.py` | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF) |
 | `scripts/llm_client.py` | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能) |
 | `.github/workflows/organize.yml` | 週1(日曜3:00 JST)+ 手動実行のワークフロー |
 
@@ -31,11 +32,44 @@ flowchart LR
 ### 整理処理の内容
 
 1. `inbox/*.md`(+安全網としてルート直下のクリップ形式`.md`)を収集
-2. Gemini APIで タイトル・3行要約・タグ(3〜5個)を生成
-3. frontmatter(`url`, `created`, `tags`, `summary`)を付与
-4. `library/` の既存ノートと突き合わせ、同一URLまたは内容が酷似する場合は統合
+2. URLから種別(`type`)を判定し、種別に応じてコンテンツを取得(下表参照)
+3. Gemini APIで タイトル・3行要約・タグ(3〜5個)を生成
+4. frontmatter(`url`, `created`, `type`, `tags`, `summary`)を付与
+5. `library/` の既存ノートと突き合わせ、同一URLまたは内容が酷似する場合は統合
    (情報量の多い方を残し、他方のURLを `sources` に追記。重複側は `archive/` へ)
-5. `library/YYYY-MM-DD-タイトルスラッグ.md` へ移動
+   ※ YouTubeは `youtu.be` / `watch?v=` / `shorts` の表記ゆれを同一URLとして扱います
+6. `library/YYYY-MM-DD-タイトルスラッグ.md` へ移動
+
+### frontmatter スキーマ
+
+| フィールド | 内容 |
+|---|---|
+| `url` | 元URL(クリップ1行目から抽出) |
+| `created` | クリップの作成日時(ファイル名 → git履歴 → mtime の順で解決) |
+| `type` | URL種別。`video` / `slides` / `post` / `image` / `pdf` / `article` のいずれか |
+| `tags` | LLM生成タグ(3〜5個)+ 必要に応じてシステムタグ(下記) |
+| `summary` | 3行程度の要約 |
+| `sources` | (統合時のみ)統合された他方のURL |
+
+#### URL種別と処理内容
+
+| `type` | 判定対象 | 処理 |
+|---|---|---|
+| `video` | youtube.com / youtu.be / vimeo.com / ニコニコ動画 | YouTubeはoEmbedでタイトル・チャンネル名を取得し、字幕(ja優先→en、自動生成可)をGeminiで要約。字幕が取れない場合はGeminiの動画URL直接入力にフォールバック。Vimeo・ニコ動はタイトル取得のみ+`needs-review` |
+| `slides` | speakerdeck.com / slideshare.net / docswell.com | oEmbedでタイトル・作者を取得。SpeakerDeckはPDFを取得できればGeminiのPDF入力で要約(15MB上限)。SlideShare・Docswellは情報取得のみ+`needs-review` |
+| `post` | x.com / twitter.com | oEmbedで本文取得(従来どおり)。画像・動画添付が示唆される場合は `has-media` を付与(実体の取得はv2予定) |
+| `image` | 画像拡張子(.jpg/.png/.webp等)の直リンク | URLのみ保存+`has-media`, `needs-review` |
+| `pdf` | `.pdf` 直リンク | PDFを取得しGeminiのPDF入力で要約(15MB上限) |
+| `article` | 上記以外 | 従来どおり(クリップ本文をGeminiで要約) |
+
+#### システムタグ
+
+- `needs-review`: コンテンツを自動取得できなかったノート。要約はタイトル・URLからの推測のみなので手動確認推奨。**libraryに入った後に自動で再処理されることはありません**
+- `has-media`: 画像・動画添付があるノート。メディア実体はリポジトリに保存しません(要約に使ったPDF等の一時データもワークフロー内で破棄)
+
+※ YouTube字幕APIはGitHub ActionsのIPがブロックされることが多く、その場合はGeminiの
+動画URL直接入力(無料枠は公開動画1日8時間まで)で要約します。それも失敗した場合は
+タイトルのみ+`needs-review` になります。
 
 ## セットアップ
 
@@ -89,7 +123,7 @@ flowchart LR
 APIキーなしで動作確認できます(外部APIを呼ばずモックで処理)。
 
 ```bash
-pip install pyyaml
+pip install -r requirements.txt
 DRY_RUN=1 python scripts/organize.py
 ```
 
