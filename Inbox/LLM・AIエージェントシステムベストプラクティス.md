@@ -1,3 +1,5 @@
+https://speakerdeck.com/shibuiwilliam/llm-ai
+
 ## More Decks by shibuiwilliam
 
 [

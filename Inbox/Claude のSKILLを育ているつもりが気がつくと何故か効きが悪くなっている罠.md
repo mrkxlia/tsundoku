@@ -1,3 +1,5 @@
+https://qiita.com/sh-fukaya/items/763da273a5dc61112aee
+
 ## 背景
 
 Claude のスキルを使い始めると、だいたいこういう流れになります。
