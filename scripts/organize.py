@@ -4,13 +4,15 @@
 1. 1行目からURLを抽出(bare URL / Markdownリンクの両対応)
 2. URLから種別(video/slides/post/image/pdf/article)を判定し、種別に応じて
    コンテンツを取得(media_types.py 参照。YouTube字幕・SpeakerDeck PDF・X oEmbed等)
-3. LLM(llm_client)で タイトル・3行要約・タグ(3〜5個)を生成
+3. X添付画像・画像直リンクは実体を取得して assets/ に保存し、
+   Geminiで説明+OCRを生成して本文の「## 画像の内容」セクションに残す
+4. LLM(llm_client)で タイトル・3行要約・タグ(3〜5個)を生成
    (PDFはGeminiのPDF入力、字幕が取れないYouTubeは動画URL直接入力で要約)
-4. frontmatter(url, created, type, tags, summary)を付与
+5. frontmatter(url, created, type, tags, summary)を付与
    (自動取得できなかったものは needs-review、メディア添付ありは has-media タグ)
-5. library/ の既存ノートと突き合わせ、同一URL・酷似内容なら統合
+6. library/ の既存ノートと突き合わせ、同一URL・酷似内容なら統合
    (情報量の多い方を残し、他方のURLを sources に追記、重複側は archive/ へ)
-6. library/YYYY-MM-DD-<タイトルスラッグ>.md へ移動
+7. library/YYYY-MM-DD-<タイトルスラッグ>.md へ移動
 
 環境変数:
     MAX_ITEMS_PER_RUN : 1回の実行で処理する最大件数(既定20。超過分は次回へ)
@@ -39,6 +41,9 @@ ROOT = Path(__file__).resolve().parent.parent
 INBOX = ROOT / "inbox"
 LIBRARY = ROOT / "library"
 ARCHIVE = ROOT / "archive"
+ASSETS = ROOT / "assets"
+
+IMAGE_SECTION_HEADER = "## 画像の内容"
 
 DEFAULT_MAX_ITEMS = 20
 SIMILARITY_THRESHOLD = 0.9
@@ -239,6 +244,26 @@ def unique_path(directory: Path, name: str) -> Path:
     return path
 
 
+def write_assets(stem: str, images: list[media_types.ImageAsset]) -> list[Path]:
+    """画像bytesを assets/<ノートstem>-N.<ext> に書き出す。"""
+    paths = []
+    for i, asset in enumerate(images, 1):
+        path = unique_path(ASSETS, f"{stem}-{i}.{asset.ext}")
+        path.write_bytes(asset.data)
+        paths.append(path)
+    return paths
+
+
+def append_image_section(body: str, asset_paths: list[Path], image_text: str) -> str:
+    """本文末尾に「## 画像の内容」セクション(埋め込み+説明/OCR)を付加する。"""
+    if not asset_paths and not image_text:
+        return body
+    # ../assets/ 形式は library/ と archive/ のどちらからも解決でき、GitHub上でも表示される
+    embeds = "\n".join(f"![](../assets/{p.name})" for p in asset_paths)
+    blocks = "\n\n".join(s for s in (embeds, image_text) if s)
+    return f"{body.strip()}\n\n{IMAGE_SECTION_HEADER}\n\n{blocks}"
+
+
 # ---------------------------------------------------------------- メイン処理
 
 def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[LibraryNote]) -> str:
@@ -246,6 +271,20 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
     info = media_types.enrich(clip.url, clip.body, dry_run=is_dry_run())
     body = info.note_body
     hint = clip.title_hint or info.title_hint
+
+    # 添付画像があればGeminiで説明+OCRを生成(失敗しても画像自体は保存する)
+    image_text = ""
+    if info.images:
+        try:
+            image_text = client.describe_images(
+                clip.url, [(a.data, a.mime) for a in info.images]
+            ).strip()
+        except llm_client.LLMError as e:
+            print(f"    [llm] 画像説明に失敗(説明なしで続行): {e}", file=sys.stderr)
+        if image_text:
+            if info.type == "image":
+                info.extra_tags = [t for t in info.extra_tags if t != "needs-review"]
+            info.llm_body = f"{info.llm_body}\n\n画像の内容:\n{image_text}".strip()
 
     meta = None
     if info.pdf is not None:
@@ -274,23 +313,27 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
     filename = f"{date}-{slugify(meta['title'])}.md"
 
     url_norm = normalize_url(clip.url)
+    # 既存library側の本文は「画像の内容」セクション込みで保存されるため、比較対象を揃える
+    compare_body = f"{body}\n\n{image_text}" if image_text else body
     dup = next(
-        (n for n in library if url_norm in n.urls or is_similar(body, n.body)),
+        (n for n in library if url_norm in n.urls or is_similar(compare_body, n.body)),
         None,
     )
 
     if dup is None:
         new_path = unique_path(LIBRARY, filename)
-        new_path.write_text(dump_note(fm, body), encoding="utf-8")
+        asset_paths = write_assets(new_path.stem, info.images)
+        body_final = append_image_section(body, asset_paths, image_text)
+        new_path.write_text(dump_note(fm, body_final), encoding="utf-8")
         clip.path.unlink()
         library.append(
-            LibraryNote(path=new_path, fm=fm, body=body, urls={url_norm})
+            LibraryNote(path=new_path, fm=fm, body=body_final, urls={url_norm})
         )
         print(f"  -> library/{new_path.name}")
         return "organized"
 
     # 重複: 情報量(本文の長さ)が多い方を library に残す
-    if len(normalize_body(body)) > len(normalize_body(dup.body)):
+    if len(normalize_body(compare_body)) > len(normalize_body(dup.body)):
         # 新しい方が充実 → 既存ノートを archive へ、URLは新ノートの sources に集約
         sources = [u for u in [dup.fm.get("url", "")] + list(dup.fm.get("sources") or []) if u]
         sources = [u for u in dict.fromkeys(sources) if normalize_url(u) != url_norm]
@@ -299,9 +342,11 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
         archived = unique_path(ARCHIVE, dup.path.name)
         dup.path.rename(archived)
         new_path = unique_path(LIBRARY, filename)
-        new_path.write_text(dump_note(fm, body), encoding="utf-8")
+        asset_paths = write_assets(new_path.stem, info.images)
+        body_final = append_image_section(body, asset_paths, image_text)
+        new_path.write_text(dump_note(fm, body_final), encoding="utf-8")
         clip.path.unlink()
-        dup.path, dup.fm, dup.body = new_path, fm, body
+        dup.path, dup.fm, dup.body = new_path, fm, body_final
         dup.urls |= {url_norm}
         print(f"  -> library/{new_path.name} (既存 {archived.name} を統合し archive へ)")
         return "merged"
@@ -321,7 +366,7 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
 
 
 def main() -> int:
-    for d in (INBOX, LIBRARY, ARCHIVE):
+    for d in (INBOX, LIBRARY, ARCHIVE, ASSETS):
         d.mkdir(exist_ok=True)
 
     max_items = env_int("MAX_ITEMS_PER_RUN", DEFAULT_MAX_ITEMS)

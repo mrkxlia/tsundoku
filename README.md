@@ -18,6 +18,7 @@ flowchart LR
 | `inbox/` | クリップの着地点。ここに溜まったノートが整理対象 |
 | `library/` | 整理済みノート。`YYYY-MM-DD-タイトル.md` に正規化され、frontmatter(url / created / type / tags / summary)付き |
 | `archive/` | 重複などで不要になったノート。閲覧対象外 |
+| `assets/` | ノートに紐づく画像実体(X添付・画像直リンク)。`<ノート名>-1.jpg` 形式 |
 | `scripts/organize.py` | 整理スクリプト本体 |
 | `scripts/media_types.py` | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF) |
 | `scripts/llm_client.py` | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能) |
@@ -58,15 +59,24 @@ flowchart LR
 |---|---|---|
 | `video` | youtube.com / youtu.be / vimeo.com / ニコニコ動画 | YouTubeはoEmbedでタイトル・チャンネル名を取得し、字幕(ja優先→en、自動生成可)をGeminiで要約。字幕が取れない場合はGeminiの動画URL直接入力にフォールバック。Vimeo・ニコ動はタイトル取得のみ+`needs-review` |
 | `slides` | speakerdeck.com / slideshare.net / docswell.com | oEmbedでタイトル・作者を取得。SpeakerDeckはPDFを取得できればGeminiのPDF入力で要約(15MB上限)。SlideShare・Docswellは情報取得のみ+`needs-review` |
-| `post` | x.com / twitter.com | oEmbedで本文取得(従来どおり)。画像・動画添付が示唆される場合は `has-media` を付与(実体の取得はv2予定) |
-| `image` | 画像拡張子(.jpg/.png/.webp等)の直リンク | URLのみ保存+`has-media`, `needs-review` |
+| `post` | x.com / twitter.com | oEmbedで本文取得。添付画像は本文中の `pbs.twimg.com` リンク(無ければ無認証のsyndication API)から実体を取得して `assets/` に保存し、Geminiの画像入力で「説明+文字の書き起こし(OCR)」を生成して本文の「## 画像の内容」セクションに残す(1枚5MB・1ノート4枚まで。動画は対象外) |
+| `image` | 画像拡張子(.jpg/.png/.webp等)の直リンク | 画像実体を取得して `assets/` に保存し、Geminiで説明+OCRを生成。成功すれば `needs-review` は付かない |
 | `pdf` | `.pdf` 直リンク | PDFを取得しGeminiのPDF入力で要約(15MB上限) |
 | `article` | 上記以外 | 従来どおり(クリップ本文をGeminiで要約) |
 
 #### システムタグ
 
 - `needs-review`: コンテンツを自動取得できなかったノート。要約はタイトル・URLからの推測のみなので手動確認推奨。**libraryに入った後に自動で再処理されることはありません**
-- `has-media`: 画像・動画添付があるノート。メディア実体はリポジトリに保存しません(要約に使ったPDF等の一時データもワークフロー内で破棄)
+- `has-media`: 画像・動画添付があるノート。画像は `assets/` にコミットされ、ノートから `![](../assets/...)` で参照されます。動画・PDFの実体は従来どおり非コミット(要約に使った一時データはワークフロー内で破棄)
+
+#### 画像の内容セクション
+
+添付画像を取得できたノートには、本文末尾に「## 画像の内容」セクションが付きます。
+画像の埋め込みに続けて、Geminiが生成した「説明+画像内の文字の全文書き起こし」が入るため、
+Obsidianの全文検索でスクリーンショットの中身までヒットするようになります
+(同じテキストは要約・タグの生成にも反映されます)。
+説明の生成に失敗した場合も画像自体は保存されます(セクションは埋め込みのみ)。
+ノートを手動削除しても対応する `assets/` 内の画像は自動削除されません。
 
 ※ YouTube字幕APIはGitHub ActionsのIPがブロックされることが多く、その場合はGeminiの
 動画URL直接入力(無料枠は公開動画1日8時間まで)で要約します。それも失敗した場合は
@@ -119,7 +129,8 @@ flowchart LR
   枠を使い切った場合はチェーン後段のモデルへ自動フォールバックし、
   それでも失敗したノートは `inbox/` に残って次回再試行されます。
   ※ RPM以外に1日あたりのリクエスト数(RPD)上限がある場合、backlogが多い日は
-  上限に達することがあります。頻発する場合は `MAX_ITEMS_PER_RUN` を下げてください
+  上限に達することがあります。頻発する場合は `MAX_ITEMS_PER_RUN` を下げてください。
+  なお画像付きノートは説明生成のためGemini呼び出しが1件につき1回追加されます
 
 ### ローカルでの動作確認
 
