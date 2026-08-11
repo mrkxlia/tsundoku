@@ -1,4 +1,19 @@
-https://x.com/u1/status/2073289543948923153?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/u1/status/2073289543948923153?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:15:40'
+type: post
+tags:
+- claude
+- ai
+- 開発効率
+- プログラミング
+summary: 'Claude Codeのcompact機能による会話履歴の要約は非可逆であり、指示とログの混同やセッション状態の喪失といった構造的事故を引き起こす。
+
+  これに対する対策として、圧縮前状態を保存するskill、復旧用マーカーを使う2段階hook、60%通知による自動圧縮回避の仕組みを実装した。
+
+  1M context環境と組み合わせることで、 compactを多用しても論理破綻が起きない安定したセッション運用が可能になる。'
+---
+
 # claude codeのcompactの問題点と対策
 2026-08-11
 後日､以下の内容+αを自動で入れられて透過的にcompactを強化出来るプラグインを作りました｡

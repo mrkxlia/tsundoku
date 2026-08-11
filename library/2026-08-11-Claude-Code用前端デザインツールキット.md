@@ -1,4 +1,20 @@
-https://x.com/wsl8297/status/2058805803508007038?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/wsl8297/status/2058805803508007038?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:15:40'
+type: post
+tags:
+- claudecode
+- フロントエンド
+- uiデザイン
+- 開発ツール
+- 生成ai
+summary: 'Claude Codeを使った前端開発でAI特有のテンプレート感をなくし、人間が作ったようなデザインを実現するためのツールキットを紹介。
+
+  デザインスキルやテーマ設定、動效ツール、UI/UXインテリジェンスなど、ワーク流を補完する多彩な内容を網羅。
+
+  ReactやTailwindなど多様なフレームワークに対応し、実践的な前端開発の品質向上をサポート。'
+---
+
 # Post by @wsl8297 on X
 2026-08-11
 用 Claude Code 写前端，功能通常不难，难的是别一眼看上去就像 AI 生成的模板页。Claude Code Frontend Design Toolkit 收的就是这类“让页面更像人做的”工具。

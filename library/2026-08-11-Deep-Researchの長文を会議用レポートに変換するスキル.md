@@ -1,4 +1,19 @@
-https://x.com/kotetsu_0321/status/2086735553706316213?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/kotetsu_0321/status/2086735553706316213?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:06:42'
+type: post
+tags:
+- AI
+- claudecode
+- 業務効率化
+- プロンプト
+summary: 'AIのDeep Researchが出力する読みにくい長文を、会議で使える構造化されたレポートへ自動編集するClaude Code用スキルを紹介しています。
+
+  結論を先頭にし、数字や比較を表やグラフへ適切に変換しつつ、原文にない事実の追加を防ぐ厳格な検証機能を備えています。
+
+  SKILL.mdは全文公開されており、誰でも簡単にインストールして利用可能です。'
+---
+
 # Post by @kotetsu_0321 on X
 2026-08-11
 AIのDeep Researchは「調べる」は最強。でも、出てくるのはメリハリのない長文で「伝える」は最弱。正直、読まずに終わりがち。  

@@ -1,4 +1,19 @@
-https://x.com/oikon48/status/2061549233900331424?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/oikon48/status/2061549233900331424?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:15:40'
+type: post
+tags:
+- anthropic
+- プロンプト
+- 学習
+- ai
+summary: 'Anthropicのメンバーが実践している、深い理解を促すための効果的な学習用プロンプトを紹介。
+
+  AIが段階的な教師となり、チェックリストやクイズを用いてユーザーの理解度を徹底的に確認する。
+
+  問題の本質や解決策の「なぜ」を深く掘り下げることで、確実な知識の習得をサポートする。'
+---
+
 # Post by @oikon48 on X
 2026-08-11
 Anthropicのメンバーが使っている仕事の学習用プロンプト
