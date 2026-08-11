@@ -1,4 +1,20 @@
-https://x.com/ai_masaou/status/2015264957810844012?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/ai_masaou/status/2015264957810844012?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T21:35:08'
+type: post
+tags:
+- claudecode
+- AI活用
+- プログラミング
+- 学習
+- ドキュメント
+summary: 'CLAUDEmdに1行追加することでClaude Codeにプロジェクトの解説ドキュメントを自動生成させる方法を解説しています。
+
+  技術的な判断の理由や暗黙知を形式知化し、初見コードの理解や初心者エンジニアの学習効率を高める効果があります。
+
+  生成されたファイルはgitignoreへの追加が推奨され、チーム開発のオンボーディング資料としても応用可能です。'
+---
+
 # Post by @AI_masaou on X
 2026-08-11
 CLAUDEmdに1行追加するだけで  

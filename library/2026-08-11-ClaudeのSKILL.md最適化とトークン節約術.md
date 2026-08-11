@@ -1,4 +1,19 @@
-https://x.com/shocolt/status/2031013430971465847?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/shocolt/status/2031013430971465847?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T21:35:08'
+type: post
+tags:
+- claude
+- aiエージェント
+- プログラミング
+- 生成ai
+summary: 'Anthropic公式ガイドを参考にAIエージェントの構成を見直し、フォルダ分離やトラブルシューティング追加を実施。
+
+  段階的開示(Progressive Disclosure)の仕組みを取り入れることで、SKILL.mdのトークン消費量を約40-45%削減。
+
+  レスポンス速度の向上やエラー時の自律対処力アップに効果的な実践的手法として紹介されている。'
+---
+
 # Post by @shocolt on X
 2026-08-11
 「Anthropic公式が出してるガイドの内容と、自分の今のAIエージェントとの差分をAIに聞いて、構成に差分があれば組み込んで欲しい！」と伝えたら、

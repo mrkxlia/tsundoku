@@ -1,4 +1,19 @@
-https://dev.classmethod.jp/articles/claude-code-trying-out-drawio-skill-for-aws-architecture/
+---
+url: https://dev.classmethod.jp/articles/claude-code-trying-out-drawio-skill-for-aws-architecture/
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- claudecode
+- aws
+- drawio
+- 生成ai
+summary: 'draw.io公式のClaude Code向けSkillを導入し、AWSアーキテクチャ図の自動生成を検証した記事。
+
+  初期状態ではモノクロアイコンや色ズレなどの課題があったが、スタイルルールをSKILL.mdに追記することで解決した。
+
+  AWS 2026のアイコンスタイルやグループコンテナの定義など、実践的なガイドラインがまとめられている。'
+---
+
 # Claude Code × draw.io公式Skillで、AWSアーキテクチャ図の生成を自動化してみた
 2026-08-11
 ## はじめに
