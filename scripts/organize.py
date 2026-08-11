@@ -86,11 +86,17 @@ def is_clip_file(path: Path) -> bool:
     return extract_url(first) is not None
 
 
+def _inbox_dirs() -> list[Path]:
+    """大文字小文字の表記ゆれ(Inbox/INBOX等)を許容してinbox相当のディレクトリを列挙する。"""
+    dirs = [p for p in ROOT.iterdir() if p.is_dir() and p.name.lower() == "inbox"]
+    return dirs or [INBOX]
+
+
 def collect_candidates() -> list[Path]:
-    """inbox/*.md を主対象に、安全網としてルート直下のクリップ形式.mdも拾う。"""
+    """inbox(表記ゆれ許容)の*.mdを主対象に、安全網としてルート直下のクリップ形式.mdも拾う。"""
     candidates: list[Path] = []
-    if INBOX.is_dir():
-        candidates += sorted(p for p in INBOX.glob("*.md") if is_clip_file(p))
+    for inbox_dir in _inbox_dirs():
+        candidates += sorted(p for p in inbox_dir.glob("*.md") if is_clip_file(p))
     # 安全網: 保存先設定がルートのままの端末からのクリップ
     candidates += sorted(
         p
