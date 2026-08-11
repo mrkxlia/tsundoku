@@ -1,4 +1,19 @@
-https://www.accenture.com/jp-ja/blogs/japan-careers-blog/powerpoint
+---
+url: https://www.accenture.com/jp-ja/blogs/japan-careers-blog/powerpoint
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- パワポ
+- ビジネススキル
+- コンサルティング
+- キャリア
+summary: 'アクセンチュアのシニア・マネジャーが、PowerPointスライド作成の意味や目的、分かりやすいスライドを作るためのお作法を解説しています。
+
+  スライドは読み手にメッセージを伝えるためのコミュニケーションツールであり、作成前の考える時間やシンプルな構成が重要です。
+
+  豊富な経験に基づき、ビジュアルのこだわりやスライドの構成要素など、実用的なノウハウが紹介されています。'
+---
+
 # アクセンチュア現役社員が伝授！「PowerPointスライド作成の秘訣」
 2026-08-11
 ### はじめに・・・

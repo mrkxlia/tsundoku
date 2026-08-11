@@ -1,4 +1,20 @@
-https://github.com/okdt/claude-code-hardening-cheatsheet
+---
+url: https://github.com/okdt/claude-code-hardening-cheatsheet
+created: '2026-08-11T20:48:46'
+type: article
+tags:
+- claudecode
+- セキュリティ
+- ai
+- 開発環境
+- 設定管理
+summary: 'Claude Codeを安全に運用するための日本語のセキュリティ設定チートシートとテンプレート。
+
+  sandboxやpermissions、hooksを活用した実用的な設定例や監査プロンプトを提供。
+
+  公式ドキュメントを補完し、最小権限の原則に基づく多層防御の運用をサポート。'
+---
+
 # okdt/claude-code-hardening-cheatsheet: A minimal, opinionated security hardening template for Claude Code settings.json
 2026-08-11
 ## Claude Code Hardening Cheatsheet

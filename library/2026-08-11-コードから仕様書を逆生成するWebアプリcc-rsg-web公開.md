@@ -1,4 +1,19 @@
-https://zenn.dev/daishiro/articles/cc-rsg-web-release
+---
+url: https://zenn.dev/daishiro/articles/cc-rsg-web-release
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- 生成ai
+- プログラミング
+- ドキュメント
+- claude
+summary: 'コードベースからAIと対話しながら仕様書のたたき台を逆生成するWebアプリ「cc-rsg-web」が一般公開されました。
+
+  6つのフェーズによる分業とソース参照の仕組みにより、暗黙知の回収と高い追跡可能性を実現しています。
+
+  Redmineを用いた実証実験では約5000行の仕様書生成に成功し、論文としてもプレプリントが公開されています。'
+---
+
 # コードから仕様書を逆生成するWebアプリ「cc-rsg-web」を公開しました
 2026-08-11
 ## はじめに

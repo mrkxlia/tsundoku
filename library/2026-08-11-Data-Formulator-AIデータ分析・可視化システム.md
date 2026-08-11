@@ -1,4 +1,20 @@
-https://github.com/microsoft/data-formulator
+---
+url: https://github.com/microsoft/data-formulator
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- ai
+- データ分析
+- データ可視化
+- オープンソース
+- microsoft
+summary: 'Data Formulatorは、AIエージェントを活用して多様なデータソースに接続し、対話的に探索や可視化を行えるオープンソースツールです。
+
+  会話を通じたデータベースの読み込みや、編集・分岐が可能な高度なチャートギャラリーを備え、データ分析の効率を大幅に向上させます。
+
+  最新のv0.8アルファ版では、Databricks連携や企業向け認証機能、永続的なアナリスト添付ファイルなどの新機能が追加されています。'
+---
+
 # microsoft/data-formulator: 🪄 Data Formulator is an interactive AI-powered data analysis system makes it easy to connect, explore and visualize data.
 2026-08-11
 ## Data Formulator: AI-powered Data Visualization

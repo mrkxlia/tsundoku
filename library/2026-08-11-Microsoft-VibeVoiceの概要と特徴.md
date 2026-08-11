@@ -1,4 +1,20 @@
-https://github.com/microsoft/VibeVoice
+---
+url: https://github.com/microsoft/VibeVoice
+created: '2026-08-11T20:48:46'
+type: article
+tags:
+- 音声認識
+- 音声合成
+- ai
+- オープンソース
+- microsoft
+summary: 'Microsoftが開発したオープンソースの音声AIフレームワーク「VibeVoice」についての解説記事です。
+
+  音声認識(ASR)や音声合成(TTS)などのモデルを含み、長時間の音声処理や高効率な連続音声トークナイザーを特徴としています。
+
+  エッジCPU向けの軽量推移エンジンやAzure AIへの統合など、最新のアップデート情報も網羅されています。'
+---
+
 # microsoft/VibeVoice: Open-Source Frontier Voice AI
 2026-08-11
 ## 🎙️ VibeVoice: Open-Source Frontier Voice AI

@@ -1,4 +1,19 @@
-https://zenn.dev/canly/articles/cc0891517e45cc
+---
+url: https://zenn.dev/canly/articles/cc0891517e45cc
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- claudecode
+- ai
+- 開発効率化
+- 勉強会
+summary: '株式会社カンリーが全エンジニア向けに実施したClaude Code勉強会の資料を公開した記事。
+
+  CLAUDE.mdの活用法やrulesによるコンテキスト効率化、許可プロンプトのTab操作などを解説している。
+
+  AIコーディングツールをチームで再現性高く運用し、開発生産性を向上させるためのノウハウが網羅されている。'
+---
+
 # カンリー社内Claude Code勉強会の資料を公開します
 2026-08-11
 ## 本記事について
