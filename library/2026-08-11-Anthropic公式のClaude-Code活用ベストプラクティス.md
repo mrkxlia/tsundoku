@@ -1,4 +1,19 @@
-https://x.com/claudecode_love/status/2056483745851691300?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/claudecode_love/status/2056483745851691300?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:15:40'
+type: post
+tags:
+- claude
+- anthropic
+- aiコーディング
+- プログラミング
+summary: 'Anthropic公式がClaude Codeで重い処理を行う際のベストプラクティスを公開した。
+
+  コンテキスト管理やLSP連携、並列タスク進行などの大規模開発向け手法が紹介されている。
+
+  あわせてトークン枯渇を防ぐための節約ノウハウの重要性についても触れている。'
+---
+
 # Post by @ClaudeCode_love on X
 2026-08-11
 【速報】  

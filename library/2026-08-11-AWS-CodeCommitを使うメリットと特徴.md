@@ -1,4 +1,19 @@
-https://notes.maijun.net/aws/codecommit-benefits
+---
+url: https://notes.maijun.net/aws/codecommit-benefits
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- aws
+- codecommit
+- git
+- cicd
+summary: 'CodeCommitはAWSのIAMやKMSと統合されたフルマネージドGitリポジトリです。
+
+  閉域アクセスやCodeシリーズとのネイティブ連携により高度な安全性を実現します。
+
+  2025年にGA復帰し、AWS内で開発基盤を完結させたい組織に適しています。'
+---
+
 # AWS Code シリーズで CodeCommit を使うメリット
 2026-08-11
 CodeCommit の最大のメリットは、Git リポジトリを IAM・KMS・CloudTrail・VPC エンドポイントといった AWS の認証・暗号化・監査の基盤にそのまま載せられることです。CodePipeline / CodeBuild のソースとして外部サービスへの接続設定なしで直接使えるため、CI/CD を AWS 内で完結させたい場合や規制の厳しい業界に向きます。なお CodeCommit は 2024 年 7 月に新規利用の受付を停止しましたが、2025 年 11 月 24 日に一般提供(GA)へ復帰し、Git LFS 対応などのロードマップも公表されています。

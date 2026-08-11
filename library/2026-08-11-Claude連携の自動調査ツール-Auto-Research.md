@@ -1,4 +1,20 @@
-https://github.com/INDXDev/autoresearch
+---
+url: https://github.com/INDXDev/autoresearch
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- github
+- claude
+- 自動化
+- 生成ai
+- リサーチ
+summary: 'GitHub ActionsとClaude Codeを組み合わせた自動リサーチツールです。
+
+  設定トピックの最新Web調査結果を毎日GitHub IssuesやSlackへ自動配信します。
+
+  サーバー構築やコード記述は不要で、テンプレートから約5分で導入できます。'
+---
+
 # INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)
 2026-08-11
 ## 🔬 Auto Research

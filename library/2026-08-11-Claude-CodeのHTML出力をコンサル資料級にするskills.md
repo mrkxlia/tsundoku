@@ -1,4 +1,20 @@
-https://x.com/kotetsu_0321/status/2086400069461487807?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/kotetsu_0321/status/2086400069461487807?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:06:42'
+type: post
+tags:
+- claudecode
+- ai
+- デザイン
+- ドキュメント
+- 仕事術
+summary: 'Claude CodeのHTML出力をコンサル風の美しいデザインに自動整形するカスタムskillsが紹介されています。
+
+  余白と文字の階層構造、コンサル特有の図解型を活用し、そのまま会議や印刷に使える品質に引き上げます。
+
+  デスクトップ版やCLIでの簡単インストールのほか、仕組みやChatGPT派向けの利用法も解説されています。'
+---
+
 # Post by @kotetsu_0321 on X
 2026-08-11
 Claude CodeのHTML出力がダサすぎる問題。これを終わらせるために、HTML出力を「そのまま会議に出せるクオリティ」に自動で整えるskillsを作ったのでシェアします。  

@@ -1,4 +1,19 @@
-https://zenn.dev/nexta_/articles/be13a2395a5d2a
+---
+url: https://zenn.dev/nexta_/articles/be13a2395a5d2a
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- claude
+- qa
+- テスト設計
+- ai
+summary: 'AI作成のテストケースが正常系に偏る問題に対し7人のQAペルソナを導入した。
+
+  新機能と移行作業でスキルを分離し品質特性を踏まえた25列のCSVを出力。
+
+  一人QAでも再現可能で網羅性の高いテスト設計の仕組みを解説する。'
+---
+
 # Claude Code に「7人の意地悪なQA」を仕込んでテストケースの観点漏れを潰した
 2026-08-11
 [Nexta Tech Blog](https://zenn.dev/p/nexta_) Publication Pro

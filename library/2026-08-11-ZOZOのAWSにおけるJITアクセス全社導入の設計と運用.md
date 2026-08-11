@@ -1,4 +1,20 @@
-https://techblog.zozo.com/entry/just-in-time-access-company-wide-rollout-at-zozo
+---
+url: https://techblog.zozo.com/entry/just-in-time-access-company-wide-rollout-at-zozo
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- aws
+- jitアクセス
+- セキュリティ
+- zozo
+- iam
+summary: 'ZOZOはAWSでの最小権限原則を徹底するため、JITアクセスの全社導入を実施した。
+
+  OSSのTEAMを活用し、申請の幅を確保しつつ承認権限を各アカウント管理者へ委譲した。
+
+  導入後に発生した運用課題には、個別Permission Setの柔軟な設定制御で対応している。'
+---
+
 # AWSの強い権限は使い捨てに ── ZOZOがJITアクセスを全社導入した設計と運用
 2026-08-11
 ![AWSの強い権限は使い捨てに ── ZOZOがJITアクセスを全社導入した設計と運用](https://cdn-ak.f.st-hatena.com/images/fotolife/v/vasilyjp/20260709/20260709114452.png)
