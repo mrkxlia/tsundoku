@@ -1,4 +1,19 @@
-https://nyosegawa.com/posts/harness-engineering-best-practices-2026/
+---
+url: https://nyosegawa.com/posts/harness-engineering-best-practices-2026/
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- ai
+- プログラミング
+- 開発手法
+- claude
+summary: 'AIコーディングエージェントの出力品質を安定させるハーネスエンジニアリングの概念と実践的なベストプラクティスを解説。
+
+  リポジトリ衛生の維持、決定論的ツールやフックを活用した品質フィードバックループの構築手法を網羅。
+
+  2026年3月時点の高速なリンターや自動修復パターンを交えて、人間とAIの協働環境の設計を提案。'
+---
+
 # Codex ユーザーのための誰でもわかるHarness Engineeringベストプラクティス
 2026-08-11
 こんにちは！逆瀬川ちゃん ([@gyakuse](https://x.com/gyakuse)) です！

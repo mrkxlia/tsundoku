@@ -1,4 +1,19 @@
-https://speakerdeck.com/lycorptech_jp/20260319a
+---
+url: https://speakerdeck.com/lycorptech_jp/20260319a
+created: '2026-08-11T21:35:08'
+type: slides
+tags:
+- aiops
+- lineヤフー
+- インフラ運用
+- 生成ai
+summary: 'LINEヤフーにおけるインフラ運用の効率化を目指したAIOpsプロジェクト「EDITH」の取り組みについて紹介しています。
+
+  AIエージェントを用いた障害対応の初動自動化や、Inboxによるコンテキスト事前収集の仕組みを解説しています。
+
+  効果測定の重要性や、AIを活かしやすい組織設計に向けた課題と展望について述べています。'
+---
+
 # LINEヤフーにおけるAIOpsの現在地
 2026-08-11
 「 [ENOG89 Meeting](https://enog.jp/archives/3202) 」での発表資料です。  

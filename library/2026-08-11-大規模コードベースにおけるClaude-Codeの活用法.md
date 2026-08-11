@@ -1,4 +1,19 @@
-https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start
+---
+url: https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start
+created: '2026-08-11T21:35:08'
+type: article
+tags:
+- claudecode
+- ai開発
+- リファクタリング
+- 開発効率化
+summary: '大規模なコードベースやレガシーシステムでClaude Codeを効果的に運用するためのベストプラクティスを解説。
+
+  エージェント型検索の仕組みや、CLAUDE.md、フック、スキル、LSP連携といった拡張機能の重要性について紹介。
+
+  開発現場での組織的展開と環境構築を成功させるための具体的なアプローチを提示。'
+---
+
 # How Claude Code works in large codebases: Best practices and where to start
 2026-08-11
 Claude Code is running in production across multi-million-line monorepos, decades-old legacy systems, distributed architectures spanning dozens of repositories, and at organizations with thousands of developers. These environments present challenges that smaller, simpler codebases don’t, whether that’s build commands that differ across every subdirectory or legacy code spread across folders with no shared root.
