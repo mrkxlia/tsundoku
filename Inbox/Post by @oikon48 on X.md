@@ -1,0 +1,42 @@
+https://x.com/oikon48/status/2080767092106895852?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+# Post by @oikon48 on X
+2026-08-11
+【Claude 5世代モデル向けコンテキストエンジニアリングの新しいルール】
+
+Claude 5世代（Opus 5 / Fable 5など）では、過度な制約を大幅に減らすことが効果的。
+
+以前: 細かいルールをたくさん与える  
+↓  
+今: Claudeの判断力に任せる
+
+以前: ツールの使い方を例で詳しく示す  
+↓  
+今: インターフェースをうまく設計する
+
+以前: すべての情報を最初に載せる  
+↓  
+今:段階的開示（progressive disclosure） を使う
+
+以前: 同じ指示を何度も繰り返す  
+↓  
+今:ツール説明をシンプルにする
+
+以前: CLAUDE.mdに手動でメモリを書く  
+↓  
+今: Auto memoryに任せる
+
+以前: シンプルなマークダウンを使う  
+↓  
+今:リッチな参照（HTMLアーティファクト、コード、ルーブリックなど）を使う
+
+実践的なポイント:
+
+・システムプロンプト: モデルがどの製品で動作し、何をしているかを伝える。Claude Code以外の独自のエージェントハーネスを構築する場合は、ここに多くの時間を費やすべき
+
+・CLAUDE.md: 短く保ち、リポジトリの「落とし穴」だけを書く。当たり前のことは書かない
+
+・Skills: 軽量なガイドとして設計し、長くなったらファイルを分割して段階的に読み込ませる
+
+・参照: コードやHTMLモックアップなど、Claudeが直接理解しやすい形で渡すのが良い。コンフリクトする指示（「コメントを書け」と「コメントを書くな」など）を減らすと、Claudeが余計な思考をしなくて済む
+
+![](https://pbs.twimg.com/media/HOBepAkbAAAbxhr.jpg?name=orig) ![](https://pbs.twimg.com/media/HOBepAobwAA5GtE.jpg?name=orig) ![](https://pbs.twimg.com/media/HOBepAqbgAA_2tY.jpg?name=orig) ![](https://pbs.twimg.com/media/HOBepAebkAE9U6W.jpg?name=orig)
