@@ -1,4 +1,18 @@
-https://x.com/claudecode84/status/2085281860725399593
+---
+url: https://x.com/claudecode84/status/2085281860725399593
+created: '2026-08-11T19:04:37'
+type: post
+tags:
+- claude
+- 動画要約
+- 生成ai
+- 業務効率化
+summary: 'Claude Codeの「/watch-video」で動画処理を自動化できます。
+
+  URLを渡すだけで文字起こし・重要フレーム抽出・要約ノート化を実行。
+
+  YouTubeやLoomなどの動画視聴・分析時間を大幅に短縮可能です。'
+---
 
 【発見】  
 あとで見ようと思ったLoomや会議の録画、溜まってませんか。  
