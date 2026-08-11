@@ -1,0 +1,486 @@
+## More Decks by shibuiwilliam
+
+[
+
+LLMやAIエージェントをソフトウェアに組み込むプラクティス
+
+](https://speakerdeck.com/shibuiwilliam/llmyaaiezientowosohutoueanizu-miip-mupurakuteisu "LLMやAIエージェントをソフトウェアに組み込むプラクティス")
+
+2
+
+510
+
+[
+
+From Prompt Engineering to Loop Engineering
+
+](https://speakerdeck.com/shibuiwilliam/from-prompt-engineering-to-loop-engineering "From Prompt Engineering to Loop Engineering")
+
+2
+
+410
+
+[
+
+OntologyとLLMOps
+
+](https://speakerdeck.com/shibuiwilliam/ontologytollmops "OntologyとLLMOps")
+
+4
+
+110
+
+[
+
+Rule repository
+
+](https://speakerdeck.com/shibuiwilliam/rule-repository "Rule repository")
+
+3
+
+71
+
+[
+
+LLM時代の検索アーキテクチャと技術的意思決定
+
+](https://speakerdeck.com/shibuiwilliam/llmshi-dai-nojian-suo-akitekutiyatoji-shu-de-yi-si-jue-ding "LLM時代の検索アーキテクチャと技術的意思決定")
+
+5
+
+2.5k
+
+[
+
+Why Open Dataspacesのまとめ
+
+](https://speakerdeck.com/shibuiwilliam/why-open-dataspacesnomatome "Why Open Dataspacesのまとめ")
+
+2
+
+120
+
+[
+
+マルチモーダル非構造データとの闘い
+
+](https://speakerdeck.com/shibuiwilliam/marutimodarufei-gou-zao-detatonodou-i "マルチモーダル非構造データとの闘い")
+
+2
+
+720
+
+[
+
+飽くなき自動生成への挑戦
+
+](https://speakerdeck.com/shibuiwilliam/bao-kunakizi-dong-sheng-cheng-henotiao-zhan "飽くなき自動生成への挑戦")
+
+1
+
+98
+
+[
+
+AIエージェントのメモリについて
+
+](https://speakerdeck.com/shibuiwilliam/aiezientonomemorinituite "AIエージェントのメモリについて")
+
+2
+
+820
+
+## Other Decks in Technology
+
+[
+
+老害フォレンジッカーはAI羊の夢を見るか？
+
+](https://speakerdeck.com/tadmaddad/lao-hai-huorenzitukahaaiyang-nomeng-wojian-ruka "老害フォレンジッカーはAI羊の夢を見るか？")
+
+[tadmaddad](https://speakerdeck.com/tadmaddad)
+
+0
+
+300
+
+[
+
+AI時代の強いチームの作り方
+
+](https://speakerdeck.com/yuukiyo/building-strong-teams-in-the-age-of-ai "AI時代の強いチームの作り方")
+
+[yuukiyo](https://speakerdeck.com/yuukiyo)
+
+25
+
+16k
+
+[
+
+toio・myCobotでフィジカルAIっぽいことを行うための検討（とりあえず調査） / フィジカルAI LT（IoTLTによる開催）
+
+](https://speakerdeck.com/you/physical_ai_202607_iotlt "toio・myCobotでフィジカルAIっぽいことを行うための検討（とりあえず調査） / フィジカルAI LT（IoTLTによる開催）")
+
+[you](https://speakerdeck.com/you)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+300
+
+[
+
+【CEDEC2026】『ウマ娘 プリティーダービー』 英語版のキャラクターの方言や口調をローカライズするための創造的アプローチ
+
+](https://speakerdeck.com/cygames/cygames_202607_cedec2026_05 "【CEDEC2026】『ウマ娘 プリティーダービー』 英語版のキャラクターの方言や口調をローカライズするための創造的アプローチ")
+
+[cygames](https://speakerdeck.com/cygames)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+200
+
+[
+
+Redmine 7.0 新機能・機能強化解説（OSC2026京都ダイジェスト版）
+
+](https://speakerdeck.com/vividtone/redmine-7-dot-0-new-features-digest-edition "Redmine 7.0 新機能・機能強化解説（OSC2026京都ダイジェスト版）")
+
+[vividtone](https://speakerdeck.com/vividtone)
+
+1
+
+210
+
+[
+
+Pavlokで始める電撃駆動開発
+
+](https://speakerdeck.com/sgrsn/pavlokdeshi-merudian-ji-qu-dong-kai-fa "Pavlokで始める電撃駆動開発")
+
+[sgrsn](https://speakerdeck.com/sgrsn)
+
+0
+
+180
+
+[
+
+MIRU 2026 チュートリアル
+
+](https://speakerdeck.com/keisuke198619/miru-2026-tiyutoriaru "MIRU 2026 チュートリアル")
+
+[keisuke198619](https://speakerdeck.com/keisuke198619)
+
+0
+
+860
+
+[
+
+修正PRを食べてレビュースキルが賢くなる：Claude Codeによる自己改善サイクル
+
+](https://speakerdeck.com/yuyaumetsu/xiu-zheng-prwoshi-heterehiyusukirukaxian-kunaru-claude-codeniyoruzi-ji-gai-shan-saikuru "修正PRを食べてレビュースキルが賢くなる：Claude Codeによる自己改善サイクル")
+
+[yuyaumetsu](https://speakerdeck.com/yuyaumetsu)
+
+5
+
+1.4k
+
+[
+
+【CEDEC2026】次世代デジタルカードゲームのサーバー設計と運用 〜『Shadowverse: Worlds Beyond』の舞台裏～
+
+](https://speakerdeck.com/cygames/cygames_202607_cedec2026_06 "【CEDEC2026】次世代デジタルカードゲームのサーバー設計と運用 〜『Shadowverse: Worlds Beyond』の舞台裏～")
+
+[cygames](https://speakerdeck.com/cygames)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+970
+
+[
+
+生成 AI の基礎 〜 サンプル実装で学ぶ基本原理
+
+](https://speakerdeck.com/enakai00/sheng-cheng-ai-noji-chu-sanpurushi-zhuang-dexue-buji-ben-yuan-li "生成 AI の基礎 〜 サンプル実装で学ぶ基本原理")
+
+[enakai00](https://speakerdeck.com/enakai00)
+
+7
+
+4.4k
+
+[
+
+Invisible to AI? Making TYPO3 Sites Quotable by AI Search Systems
+
+](https://speakerdeck.com/wolfgangwagner/invisible-to-ai-making-typo3-sites-quotable-by-ai-search-systems "Invisible to AI? Making TYPO3 Sites Quotable by AI Search Systems")
+
+[wolfgangwagner](https://speakerdeck.com/wolfgangwagner)
+
+0
+
+160
+
+[
+
+Data Hubグループ 紹介資料
+
+](https://speakerdeck.com/sansan33/datahub-engineer "Data Hubグループ 紹介資料")
+
+[sansan33](https://speakerdeck.com/sansan33)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+3.1k
+
+## Featured
+
+[
+
+Large-scale JavaScript Application Architecture
+
+](https://speakerdeck.com/addyosmani/large-scale-javascript-application-architecture "Large-scale JavaScript Application Architecture")
+
+[addyosmani](https://speakerdeck.com/addyosmani)
+
+515
+
+110k
+
+[
+
+Navigating Team Friction
+
+](https://speakerdeck.com/lara/navigating-team-friction "Navigating Team Friction")
+
+[lara](https://speakerdeck.com/lara)
+
+192
+
+16k
+
+[
+
+Principles of Awesome APIs and How to Build Them.
+
+](https://speakerdeck.com/keavy/principles-of-awesome-apis-and-how-to-build-them "Principles of Awesome APIs and How to Build Them.")
+
+[keavy](https://speakerdeck.com/keavy)
+
+128
+
+18k
+
+[
+
+Taking LLMs out of the black box: A practical guide to human-in-the-loop distillation
+
+](https://speakerdeck.com/inesmontani/taking-llms-out-of-the-black-box-a-practical-guide-to-human-in-the-loop-distillation "Taking LLMs out of the black box: A practical guide to human-in-the-loop distillation")
+
+[inesmontani](https://speakerdeck.com/inesmontani)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+3
+
+2.3k
+
+[
+
+WCS-LA-2024
+
+](https://speakerdeck.com/lcolladotor/wcs-la-2024 "WCS-LA-2024")
+
+[lcolladotor](https://speakerdeck.com/lcolladotor)
+
+0
+
+790
+
+[
+
+Art, The Web, and Tiny UX
+
+](https://speakerdeck.com/lynnandtonic/art-the-web-and-tiny-ux "Art, The Web, and Tiny UX")
+
+[lynnandtonic](https://speakerdeck.com/lynnandtonic)
+
+304
+
+22k
+
+[
+
+StorybookのUI Testing Handbookを読んだ
+
+](https://speakerdeck.com/zakiyama/ui-testing-handbook-by-storybook "StorybookのUI Testing Handbookを読んだ")
+
+[zakiyama](https://speakerdeck.com/zakiyama)
+
+31
+
+6.9k
+
+[
+
+"I'm Feeling Lucky" - Building Great Search Experiences for Today's Users (#IAC19)
+
+](https://speakerdeck.com/danielanewman/im-feeling-lucky-building-great-search-experiences-for-todays-users-number-iac19 "\"I'm Feeling Lucky\" -  Building Great Search Experiences for Today's Users (#IAC19)")
+
+[danielanewman](https://speakerdeck.com/danielanewman)
+
+230
+
+23k
+
+[
+
+DBのスキルで生き残る技術 - AI時代におけるテーブル設計の勘所
+
+](https://speakerdeck.com/soudai/survival-db-skill "DBのスキルで生き残る技術 - AI時代におけるテーブル設計の勘所")
+
+[soudai](https://speakerdeck.com/soudai)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+68
+
+56k
+
+[
+
+XXLCSS - How to scale CSS and keep your sanity
+
+](https://speakerdeck.com/sugarenia/xxlcss-how-to-scale-css-and-keep-your-sanity "XXLCSS - How to scale CSS and keep your sanity")
+
+[sugarenia](https://speakerdeck.com/sugarenia)
+
+249
+
+1.3M
+
+[
+
+Side Projects
+
+](https://speakerdeck.com/sachag/side-projects "Side Projects")
+
+[sachag](https://speakerdeck.com/sachag)
+
+455
+
+43k
+
+[
+
+Refactoring Trust on Your Teams (GOTO; Chicago 2020)
+
+](https://speakerdeck.com/rmw/refactoring-trust-on-your-teams-goto-chicago-2020 "Refactoring Trust on Your Teams (GOTO; Chicago 2020)")
+
+[rmw](https://speakerdeck.com/rmw)
+
+35
+
+3.7k
+
+## Transcript
+
+1. ### BOOK LAUNCH LLM・AIエージェント システムベストプラクティス 2026/08/11 澁井雄介 本日の資料
+2. ### LLMに聞いてみた 猫のようで サイズは犬 shibui yusuke • いろいろ→Stability AI→LayerX→Snowﬂake • Senior
+	AI/ML Architect / Field CTO • MLOpsコミュニティ運営 • 本日の登壇内容は私個人の意見であり、 所属企業を代表するものではありません。 • Github: @shibuiwilliam • FB: yusuke.shibui • X: cv\_usk 猫耳メガネ 本日の資料
+3. ### 翔泳社刊 新作『LLM・AIエージェントシステムベストプラクティス』 2026年8月20日発売予定！ ↓amazon.co.jp↓ 以下過去の著作も発売中！
+4. ### 本書の位置づけ 「LLMの理論や使い方」ではなく「組み込むエンジニアリング」の本 扱わないもの • • • プロンプト集やコツ 特定プロダクトの操作マニュアル モデルの学習理論や数式の解説 LLM・AIエージェントシステムベストプラクティス
+	扱うもの • • • • • LLMやAIエージェントをソフトウェアに組み込む方法 そのための設計パターン・アーキテクチャ 運用・改善のプラクティス PythonサンプルコードをGitHub公開 CLAUDE.md／AGENT.md も同梱し、コーディングエージェン トで開発するときもそのまま使える 03
+5. ### 本書の位置づけ 本日のアジェンダ 1 本書を書いた経緯 3 本書の全体像と各章のプラクティス 5 執筆秘話 2022年11月の驚愕から 39手法を概要＋ピックアップで
+	いたちごっこ・ AIとの共同執筆 LLM・AIエージェントシステムベストプラクティス 2 LLM／AIエージェントの動向 4 読者特典の解説 6 エンジニアリングの将来 3年間の変化と「 2つの不確実性」 Methodology & Looped Harness Engineering 経済プレイヤー化と次の方法論 04
+6. ### WHY I WROTE THIS BOOK 1 LLM・AIエージェントシステムベストプラクティス 本書を書いた経緯 05
+7. ### 第1節・経緯 2022年11月 同年同月、 ChatGPTリリース LLM・AIエージェントシステムベストプラクティス 06
+8. ### 第1節・経緯 2022年11月 2022年11月、私は驚愕した。 ChatGPT登場のインパクト 人間にしかできなかった知的作業を、軽々とこなす技術が現れた 心血を注いだ前著『機械学習システム構築実践ガイド』の出版と同年同月 当時のAIチャットボット開発の難しさを解いたばかりだった 2年がかりの本が「一瞬で過去のもの」に 衝撃と同時に、これは新しい冒険の始まりだと直感した LLM・AIエージェントシステムベストプラクティス
+	06
+9. ### 第1節・経緯 転機は2023年6月に登場した「関数呼び出し（ Function Calling）」 ▶ ▶ 自然言語の応答 Function Calling プログラムに統合
+	ロジックに組み込めない 出力を構造化データとして扱う 検証・連携が可能に 「LLMはソフトウェアエンジニアリングに新たなパラダイムを生む」と確信し、本書の執筆を決意。 LLM・AIエージェントシステムベストプラクティス 08
+10. ### THE LANDSCAPE & THE CORE PROBLEM 2 LLM・AIエージェントシステムベストプラクティス LLM／AIエージェントの動向 08
+11. ### 第2節・動向 LLM/AIエージェントの本質はソフトウェア 情報収集 文章・アイデア ソフト開発 デザイン ChatGPTに相談しながら調べる、 新しい情報の得方 Notion・Google Docsの生成／要
+	約、企画支援 Cursor / Claude Code / Copilot / Codex Figma・Canvaの画像生成・提案 LLM/AIエージェントも結局はソフトウェア世界の一部 LLM単体は「重みパラメータの集合」。組み込んで初めて価値になる。ソフトウェア工学の知見を適用・拡張する。 LLM・AIエージェントシステムベストプラクティス 09
+12. ### 第2節・動向 「2つの不確実性」 1 LLM自体の不確実性 2 エンジニアリングの不確実性 • 同じプロンプトでも出力が変わる • LLM/AIエージェントをどう設計、実装、テストすべきか
+	• ハルシネーション（事実に基づかない生成） • 最適な組み込み方法は試行錯誤の段階 • HTTP 200（正常）でも中身が不安定 • 「正しいか不明だが、動いてはいる」曖昧さ LLM・AIエージェントシステムベストプラクティス 10
+13. ### 第2節・動向 不確実性への対処の「鉄則」 不確実な要素は、局所化して制限し、評価する。 局所化する 制限する 評価する 予測不可能な挙動を特定のレイヤーに閉じ込める （例：LLM出力を専用層で構造化） 影響範囲をシステム全体に広げない 出力直後の検証・テスト・運用モニタリング
+	・Human-in-the-Loop LLM・AIエージェントシステムベストプラクティス 11
+14. ### 39 PRACTICES ACROSS 5 CHAPTERS 3 LLM・AIエージェントシステムベストプラクティス 本書の全体像と各章のプラクティス 12
+15. ### 本書の全体像 基礎から応用まで、段階的に積み上がる 39 手法 第2章 第3章 第4章 第5章 第6章 組み込みの基礎
+	API 活用 パイプライン／エージェント AIエージェント設計 応用プラクティス 12 手法 基礎 LLM・AIエージェントシステムベストプラクティス 5 手法 8 手法 7 手法 7 手法 応用 13
+16. ### 本書の全体像 サンプルコードの方針 https://github.com/shibuiwilliam/llm-best-practice-book-program Python / uv / Docker で再現可能 主要ライブラリ：openai・google-genai・anthropic・langgraph
+	プロバイダに優劣はつけない OpenAI/Anthropic/Googleを使って実装 AIコーディング前提の構成 各ディレクトリにREADME＋CLAUDE.md＋AGENT.md サンプルコード自体をAIコーディングエージェントで開発 サンプルコードや方法論は人間による開発だけでなく、エージェントによる開発でも活用できるように設計 LLM・AIエージェントシステムベストプラクティス 15
+17. ### 第2章 概要 LLMをソフトウェアに組み込む基礎的なプラクティス LLMを安定的に活用するための技術的基盤を網羅。 • 出力の構造化 • LLMでLLMを評価（LLM-as-a-Judge） • 動的な構造化出力
+	• プロンプトのテンプレート化 第2章 • 非構造化データの構造化 • プロンプトのユニットテスト 12 • LLMOpsのための構造化ログ • プロンプトのプロファイリング • 非同期バッチ処理 • 関数呼び出し（ Tool call） • ストリーミング • スクリプト生成と実行 の手法を収録 LLM・AIエージェントシステムベストプラクティス 16
+18. ### 第2章 ピックアップ ① 出力の構造化（ Structured Output） LLMを「会話するモデル」から「型付きインターフェースを持つ部品」へ。 全体像：構造化の流れ 1 境界
+	＝ 不確実性を局所化する LLM 自然言語の出力 （不安定） 変換・検証レイヤー 構造化データ JSON Schema / Pydantic 型付き・検証済み 2 パイプライン ツール連携 評価 すべての後続処理は、この構造化データの上に乗る LLM・AIエージェントシステムベストプラクティス 自然言語のまま使わない 不安定な出力をそのままロジックに流さない 境界で型に強制する JSON Schema / Pydantic で検証可能な構造へ変換 ログ 3 すべての土台になる パイプライン・ツール・評価・ログが構造化データに乗る 17
+19. ### 第2章 ピックアップ ② LLMでLLMを評価する（ LLM-as-a-Judge） 確率的な出力の品質を、スケーラブルに評価する。 全体像：生成と評価の分離 1 候補 生成LLM
+	評価LLM（Judge） 合格 → 採用 出力を生成 モデル/プロンプト固定 不合格 → 再生成 不合格ならプロンプト・温度を変えて再生成（ループ） 2 同期・非同期・タイミングはユースケース次第 使い方次第で同期評価・非同期評価を分ける Judgeで自動採点 品質・安全性を機械的に判定し、スケーラブルに「評価」を実現 評価結果を テスト / 運用モニタリングに蓄積 3 LLM・AIエージェントシステムベストプラクティス ドリフトを防止 評価モデル・プロンプトを固定してブレを抑える 18
+20. ### 第2章 ピックアップ ③ プロンプトのテンプレート化とユニットテスト、プロファイリング プロンプトはLLM/AIエージェント活用で最も操作しやすいインターフェイス。 プロンプトを「コード」として記述・管理・テストする。 全体像：プロンプトの資産化 Git でバージョン管理・レビュー 1
+	テンプレート レンダリング {{変数}} 変数を挿入 LLM 出力を検証：期待値のアサート／コスト・レイテンシ計測 LLM/AIエージェントに対する Predictive Test Selectionへ LLM・AIエージェントシステムベストプラクティス 品質を左右するテキストを変数入りの構造で記述 出力 2 ユニットテスト テンプレート化 ユニットテスト 期待出力をアサートし回帰を検出、Gitで版管理 プロファイラ 3 プロファイリング 品質・コスト・レイテンシを計測して可視化 19
+21. ### 第3章 概要 LLMのAPIを活用するプラクティス 不安定な外部APIを、信頼できるサービスとして扱う。 第3章 • Adapter / Factory パターン
+	• リクエスト量の制御（レート制限・優先度） • タイムアウト・フォールバック • API ゲートウェイ設計 • 適応的バックオフによるリトライ 5 の手法を収録 LLM・AIエージェントシステムベストプラクティス 20
+22. ### 第3章 ピックアップ ① AdapterとFactoryパターン OpenAI GPT / Anthropic Claude /
+	Google Gemini を、1つのインターフェースで扱う。 全体像：抽象化レイヤー 1 共通インターフェース アプリは1つの型だけに依存し、SDKの差を隠す アプリケーション 共通インターフェース（ LLMClient） OpenAI Adapter Anthropic Adapter Factory が生成 2 LLM・AIエージェントシステムベストプラクティス Claude API 設定でプロバイダを選択・差し替え可能に Google Adapter 3 OpenAI API Factoryで生成を一元化 変化に強い 提供終了・更新・フォールバック／A/Bテストに対応 Gemini API 21
+23. ### 第3章 ピックアップ ② タイムアウト・フォールバック・適応的バックオフ 「落ちる前提」で LLM APIのクライアントライブラリを設計する。 全体像：耐障害の制御フロー 1 成功
+	→ レスポンス返却 リクエスト LLM API 判定 タイムアウト 巨大推論ゆえの遅延・暴走を打ち切る タイムアウト → フォールバック 代替モデル/経路へ 2 フォールバック 代替モデル・経路へ切り替えて処理を継続 429 / 5xx → バックオフ 待機を伸ばして再試行 リトライは LLM API 呼び出しへ戻る（ループ） LLM・AIエージェントシステムベストプラクティス 3 適応的バックオフ 待機を伸ばして再試行、一時障害を吸収 22
+24. ### 第4章 概要 LLMのパイプラインや AIエージェントのプラクティス 大規模なLLMシステムを、保守性高く構築する設計原則。 第4章 8 • CQRS（状態変化と読み取りの分離） •
+	ワークフローオーケストレーション • サービスインターフェースの分離 • 依存性注入（ DI） • 機能単位の部品分離 • AIエージェントの抽象化設計 • LLMパイプライン • 安定コア × 柔軟な拡張の分離 の手法を収録 LLM・AIエージェントシステムベストプラクティス 23
+25. ### 第4章 ピックアップ ① LLMシステムの CQRSと部品分離 CQRS = Command Query Responsibility
+	Segregation 状態を変える処理と読む処理を分け、機能を疎結合の部品にする。 全体像： CQRS 1 コマンド／クエリ分離 状態変化と読み取りを別経路に分ける Command（状態変化） LLMによる ドキュメント生成 Queue -> Worker 書き込みストア 2 影響範囲を制御 書き込みの副作用が読み取りに漏れない Query（読み取り） LLMによる Q&A Search API 読み取りストア 生成は Command 側、参照は Query 側に振り分ける LLM・AIエージェントシステムベストプラクティス 3 部品に分離 機能単位＋インターフェース分離で保守性を確保 24
+26. ### 第4章 ピックアップ ② パイプライン、オーケストレーション、 DI 複数ステップの不安定な処理を、組み立て可能にする。 全体像： 3層の組み立て 1 オーケストレーター（分岐・リトライを制御）
+	パイプライン 複数のLLM呼び出し／外部連携を段階的に構成 Pipeline Stage 1 Stage 2 DIコンテナ（依存を注入：差し替え・テスト容易化） LLM・AIエージェントシステムベストプラクティス Stage 3 2 3 オーケストレーション 分岐・再試行を含む複雑フローを管理 依存性注入（ DI） テスト容易性と差し替え可能性を確保 25
+27. ### 第4章 ピックアップ ③ 安定したコア × 柔軟な拡張 変えたくない部分と、変え続ける部分を分ける。 全体像：コアと拡張の分離 1 拡張機能
+	拡張機能 SearchTool Prompting library コアは不変 信頼できる中核。むやみに変えず土台を守る 安定コア 2 LLM interface AgentTool interface Auth/Log/Security 拡張機能 拡張機能 Domain KnowledgeBase Governance rule 3 拡張は可変 実験的で変化の速い機能をプラグインで着脱 抽象化設計 インターフェースでコアと拡張を分離 接続はインターフェース経由（拡張は着脱可能） LLM・AIエージェントシステムベストプラクティス 26
+28. ### 第5章 概要 AIエージェント設計のプラクティス ユースケースに応じたエージェント・アーキテクチャのカタログ。 第5章 7 • ReAct型（思考・行動・観察） • イベント駆動型
+	AIエージェント • マルチAIエージェント • 学習型AIエージェント • 多層型AIエージェント • 既存ソフトウェアへの組み込み • パイプライン型 AIエージェント の手法を収録 LLM・AIエージェントシステムベストプラクティス 27
+29. ### 第5章 ピックアップ ① ReAct型エージェント 「思考 → 行動 → 観察」を回して複雑なタスクを解く。 全体像：
+	ReActループ 1 思考 行動 観察 次の一手を推論 ツールを実行 結果を観測 完了時 2 思考 →行動 →観察のループ 状況に応じて次の一手を推論し続ける ツール連携 検索・計算・APIを「行動」として実行 ツール群（検索・計算・ API） 回答を出力 観察を踏まえ、再び思考へ（ループ） 3 LLM・AIエージェントシステムベストプラクティス 注意（暴走・汚染） ループ暴走・コスト・観察によるコンテキスト汚染 28
+30. ### 第5章 ピックアップ ② マルチ／多層／イベント駆動エージェント 単体では解けないタスクを、協調・階層・疎結合で解く。 全体像： 3つの協調型 マルチ （対等） 1
+	エージェントA エージェントB スーパーバイザー／ オーケストレーター 多層 （階層） ワーカー1 イベント 駆動 エージェントC Publisher LLM・AIエージェントシステムベストプラクティス イベントバス 2 マルチエージェント 複数エージェントが対等に協調して解く 多層型 上位が下位を統治する階層アーキテクチャ ワーカー2 Subscriber 3 イベント駆動型 イベントバスで疎結合・スケーラブルに 29
+31. ### 第5章 ピックアップ ③ 学習型エージェント／システム組み込み 過去の経験から学び続け、既存システムに溶け込ませる。 全体像：学習ループと組み込み ① 学習ループ 1 実行
+	経験 経験ストア タスク遂行 実行結果 メモリに蓄積 次回参照して継続的に改善 2 経験を蓄積 実行結果をメモリ／経験ストアに保存 改善ループ 次回以降に参照して継続的に賢くなる ② 既存システムへの組み込み エージェント 既存システム（ API ／ DB ／ サービス） 3 LLM・AIエージェントシステムベストプラクティス 組み込み 運用資産として既存API・DBへ接続 30
+32. ### 第6章 概要 応用的なプラクティス 品質・コスト・ UXをさらに引き上げる発展的手法。 第6章 7 • LLMの自由度を下げて安定させる •
+	関数呼び出しのエンジニアリング • LLM SDKの薄いラッパーライブラリ • 関数呼び出しの Tool Chain • 複数推論と候補評価（ Best-of-N） • AIエージェントのメモリ更新戦略 • 不要な過去を忘れ、やり直す の手法を収録 LLM・AIエージェントシステムベストプラクティス 31
+33. ### 第6章 ピックアップ ① Best-of-N／薄いラッパー戦略 複数生成から最良を選ぶことで安定させる。公式 SDKの薄いラッパーで開発工数を減らしつつ拡張。 全体像： Best-of-N 1 OpenAI
+	SDKの 薄いラッパー 候補 1 プロンプト 候補 2 評価・選択 LLM-as-a-Judge 2 自由度を下げる UI/APIで選択肢を制限し、出力を安定化させる Best-of-N N個生成し、評価で最良の候補を選ぶ 候補 3 N 個を並列生成 最良を採用 薄いラッパー 3 LLM・AIエージェントシステムベストプラクティス 公式SDKを薄く包み、同じインターフェイスで独自の拡張機能 を追加 32
+34. ### 第6章 ピックアップ ② コンテキスト管理とメモリ更新戦略 間違いで汚染された過去を捨て、やり直し、記憶を正しく更新する。 全体像：記憶の管理 会話履歴（タイムライン） t1 › 1
+	t2 ロールバック：汚染点を切り戻し、健全な › t3 › t4 汚染 › ロールバック 汚染された履歴を切り戻し、やり直す t5 t3 からやり直す 2 パラレルワールド 複数セッションを並列に実行して探索 セッションB（並列探索） メモリストア：出所（ provenance）／ TTL・減衰 ／ 忘却 LLM・AIエージェントシステムベストプラクティス 3 メモリ更新戦略 出所・TTL・忘却で記憶を健全に保つ 33
+35. ### 特典 LLM・AIエージェントシステムベストプラクティス BONUS: ENGINEERING FOR THE CODING-AGENT ERA Methodology Engineeringと
+	Looped Harness Engineering 34
+36. ### 読者特典 本編の一歩先 —— 2026年、コーディングエージェントが主役の時代へ 特典タイトル： コーディングエージェント時代における Methodology Engineering と Looped
+	Harness Engineering 本編（〜 2025年末）の前提 特典（ 2026年）の前提 人間が主体、 コーディングエージェントは補助 コーディングエージェントが主役に LLM・AIエージェントシステムベストプラクティス 35
+37. ### 特典・出発点 便利 ＞ 制御 便利さは常に制御より先に来る。制御を後から埋め込む。 ソフトウェアを作るインターフェースが自然言語に → 誰もがソフトウェアを作る時代へ 生産量は桁違いに増えるが、Shadow AIが増える
+	設計・セキュリティ・非機能・コストはブラックボックスのまま積み上がる 生産量の爆発が、そのまま運用負債の爆発になる CLAUDE.md／AGENT.md（プロジェクトの憲法）だけでは足りない 指示は「お願い」で確率的にしか従われない／文章で全場面を網羅できない LLM・AIエージェントシステムベストプラクティス 36
+38. ### 特典・概念 ① Methodology Engineering（方法論のソフトウェア化） 方法論をエージェントが読み込んで実行できるソフトウェア資産にする。 方法論は「共通認識＝コミュニケーションツール」 TDD・DDD・SOLID・デザインパターン……「DIで作って」の一言で伝わる 方法論、プラクティス、 デザインパターン DI,
+	SOLID, DDD, TDD・・・ エージェントは読み込んだ瞬間から実践 → 伝達コストがほぼゼロ 人間が研修や経験で内面化してきたものが、即実行される コーディング エージェント 方法論に倣って作る 実装 方法論がコンパイル可能・反証可能になった 課題に応じて 方法論から設計して 実装する Dagger, CI/CD, FastAPI・・・ Eval でA/Bテスト・効果測定・回帰テストができる「生きた資産」に LLM・AIエージェントシステムベストプラクティス 37
+39. ### 特典・概念 ② Looped Harness Engineering （コーディングエージェントの DevOps） ハーネス＝エージェントを取り囲む実行環境一式。方法論を「環境として」強制・補助・検証・観測し、ループで育てる。 制約 補助
+	検証 観測 してはいけないことを不可能にする 正しいやり方を最も簡単な道にする 結果の正しさを機械的に確認する 記録して次の改善につなげる Fool Proofing：人間の注意力に頼らず、間違えようのない治具を作る。 セッションは揮発する → 学びをMaster Harnessに外部化し、組織学習にする。 LLM・AIエージェントシステムベストプラクティス 38
+40. ### 特典・三層ループ 決定論ファースト、 LLMロングテール インナーループ （セッション内） エージェントが実装→検査→自己修正。最速・人間の介入なし ミドルループ （変更単位（PR）） CIで決定論テスト＋選定Eval。人間＋レビューエージェントが承認 アウターループ
+	（チーム／組織） テレメトリ・障害・Evalの傾向を分析し、方法論とMaster Harness自体を改訂 目標関数は「信頼可能な変更量」。ルールで解けるならルールへ（最小エージェンシー）＝ LLM・AIエージェントシステムベストプラクティス 第1章の鉄則の組織スケール版。 39
+41. ### 特典・到達点 本編の手法を「方法論＋ハーネス」に翻訳する 開発・運用の実践主体が人間からエージェントへ移っても作り方の原則やアーキテクチャは失効しない。 構造化 I/O コンテキスト／メモリ ツール／MCP Eval スキーマ駆動。ルール文書＋フッ ク検査で強制
+	データデザインカタログで設計を統 治 Single Tool Gatewayで認可・監査 を一元化 Predictive Test Selectionで賢く選 定実行 LLM・AIエージェントシステムベストプラクティス 40
+42. ### BEHIND THE SCENES & THE FUTURE 6 LLM・AIエージェントシステムベストプラクティス 執筆秘話 と
+	将来 41
+43. ### 執筆秘話 書けなかった生成 AIエンジニアリング本 当初の構想（ 2023〜） 焦点を絞る 生成AI全般のエンジニアリング本 対象を定めて、ようやく前へ 画像生成 動画生成
+	1年、悩む コーディングエージェント LLM ＆ AIエージェントのエンジニアリング LLM・AIエージェント 全方面で技術の変化が早く多岐にわたり、書き切れず・・・ 後悔 本書は数年前に書いた『機械学習システムデザインパターン』の書き方を LLM/AIエージェントに転換したもの。 「新しい技術を使うエンジニアリング方法集」 という枠を出られなかった。 既知のコンフォートゾーンを出て、新しい境地に至るテーマと内容にならず・・・ LLM・AIエージェントシステムベストプラクティス 42
+44. ### 執筆秘話 2つの「いたちごっこ」 ① 進化との競争 執筆中に各社／ OSSが同じ機能を提供、論文・テックブログが公開され、 内容が重複（時に矛盾）していく ② 自分との競争 書くうちに新しいアイデアが次々湧き、盛り込みたい内容が増え続けてい
+	く 唯一の対応策は「ある時点で区切りを付けて出版する」。 初稿は2025年末。2026年の変化（Harness／Loop Engineering・新モデル）追いきれず。諦めないと永遠に出せない。 LLM・AIエージェントシステムベストプラクティス 42
+45. ### 執筆秘話 AIと猫と共に執筆 本書自体が「AIを相棒に開発する」実践の産物 知見整理にChatGPT・Gemini・Claude、実装にCursor・Copilot・Claude Code 編集・査読・校正・検証への感謝 編集者の宮腰さん、査読の恩田さん、矢野目さん、校正／検証協力の皆様に感謝 膝の上の猫 膝で寝ていた飼い猫マルグレーテと、猫缶を要求し続けた飼い猫ウィリアム LLM・AIエージェントシステムベストプラクティス
+	43
+46. ### エンジニアリングの将来 抽象度が一段上がる —— エンジニアの仕事の変化 機械語 手作業構築 手動リリース コードを書く ↓ ↓
+	↓ ↓ 高級言語 Infrastructure as Code CI/CD 作り方の作り方を作る エンジニアの仕事は「誰もが信頼できるソフトを作れる仕組み」をエンジニアリングすることへ。 「AIとは、まだ実現されていないもののことである」（ラリー・テスラー） 当たり前になった技術は道具と呼ばれ、その先に新しい「まだ実現されていないもの」が現れる。 LLM・AIエージェントシステムベストプラクティス 45
+47. ### まとめ 不確実性に対処し、方法論とハーネスを組織の資産にする 鉄則 手法 局所化して制限し、評価する 基礎→API→設計→エージェント→応用 特典 Methodology & Looped
+	Harness Eng. 出版 翔泳社『LLM・AIエージェントシステムベストプラクティス』（ ISBN 978-4-7981-9431-8） サンプルコード https://github.com/shibuiwilliam/llm-best-practice-book-program 特典 https://shoeisha.co.jp/book/present/9784798194318（SHOEISHA iD 登録） 皆様のご感想をお待ちしています！ LLM・AIエージェントシステムベストプラクティス 46

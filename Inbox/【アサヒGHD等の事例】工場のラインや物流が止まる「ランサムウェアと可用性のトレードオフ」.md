@@ -1,0 +1,547 @@
+## 要旨
+
+2025年9月29日、アサヒグループホールディングス（アサヒGHD）がランサムウェア攻撃を受け、受注・出荷システムが停止しました。 **6工場の生産ラインが稼働を停止し** 、スーパードライなど主要製品が店頭から一時的に姿を消しました\[1\]。同年8月には英国のジャガー・ランドローバー（JLR）が5週間にわたって3か国の製造拠点を止められ、推定損失19億ポンド（英国史上最も経済的被害の大きいサイバーインシデント）と評価されています\[2\]。
+
+これらの事案が示す共通の問題は、「 **IT（情報技術）とOT（制御技術）の境界が曖昧になったことで、IT側のランサムウェアが工場・物流という物理的な世界を止めるようになった** 」という構造的な変化です。
+
+「停止を防ぐ（セキュリティ）」と「止めずに動かし続ける（可用性）」は、従来のITでも両立が難しい問題でした。製造・物流の現場では、この問題はさらに複雑です。パッチを当てたら制御システムが止まる。セキュリティ監視ツールを入れたらPLCが誤動作する。ネットワークを分離したらリモート保守ができなくなる——現場エンジニアが日常的に直面するこのトレードオフを、本記事では事例・原理・対策の順で整理します。
+
+> **注意事項** ：本記事は教育目的のセキュリティ情報共有を目的としています。
+
+---
+
+## 記事本文
+
+### 1\. 「ITの問題がラインを止める」——何が変わったのか
+
+#### 1-1. OTとITが分離されていた時代の終わり
+
+かつて製造現場の制御システム（OT）は、企業ネットワーク（IT）と物理的に分離されていました。PLC（プログラマブルロジックコントローラ）やSCADA（監視制御システム）は「閉じた世界」で動き、インターネットにつながっていなかった。だからこそ、IT側でランサムウェアに感染しても、工場のラインは動き続けることができました。
+
+この前提が崩れたのはDX（デジタルトランスフォーメーション）の波です。
+
+```text
+IT と OT の融合が進んだ背景：
+
+かつての製造現場：
+  [企業ネットワーク（IT）] ─ 完全分離 ─ [工場制御システム（OT）]
+  → 物理的に切り離された「エアギャップ」
+  → ランサムウェアはOTに届かない
+
+現在の製造現場：
+  [企業ネットワーク（IT）]
+      ↕ VPN・SCADA連携・クラウドMES
+  [工場制御システム（OT）]
+      └── PLC（工作機械制御）
+      └── SCADA（監視制御）
+      └── HMI（ヒューマンマシンインターフェース）
+      └── 産業用IoTセンサー
+
+DXで何が変わったか：
+  ✓ リアルタイム生産データをERP・MESに連携
+  ✓ リモートから設備を監視・制御
+  ✓ 外部ベンダーがリモートで設備を保守
+  ✓ クラウド上の需要予測システムと生産ラインを連動
+
+→ これらの「つながり」はすべて、
+  攻撃者が IT から OT に到達する経路にもなる
+```
+
+> "Dragos data found that 96% of OT incidents in 2024 originated in enterprise IT network connections."  
+> — Jimber.io, "The Purdue model in 2026: why flat IT-OT networks fail" \[3\]  
+> [https://jimber.io/blog/purdue-model-2026/](https://jimber.io/blog/purdue-model-2026/)
+
+96%——OTインシデントのほぼすべてが、工場の制御システム自体ではなく企業ITネットワーク側から始まっているのです。
+
+#### 1-2. 攻撃者の目的が「データ窃取」から「操業停止」にシフトした
+
+Ransomware groups have adapted to flat infrastructure. Where encrypting IT data was once the goal, attackers now aim straight at halting physical production, because unplanned downtime for a mid-sized manufacturer can run to hundreds of thousands of euros a day, which sharply raises the pressure to pay.\[3\]
+
+> 出典：Jimber.io \[3\]  
+> [https://jimber.io/blog/purdue-model-2026/](https://jimber.io/blog/purdue-model-2026/)
+
+攻撃者の経済合理性が変わりました。データを暗号化して身代金を要求するより、 **生産ラインを止めて1日あたり数十万〜数百万ユーロの損失を発生させる方が、支払いへの圧力がはるかに強い** のです。
+
+Check Point の「Manufacturing Threat Landscape 2026」（2026年4月）は、2025年の製造業へのランサムウェア攻撃が2024年比 **56%増** （937件→1,466件）と記録しています\[3\]。
+
+---
+
+### 2\. アサヒGHD事案——「商品が店頭から消えた」という可視的な被害
+
+#### 2-1. 事案の全体像
+
+2025年9月末、アサヒグループがランサムウェア攻撃を受け、複数拠点で受注・出荷システムが停止しました。一部の工場では生産ラインの稼働停止を余儀なくされ、復旧には時間を要し、決算処理にも影響が生じています。本事件は、サイバー攻撃が組織内部にとどまらず、流通・販売・消費の現場にまで波及することを社会に強く印象づけました。\[1\]
+
+> 出典：SQAT.jp「アサヒグループも被害に——製造業を揺るがすランサムウェア攻撃」\[1\]  
+> [https://www.sqat.jp/kawaraban/39672/](https://www.sqat.jp/kawaraban/39672/)
+
+```text
+アサヒGHD 事案のタイムライン：
+
+2025年9月（障害発生の約10日前）
+  グループ内拠点のネットワーク機器を経由して侵入
+  → 偵察・横展開期間（被害者側は気づいていない）
+
+2025年9月29日 午前7時
+  グループ各社のシステムで障害発生
+  → 商品の受注・出荷業務が停止
+  → コールセンター業務も停止
+
+2025年9月29日 午前11時
+  ネットワーク遮断・データセンター隔離
+
+2025年10月2日頃
+  6工場の稼働再開（一部工場は生産停止が続いていた）
+  スーパードライ等、主要製品の出荷が停止
+
+2025年10月3日
+  公式発表：ランサムウェアによる攻撃と確認
+
+2025年10月7日
+  ロシア系グループ「Qilin」が犯行声明・身代金を要求
+  → アサヒGHDは応じなかった
+
+2025年11月27日
+  詳細を公表する記者会見
+  → 侵入経路：グループ内拠点のネットワーク機器を経由
+
+2026年2月18日
+  調査完了・再発防止策を正式公表
+```
+
+#### 2-2. 「DXを進めるほど、止まったときの影響が大きくなる」
+
+今回の事件が示したのは、「DXを進めるほど、止まったときの影響が大きくなる」という現実です。システム障害はもはやIT部門の問題ではなく、経営のリスクそのもの。攻めのDXがAIなら、守るDXはインフラ整備です。ランサムウェアの本当の恐ろしさは、データを奪うことではなく、日常を止める力にあります。\[4\]
+
+> 出典：Sales Seeds「アサヒグループHDを襲ったランサムウェア——止まるDX、動かないインフラ」\[4\]  
+> [https://sales-seeds.com/blog/asahi-ransomware](https://sales-seeds.com/blog/asahi-ransomware)
+
+アサヒGHDは「DX先進企業」として知られていました。受注・出荷システムの統合、リアルタイムの在庫管理、工場と物流の連携——こうしたDXの成果が、逆に「1か所が止まると全体が止まる」という脆弱性を生みました。
+
+---
+
+### 3\. 名古屋港事案（2023年）——物流インフラへの直撃
+
+製造業だけの問題ではありません。2023年7月5日、 **日本最大の貿易港である名古屋港** がランサムウェア攻撃を受け、コンテナの荷役業務が約2日間停止しました。
+
+The largest port in Japan, the Port of Nagoya, was forced to suspend its operations following a ransomware attack on July 5, 2023, disrupting the port's communication systems and preventing the facility from processing import and export operations. While the ransomware attack did not impact the shipment of new cars for Toyota, the world's largest carmaker, it affected the loading and unloading of imported and exported parts at the port.\[5\]
+
+> 出典：Dragos「OT Cybersecurity Breach Disrupts Operations at the Port of Nagoya, Japan」\[5\]  
+> [https://www.dragos.com/blog/ot-cybersecurity-breach-disrupts-operations-at-the-port-of-nagoya-japan](https://www.dragos.com/blog/ot-cybersecurity-breach-disrupts-operations-at-the-port-of-nagoya-japan)
+
+```text
+名古屋港事案（2023年7月）：
+
+攻撃グループ：LockBit 3.0
+標的：名古屋港統一ターミナルシステム（NUTS）
+
+影響：
+  ├── コンテナの荷役業務が約2日間停止
+  ├── 輸出入貨物の積み降ろし不可
+  ├── トヨタ完成車の輸送は無事（別システム）
+  └── 部品の輸出入に影響（トヨタへの間接影響）
+
+復旧：
+  → バックアップからのシステム復旧により2日程度で再開
+  → 比較的早期の復旧が可能だったことが成功事例として紹介
+
+教訓：
+  「物流インフラ」へのランサムウェアは
+  製造業サプライチェーン全体に波及する
+```
+
+アサヒGHD事案と名古屋港事案、どちらも「ITシステムが止まった」という話ですが、その影響は工場ライン・物流・消費者の手元にまで及んでいます。
+
+---
+
+### 4\. 「可用性のトレードオフ」——製造・物流の現場が直面する固有の問題
+
+#### 4-1. OTシステムの「止められない」という制約
+
+> "OT ransomware targets the operational technology that controls machines on the factory floor: programmable logic controllers, robotic controls, drives, and motion controls. When OT systems are compromised, it's not data that stops — it's production. Recovery is also more complex because OT systems often cannot simply be reimaged the way a laptop can."  
+> — EI3 Corp, "Ransomware Is No Longer an IT Problem. It Is a Production Problem." \[6\]  
+> [https://ei3.com/iiot-insights/ransomware-is-no-longer-an-it-problem.-it-is-a-production-problem](https://ei3.com/iiot-insights/ransomware-is-no-longer-an-it-problem.-it-is-a-production-problem)
+
+ITシステムなら「感染したPCを隔離し、イメージから再インストール」という対応が比較的容易です。しかしOTシステムは異なります。
+
+```text
+OTシステムが「普通のITセキュリティ対策」を取りにくい理由：
+
+① パッチ適用の制約
+  問題: PLCやSCADAにパッチを当てると、設備が正常動作しなくなる可能性
+  現場の声:「パッチを当てた後に制御が不安定になったら、誰が責任を取るのか」
+  現実: 製造業のOT機器の40%は10年以上前の設計基準に基づいている[3]
+
+② 再起動できない
+  問題: 24時間365日の連続運転が前提の設備は、再起動自体が損失
+  例: 高炉・化学プラント・食品製造ラインは「止めること」自体が問題
+
+③ セキュリティツールとの非互換
+  問題: 標準的なEDR/アンチウイルスがPLC・HMIに入れられない
+  理由: 組み込みOSや専用ハードウェアが多く、エージェント型ツールが非対応
+
+④ 応答時間の要件
+  問題: 工場制御システムはミリ秒単位のリアルタイム制御が前提
+  問題: セキュリティ検査・暗号化処理がレイテンシに影響する場合がある
+
+⑤ ベンダーロックインと保守契約の制約
+  問題: 制御システムはベンダーが独自に管理し、勝手に変更できない
+  現実: 「このシステムを変更するには、ベンダーの許可と立ち会いが必要」
+```
+
+#### 4-2. 「セキュリティを高めると可用性が下がる」という誤解と真実
+
+Standard antivirus is often incompatible with OT devices — PLCs run specialized embedded operating systems, HMIs may rely on legacy Windows versions no longer receiving security updates, and SCADA servers often can't be patched without extensive testing in an offline environment that mirrors production.\[7\]
+
+> 出典：ITECS Online「Manufacturing Cybersecurity OT and IT Guide 2026」\[7\]  
+> [https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026](https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026)
+
+この「セキュリティとOT可用性のトレードオフ」は本当に解けない問題なのでしょうか。答えは「 **どこにセキュリティ投資をするか次第** 」です。
+
+```text
+可用性を損なわないセキュリティ投資の考え方：
+
+【可用性を損なうアプローチ（避けるべき）】
+  ✗ PLCに直接EDRエージェントをインストール
+  ✗ OTネットワークに高頻度のアクティブスキャン
+  ✗ SCADAサーバーに緊急パッチを検証なしで適用
+  ✗ 工場制御PCにWindows Updateを自動適用
+
+【可用性を維持しながらセキュリティを高めるアプローチ】
+  ✓ ネットワークタップによるパッシブ監視
+    → トラフィックを「聞くだけ」でOT機器に一切触れない
+  ✓ 入口でのセキュリティ強化（IT/OT境界のFirewall・DMZ）
+    → OT機器自体には手を加えず、通信経路で制御
+  ✓ ネットワーク分離（攻撃者がIT側に侵入しても
+    OTに届かない設計）
+  ✓ ジャストインタイムリモートアクセス
+    → ベンダー保守のアクセスを必要な時間帯・機器のみに限定
+  ✓ 検証済み環境でのパッチテスト後の計画的適用
+    → 生産停止メンテナンスのタイミングに合わせてパッチを適用
+```
+
+---
+
+### 5\. パードモデル（Purdue Model）——IT/OT分離の設計思想
+
+現在のIT/OTセキュリティの設計思想の基礎となっているのが、ISA-95/IEC 62443に基づくパードモデルです。
+
+The Purdue Model is a logical framework that segments industrial control systems into zones (Levels 0–5) to improve security and prevent the lateral spread of cyber threats between OT and IT environments.\[8\]
+
+> 出典：Acronis「OT & ICS Cybersecurity Explained: From Factory Floors to the Power Grid」\[8\]  
+> [https://www.acronis.com/en/blog/posts/ot-and-ics-cybersecurity-explained/](https://www.acronis.com/en/blog/posts/ot-and-ics-cybersecurity-explained/)
+
+```text
+パードモデルの5層構造（IT/OT分離の設計思想）：
+
+Level 0: フィールドデバイス層
+  └── センサー・アクチュエータ・モーター等の物理デバイス
+      （ネットワーク接続最小化が原則）
+
+Level 1: 基本制御層
+  └── PLC（プログラマブルロジックコントローラ）
+      → ライン制御・機械制御を担う
+      → 直接インターネットに接続してはならない
+
+Level 2: プロセス監視層
+  └── HMI（ヒューマンマシンインターフェース）・SCADA
+      → オペレーターが設備を監視・操作する端末
+      → Level 0-1 との通信専用、企業ネットワーク非接続
+
+     ===================== OT/IT 境界 =====================
+     ← ここにファイアウォール・DMZを設置（最重要）→
+
+Level 3: 製造運用管理層
+  └── MES（製造実行システム）・工程管理システム
+      → 生産計画・品質管理・設備稼働状況の集約
+      → OTへのアクセスは制限的・一方向が望ましい
+
+Level 4: ビジネス計画・物流層
+  └── ERP・在庫管理・サプライチェーン管理
+      → 企業ネットワーク（IT）の領域
+
+Level 5: エンタープライズゾーン
+  └── メール・インターネット・クラウド等
+      → インターネット接続がある領域
+
+攻撃の侵入経路（アサヒGHD・JLR等の典型例）：
+  Level 5（インターネット） → Level 4（ERP） → 
+  Level 3（MES） → Level 2（SCADA） → 生産停止
+```
+
+アサヒGHDやJLRの事案で起きたことは、このパードモデルが実質的に機能していなかった—— **IT/OT境界での制御が不十分だったため、ITへの侵入がLevel 2・Level 1まで到達し、生産停止を引き起こした** ということです。
+
+---
+
+### 6\. 国際比較——ダウンタイムのコストが示す「可用性」の経済的価値
+
+「セキュリティ投資と可用性のトレードオフ」を経営レベルで判断するために必要なのは、 **「止まったとき何が失われるか」の定量化** です。
+
+According to the Siemens 2024 report, the world's 500 biggest companies lose approximately $1.4 trillion per year to unplanned downtime, about 11% of annual revenues. Hourly costs reach $2.3 million in automotive manufacturing.\[8\]
+
+> 出典：Acronis（Siemens 2024 Report引用）\[8\]
+
+```text
+製造業における計画外ダウンタイムのコスト（参考）：
+
+自動車製造：　 約230万ドル／時
+半導体製造：　 約200万ドル／時
+食品製造：　　 数十万ドル／時（品目・ライン規模による）
+物流・港湾：　 数十万〜数百万ドル／日
+
+日本の名古屋港事案（2023年）での推計影響：
+  → 2日間の荷役停止
+  → 日本最大の貿易港（取扱量世界Top10）への影響
+  → 直接コストに加え、サプライチェーン全体への波及
+
+アサヒGHD事案（2025年）での波及範囲：
+  → 受注・出荷システムの停止
+  → 6工場の生産ライン停止
+  → スーパードライ等主要商品の市場消失
+  → 決算発表の延期（投資家への影響）
+  → プロ野球ビールかけ中止（ブランドへの影響）
+```
+
+Sophosの「The State of Ransomware in Manufacturing and Production 2025」によれば、製造業のランサムウェア被害からの回復にかかった時間の中央値は、身代金を支払った場合でも支払わない場合でも **数週間〜数か月** の範囲です\[9\]。
+
+Exploited vulnerabilities are the leading root cause of ransomware attacks on manufacturing and production organizations, responsible for 32% of incidents. A lack of expertise named by 42.5% of victims as contributing factor, followed by unknown security gaps contributing to 41.6% of attacks.\[9\]
+
+> 出典：Sophos「The State of Ransomware in Manufacturing and Production 2025」\[9\]  
+> [https://www.sophos.com/en-us/blog/the-state-of-ransomware-in-manufacturing-and-production-2025](https://www.sophos.com/en-us/blog/the-state-of-ransomware-in-manufacturing-and-production-2025)
+
+---
+
+### 7\. 「トレードオフ」の解き方——優先度マトリクスと段階的対策
+
+セキュリティと可用性のトレードオフは「ゼロサム（どちらかを取れば一方が失われる）」ではありません。 **どこに投資するかの優先度判断** です。
+
+#### 7-1. リスクベースの優先度マトリクス
+
+```text
+製造・物流環境でのセキュリティ対策優先度マトリクス：
+
+評価軸：
+  縦軸: セキュリティ効果（高・低）
+  横軸: 可用性への影響（小・大）
+
+【優先度最高：即実施】（セキュリティ効果大・可用性影響小）
+  ✅ IT/OT境界のファイアウォール・DMZ設置
+      → OT機器に一切手を加えず、ネットワーク層で制御
+  ✅ MFA（多要素認証）の導入（管理端末・リモートアクセス）
+      → 認証情報窃取による侵入の大部分を防ぐ
+  ✅ ネットワークの可視化・パッシブ監視
+      → OT機器に触れずにトラフィックを監視
+  ✅ 管理権限の最小化
+      → ドメイン管理者権限の使用を制限
+  ✅ バックアップのオフライン・イミュータブル化
+      → OT環境固有の設定ファイル・ラダープログラムも対象
+
+【優先度高：計画的実施】（セキュリティ効果大・可用性影響中）
+  ✅ リモートアクセスのジャストインタイム化
+      → ベンダー保守のVPN常時開通を廃止
+      → 必要な時間帯・機器のみにアクセスを限定
+  ✅ ネットワークセグメンテーションの強化
+      → 生産ライン別・用途別にセグメントを分割
+  ✅ OTセキュリティ専用の監視ソリューション導入
+      → Claroty・Dragos・Nozomi等のOT専用IDS
+
+【慎重な検討が必要】（可用性影響大・十分な事前検証が必要）
+  ⚠️ OT機器へのパッチ適用
+      → 検証環境での事前テスト必須
+      → 定期メンテナンス停止に合わせた計画適用
+  ⚠️ ネットワーク構成の大幅な変更
+      → 段階的な適用・ロールバック計画の事前策定
+```
+
+#### 7-2. JLR（ジャガー・ランドローバー）事案が示す「段階的対策失敗」の教訓
+
+In August 2025, Jaguar Land Rover suffered what the UK Cyber Monitoring Centre would later call the most economically damaging cyber incident in British history. Attackers exploited vulnerabilities in a third-party supplier's software, moved laterally into JLR's core production systems, and deployed ransomware that halted manufacturing across three countries for five weeks. The estimated damage reached £1.9 billion, and more than 5,000 businesses in JLR's supply chain felt the impact.\[2\]
+
+> 出典：ITECS Online（Integrity360のJLRインシデント分析引用）\[2\]  
+> [https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026](https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026)
+
+JLRの事案は「サードパーティサプライヤーのソフトウェアの脆弱性」から始まっています。前回の記事（アサヒGHD・デンソー）で論じた「弱いリンクからの侵入」が、今度は製造現場のOTまで到達した最大規模の事案です。
+
+5週間・3か国・19億ポンド・サプライチェーン5,000社以上への影響——これが「IT/OT境界の防御が不十分だった場合の最悪シナリオ」の実例です。
+
+---
+
+### 8\. インシデント対応のトレードオフ——「隔離するか、動かし続けるか」
+
+攻撃が発覚したとき、最も悩ましいのが「今すぐネットワークを切断するか、業務継続を優先するか」という判断です。
+
+アサヒGHDが2025年9月29日に取った判断を振り返ります。
+
+```text
+アサヒGHD インシデント対応の意思決定：
+
+午前7時：  システム障害を検知
+午前11時：  ネットワーク遮断・データセンター隔離を決断
+
+「遮断の決断」が意味するもの：
+  ✅ ランサムウェアの拡散を止める
+  ✅ 追加の暗号化を防ぐ
+  ✅ 情報流出を最小限に抑える
+
+「遮断の決断」が引き起こすもの：
+  ✗ 受注・出荷システムが即座に停止
+  ✗ 工場の生産ラインが停止
+  ✗ 復旧まで数週間の業務停止
+
+しかし、遮断しなかった場合：
+  → 感染拡大で被害がさらに拡大
+  → バックアップまで暗号化される可能性
+  → 最終的な復旧にさらに時間がかかる
+
+教訓：
+  「4時間後に遮断」という選択は正しかった
+  しかし理想は「遮断と同時に切り替わるバックアップ業務フロー」を
+  事前に準備しておくこと
+```
+
+> "Ransomware impacts plant floor even without encrypting PLCs. In 2024–2025, many manufacturing attacks involved data theft plus extortion — backups alone aren't enough if they aren't tested under production timing."  
+> — DeepStrike.io, "Manufacturing Cybersecurity Statistics 2026" \[10\]  
+> [https://deepstrike.io/blog/manufacturing-cybersecurity-statistics](https://deepstrike.io/blog/manufacturing-cybersecurity-statistics)
+
+「バックアップがある」だけでは不十分です。「工場が止まっている状態で、どの順番で、何時間以内に、誰が、何をして復旧させるか」という手順が事前に検証されていなければ、バックアップは机上の安心感にすぎません。
+
+---
+
+### 9\. エンジニアが今すぐできること——OT/ITセキュリティの実務チェックリスト
+
+```text
+製造・物流エンジニアのためのセキュリティチェックリスト：
+
+【見える化（まず現状を把握する）】
+  ✅ IT/OTの境界がどこにあるか地図（ネットワーク図）があるか
+  ✅ 工場制御システムがインターネットに（間接的にでも）
+     つながっている経路をすべて把握しているか
+  ✅ 外部ベンダーがOT機器にアクセスする経路を把握しているか
+  ✅ 工場ネットワーク上のすべての機器（IoTセンサー含む）を
+     インベントリ管理しているか
+
+【境界防御（侵入しても広がらないようにする）】
+  ✅ IT側からOT側への通信が、必要なポート・プロトコルのみに
+     限定されているか（デフォルト全拒否か）
+  ✅ OT機器の管理インターフェースがインターネットに
+     直接公開されていないか
+  ✅ リモートアクセス（VPN）の接続先がOTネットワーク全体ではなく、
+     必要な機器のみに限定されているか
+  ✅ SCADAサーバーが企業ネットワークに直接接続されていないか
+     （DMZを経由しているか）
+
+【認証（侵入経路の入口を守る）】
+  ✅ OTシステムへのリモートアクセスにMFAが適用されているか
+  ✅ ベンダー保守アカウントが常時有効ではなく、
+     使用時のみ有効化する運用になっているか
+  ✅ 共有アカウント（システム共通のパスワード）が使われていないか
+  ✅ 退職したベンダー担当者のアカウントが削除されているか
+
+【OT固有のバックアップ】
+  ✅ PLCのラダープログラム・パラメータがバックアップされているか
+  ✅ SCADAの設定ファイル・プロジェクトファイルがオフラインで
+     保管されているか
+  ✅ 「OTシステムをゼロから復旧する手順書」が存在するか
+  ✅ 復旧手順を実際にテストしたことがあるか
+
+【インシデント対応の事前準備】
+  ✅ 「工場を止めるか・動かし続けるか」の意思決定権限が
+     インシデント時に明確か
+  ✅ ITが感染した場合でも業務継続できる
+     「手動運用」フローが定義されているか
+  ✅ 連絡先（ベンダー・JPCERT・所管省庁）を事前にリスト化しているか
+  ✅ 工場停止時の顧客・物流・調達への通知手順が定義されているか
+```
+
+---
+
+### 10\. まとめ——「止まらないこと」と「止めたとき回復できること」
+
+アサヒGHDのランサムウェア攻撃がビールを店頭から消したとき、それはITの問題ではありませんでした。DXによってつながったシステムが、サイバー攻撃の被害を物理的な世界に伝達した結果でした。
+
+「セキュリティを高めると可用性が下がる」——この命題は一部正しく、一部誤りです。PLCに直接エージェントを入れればOTの稼働に影響するかもしれません。しかしIT/OT境界にファイアウォールを設け、リモートアクセスをジャストインタイム化し、OT設定ファイルをオフラインバックアップすることは、 **可用性に影響を与えずにリスクを大幅に下げます** 。
+
+投資すべきは「OT機器そのものへの直接的なセキュリティ対策」より先に、 **「OTに到達するまでの経路を断つ」ネットワーク設計** と、 **「侵害されても数時間で復旧できる」回復設計** です。
+
+工場のラインが止まったとき、エンジニアに問われるのは「なぜ攻撃を防げなかったか」だけではありません。「なぜ4時間以内に代替手段に切り替えられなかったか」も、同じ重さで問われます。この2つへの答えを準備することが、製造・物流エンジニアが今すべきことです。
+
+---
+
+## 参考文献
+
+\[1\] SQAT.jp. 「アサヒグループも被害に——製造業を揺るがすランサムウェア攻撃」. 2025年11月.  
+[https://www.sqat.jp/kawaraban/39672/](https://www.sqat.jp/kawaraban/39672/)
+
+\[2\] ITECS Online. "Cybersecurity for Manufacturing OT and IT Guide 2026." February 10, 2026.  
+[https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026](https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026)
+
+\[3\] Jimber.io. "The Purdue model in 2026: why flat IT-OT networks fail." June 25, 2026.  
+[https://jimber.io/blog/purdue-model-2026/](https://jimber.io/blog/purdue-model-2026/)
+
+\[4\] Sales Seeds. 「アサヒグループHDを襲ったランサムウェア——止まるDX、動かないインフラ」. 2025年10月.  
+[https://sales-seeds.com/blog/asahi-ransomware](https://sales-seeds.com/blog/asahi-ransomware)
+
+\[5\] Dragos. "OT Cybersecurity Breach Disrupts Operations at the Port of Nagoya, Japan." 2023.  
+[https://www.dragos.com/blog/ot-cybersecurity-breach-disrupts-operations-at-the-port-of-nagoya-japan](https://www.dragos.com/blog/ot-cybersecurity-breach-disrupts-operations-at-the-port-of-nagoya-japan)
+
+\[6\] EI3 Corp. "Ransomware Is No Longer an IT Problem. It Is a Production Problem." July 2026.  
+[https://ei3.com/iiot-insights/ransomware-is-no-longer-an-it-problem.-it-is-a-production-problem](https://ei3.com/iiot-insights/ransomware-is-no-longer-an-it-problem.-it-is-a-production-problem)
+
+\[7\] ITECS Online. "Manufacturing Cybersecurity | OT and IT Guide 2026." February 10, 2026.  
+[https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026](https://itecsonline.com/post/cybersecurity-for-manufacturing-ot-it-convergence-guide-2026)
+
+\[8\] Acronis. "OT & ICS Cybersecurity Explained: From Factory Floors to the Power Grid." April 3, 2026.  
+[https://www.acronis.com/en/blog/posts/ot-and-ics-cybersecurity-explained/](https://www.acronis.com/en/blog/posts/ot-and-ics-cybersecurity-explained/)
+
+\[9\] Sophos. "The State of Ransomware in Manufacturing and Production 2025." December 3, 2025.  
+[https://www.sophos.com/en-us/blog/the-state-of-ransomware-in-manufacturing-and-production-2025](https://www.sophos.com/en-us/blog/the-state-of-ransomware-in-manufacturing-and-production-2025)
+
+\[10\] DeepStrike.io. "Manufacturing Cybersecurity Statistics 2026: OT Risk & Ransomware." June 23, 2026.  
+[https://deepstrike.io/blog/manufacturing-cybersecurity-statistics](https://deepstrike.io/blog/manufacturing-cybersecurity-statistics)
+
+\[11\] トレンドマイクロ. 「アサヒグループへのランサムウェア攻撃事例を記者会見から考察」. 2025年12月18日.  
+[https://www.trendmicro.com/ja\_jp/jp-security/25/l/expertview-20251218-01.html](https://www.trendmicro.com/ja_jp/jp-security/25/l/expertview-20251218-01.html)
+
+\[12\] Wikipedia. 「2025年アサヒグループホールディングスへのサイバー攻撃」. 2026年.  
+[https://ja.wikipedia.org/wiki/2025%E5%B9%B4%E3%82%A2%E3%82%B5%E3%83%92%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9%E3%81%B8%E3%81%AE%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83](https://ja.wikipedia.org/wiki/2025%E5%B9%B4%E3%82%A2%E3%82%B5%E3%83%92%E3%82%B0%E3%83%AB%E3%83%BC%E3%83%97%E3%83%9B%E3%83%BC%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0%E3%82%B9%E3%81%B8%E3%81%AE%E3%82%B5%E3%82%A4%E3%83%90%E3%83%BC%E6%94%BB%E6%92%83)
+
+\[13\] サイバーセキュリティ総研. 「アサヒグループホールディングスのサイバー攻撃被害：ランサムウェア攻撃の全貌と影響を徹底解説」. 2025年10月21日.  
+[https://cybersecurity-info.com/column/agh-insident-response/](https://cybersecurity-info.com/column/agh-insident-response/)
+
+\[14\] arXiv. "Threat-based Security Controls to Protect Industrial Control Systems." January 2025.  
+[https://arxiv.org/pdf/2501.13268](https://arxiv.org/pdf/2501.13268)
+
+\[15\] アサヒグループホールディングス. 「サイバー攻撃被害の再発防止策とガバナンス体制の強化について」. 2026年2月18日.  
+[https://www.asahigroup-holdings.com/newsroom/detail/20260218-0101.html](https://www.asahigroup-holdings.com/newsroom/detail/20260218-0101.html)
+
+\[16\] CyberUpdates365. "Manufacturing Cyber Security Breaches: The $2.4M/Hr Crisis." July 2026.  
+[https://cyberupdates365.com/manufacturing-cyber-security-breaches-2026/](https://cyberupdates365.com/manufacturing-cyber-security-breaches-2026/)
+
+\[17\] IEC 62443 / ISA-99. "Security for Industrial Automation and Control Systems."  
+[https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards](https://www.isa.org/standards-and-publications/isa-standards/isa-iec-62443-series-of-standards)
+
+\[18\] JPCERT/CC. 「制御システムセキュリティ対策ガイド」.  
+[https://www.jpcert.or.jp/ics/ics-guide.html](https://www.jpcert.or.jp/ics/ics-guide.html)
+
+\[19\] 経済産業省. 「工場システムにおけるサイバー・フィジカル・セキュリティ対策ガイドライン」. 2022年.  
+[https://www.meti.go.jp/policy/netsecurity/mng\_guide.html](https://www.meti.go.jp/policy/netsecurity/mng_guide.html)
+
+\[20\] Verizon. "2025 Data Breach Investigations Report (DBIR)." 2025.  
+[https://www.verizon.com/business/resources/reports/dbir/](https://www.verizon.com/business/resources/reports/dbir/)
+
+[1](https://qiita.com/suzukengo/items/97d1d1215c3a632ce370/likers)
+
+いいねしたユーザー一覧へ移動
+
+0
+
+[0](#comments)
+
+コメント一覧へ移動
+
+新規登録して、もっと便利にQiitaを使ってみよう
+
+1. あなたにマッチした記事をお届けします
+2. 便利な情報をあとで効率的に読み返せます
+3. ダークテーマを利用できます
+[ログインすると使える機能について](https://help.qiita.com/ja/articles/qiita-login-user)

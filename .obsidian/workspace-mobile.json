@@ -4,17 +4,21 @@
     "type": "split",
     "children": [
       {
-        "id": "4d02cdfac14dada0",
+        "id": "6f093007c86fc81a",
         "type": "tabs",
         "children": [
           {
-            "id": "de9a13b95df858cd",
+            "id": "7e88a68ec62b8db5",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "README.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新規タブ"
+              "title": "README"
             }
           }
         ]
@@ -177,8 +181,23 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "cc649ea90017e6b4",
+  "active": "7e88a68ec62b8db5",
   "lastOpenFiles": [
+    "Inbox/Post by @Jij_Inc_JP on X.md",
+    "library/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
+    "README.md",
+    "inbox",
+    "archive",
+    "library",
+    "scripts/llm_client.py",
+    "scripts/organize.py",
+    "scripts",
+    "/scripts/organize.py",
+    "/scripts/llm_client.py",
+    "/library/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
+    "/README.md",
+    "/scripts",
+    "/library",
     "[Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話.md",
     "2026-08-05T23:59:40+09:00.md",
     "2026-08-05T23:59:25+09:00.md",
