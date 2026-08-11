@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "README.md",
+                "file": "library/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "README"
+              "title": "2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術"
             }
           }
         ]
@@ -183,6 +183,7 @@
   },
   "active": "7e88a68ec62b8db5",
   "lastOpenFiles": [
+    "README.md",
     "Inbox/AIインフラの最新技術動向2026 (OCP China).md",
     "template/Template.md",
     "template",
@@ -208,7 +209,6 @@
     "/Inbox",
     "Inbox/Post by @ClaudeCode_aca on X.md",
     "Inbox/Post by @Jij_Inc_JP on X.md",
-    "README.md",
     "requirements.txt",
     "scripts/media_types.py",
     "/scripts/media_types.py",
