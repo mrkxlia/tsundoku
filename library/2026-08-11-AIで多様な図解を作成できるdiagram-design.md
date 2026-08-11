@@ -1,4 +1,19 @@
-https://x.com/trendtech33566/status/2086219407160905901?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+url: https://x.com/trendtech33566/status/2086219407160905901?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-11T20:06:42'
+type: post
+tags:
+- AI
+- デザイン
+- 図解
+- ツール
+summary: 'AIによる図解作成でよくある画一的な見た目を改善するツールdiagram-designを紹介。
+
+  アーキテクチャ図やフロー図など27種類に対応し、HTMLとSVGで完結するためビルド不要。
+
+  ブランド感の調整も可能で、Figmaでの微調整作業を減らしたい人に最適。'
+---
+
 # Post by @trendtech33566 on X
 2026-08-11
 図をAIに描かせると、なんか全部"よくある箱"になる人へ👀

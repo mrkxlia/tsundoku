@@ -1,4 +1,21 @@
-https://zenn.dev/ncdc/articles/56d60cb79319b2
+---
+url: https://zenn.dev/ncdc/articles/56d60cb79319b2
+created: '2026-08-10T23:41:22'
+type: article
+tags:
+- claudecode
+- ai
+- プログラミング
+- 開発効率化
+summary: 'AIのプロジェクトキャッチアップ説明が抽象的になる原因と対策について解説しています。
+
+  良い例と悪い例を提示して具体性のレベルを縛り、mermaid等の図の出力を必須にすることで実用的な出力を得る手法を紹介しています。
+
+  抽象的な指示ではなく実例と形式の指定を行うことで、AIの回答の質を向上させるアプローチをまとめています。'
+sources:
+- https://zenn.dev/p/ncdc
+---
+
 # [Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話
 2026-08-11
 [NCDC テックブログ](https://zenn.dev/p/ncdc) Publication Pro
