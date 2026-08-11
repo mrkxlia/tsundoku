@@ -14,6 +14,7 @@ create_client() の分岐を変えるだけでよい。
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 import re
@@ -42,6 +43,30 @@ URL: {url}
 {body}
 """
 
+PDF_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付のスライドPDFを読み、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "スライドの要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+
+制約:
+- tags は3〜5個。日本語または英小文字で、スペースを含めないこと(例: "生成ai", "プログラミング", "キャリア")
+- title にはファイル名に使えない記号(/ \\ : * ? " < > |)を使わないこと
+
+URL: {url}
+タイトルのヒント: {title_hint}
+"""
+
+VIDEO_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付の動画の内容を確認し、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "動画内容の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+
+制約:
+- tags は3〜5個。日本語または英小文字で、スペースを含めないこと(例: "生成ai", "プログラミング", "キャリア")
+- title にはファイル名に使えない記号(/ \\ : * ? " < > |)を使わないこと
+
+URL: {url}
+タイトルのヒント: {title_hint}
+"""
+
 
 class LLMError(Exception):
     """全モデルで生成に失敗した場合に送出される。"""
@@ -52,6 +77,14 @@ class LLMClient:
 
     def generate_note_meta(self, url: str, title_hint: str, body: str) -> dict:
         """クリップ1件から {"title": str, "summary": str, "tags": [str]} を返す。"""
+        raise NotImplementedError
+
+    def generate_note_meta_from_pdf(self, url: str, title_hint: str, pdf_bytes: bytes) -> dict:
+        """PDF(スライド等)を入力として同じ形式のメタ情報を返す。"""
+        raise NotImplementedError
+
+    def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
+        """YouTube動画URLを直接入力として同じ形式のメタ情報を返す。"""
         raise NotImplementedError
 
 
@@ -76,10 +109,42 @@ class GeminiClient(LLMClient):
             title_hint=title_hint or "(なし)",
             body=(body or "(本文なし)")[:MAX_BODY_CHARS],
         )
+        return self._generate_with_parts([{"text": prompt}], self.model_chain)
+
+    def generate_note_meta_from_pdf(self, url: str, title_hint: str, pdf_bytes: bytes) -> dict:
+        prompt = PDF_PROMPT_TEMPLATE.format(url=url, title_hint=title_hint or "(なし)")
+        parts = [
+            {"text": prompt},
+            {
+                "inline_data": {
+                    "mime_type": "application/pdf",
+                    "data": base64.b64encode(pdf_bytes).decode("ascii"),
+                }
+            },
+        ]
+        return self._generate_with_parts(parts, self._multimodal_chain())
+
+    def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
+        prompt = VIDEO_PROMPT_TEMPLATE.format(url=url, title_hint=title_hint or "(なし)")
+        parts = [{"text": prompt}, {"file_data": {"file_uri": video_uri}}]
+        # 動画はトークン消費が大きいため低解像度で処理する
+        return self._generate_with_parts(
+            parts, self._multimodal_chain(), media_resolution="MEDIA_RESOLUTION_LOW"
+        )
+
+    def _multimodal_chain(self) -> list[str]:
+        # Gemma系はPDF・動画入力に非対応
+        return [m for m in self.model_chain if "gemma" not in m.lower()]
+
+    def _generate_with_parts(
+        self, parts: list[dict], chain: list[str], media_resolution: str | None = None
+    ) -> dict:
+        if not chain:
+            raise LLMError("PDF/動画入力に対応するモデルがチェーンにありません")
         errors = []
-        for model in self.model_chain:
+        for model in chain:
             try:
-                text = self._call_model(model, prompt)
+                text = self._call_model(model, parts, media_resolution=media_resolution)
                 meta = _parse_meta_json(text)
                 if meta:
                     return meta
@@ -92,14 +157,16 @@ class GeminiClient(LLMClient):
                 print(f"    [llm] {model} で通信エラー — 次のモデルへフォールバック: {e}", file=sys.stderr)
         raise LLMError("全モデルで生成に失敗: " + "; ".join(errors))
 
-    def _call_model(self, model: str, prompt: str) -> str:
+    def _call_model(self, model: str, parts: list[dict], media_resolution: str | None = None) -> str:
         payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
+            "contents": [{"parts": parts}],
             "generationConfig": {"temperature": 0.3},
         }
         # Gemma系はresponseMimeType(JSONモード)非対応
         if "gemma" not in model.lower():
             payload["generationConfig"]["responseMimeType"] = "application/json"
+        if media_resolution:
+            payload["generationConfig"]["mediaResolution"] = media_resolution
 
         req = urllib.request.Request(
             GEMINI_ENDPOINT.format(model=model),
@@ -144,6 +211,14 @@ class MockClient(LLMClient):
         title = re.sub(r"^#+\s*", "", title)[:30]
         summary = "\n".join(lines[:3])[:200] or "(本文なし)"
         return {"title": title, "summary": summary, "tags": ["未分類", "mock"]}
+
+    def generate_note_meta_from_pdf(self, url: str, title_hint: str, pdf_bytes: bytes) -> dict:
+        title = (title_hint or url)[:30] or "無題"
+        return {"title": title, "summary": "(PDFモック要約)", "tags": ["未分類", "mock-pdf"]}
+
+    def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
+        title = (title_hint or url)[:30] or "無題"
+        return {"title": title, "summary": "(動画モック要約)", "tags": ["未分類", "mock-video"]}
 
 
 def _parse_meta_json(text: str) -> dict | None:
