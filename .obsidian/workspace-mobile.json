@@ -11,14 +11,10 @@
             "id": "7e88a68ec62b8db5",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "library/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術"
+              "title": "新規タブ"
             }
           }
         ]
@@ -181,34 +177,35 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "9073b3f6df866196",
+  "active": "7e88a68ec62b8db5",
   "lastOpenFiles": [
-    "library/2026-08-11-Claude-Codeのキャッチアップ方法.md",
-    "library/2026-08-11-AIインフラの最新技術動向2026-OCP-China.md",
-    "library/2026-08-11-CLIエージェント管理ツールOrcaの活用プロンプト.md",
-    "library/2026-08-11-Claude-Codeを活用した開発実践と設計スキルの重要性.md",
-    "library/2026-08-11-ZOZOのAWSにおけるJITアクセス全社導入の設計と運用.md",
-    "library/2026-08-11-Claude-CodeのHTML出力をコンサル資料級にするskills.md",
-    "library/2026-08-11-Opus-5の性能を引き出すプロンプト指示のコツ.md",
-    "library/2026-08-11-LangfuseをEC2とDockerで安価にセルフホストする方法.md",
-    "library/2026-08-11-AI駆動開発における実践的運用フロー.md",
-    "library/2026-08-11-AWS-CodeCommitを使うメリットと特徴.md",
-    "library/2026-08-11-Claude-Codeと7人のQAでテストケースの観点漏れを潰す.md",
-    "library/2026-08-11-人工知能学会に向けリサーチ自動化テンプレートを公開.md",
-    "library/2026-08-11-PMの定型業務をSkill化する実践要件定義とデータ分析.md",
-    "library/2026-08-11-Claude-Codeのセキュリティ対策と推奨設定手順.md",
-    "library/2026-08-11-Anthropic公式のClaude-Code活用ベストプラクティス.md",
-    "library/2026-08-11-Herdrを用いたAIエージェントの並列実行とレビュー.md",
-    "library/2026-08-11-Claude連携の自動調査ツール-Auto-Research.md",
-    "library/2026-08-11-Claude-Codeによる設計書作成サブエージェントの作り方.md",
-    "library/2026-08-11-AI開発環境-orca-ADEの紹介.md",
-    "/library/2026-08-11-人工知能学会に向けリサーチ自動化テンプレートを公開.md",
-    "/library/2026-08-11-ZOZOのAWSにおけるJITアクセス全社導入の設計と運用.md",
-    "/library/2026-08-11-PMの定型業務をSkill化する実践要件定義とデータ分析.md",
-    "/library/2026-08-11-Opus-5の性能を引き出すプロンプト指示のコツ.md",
-    "/library/2026-08-11-LangfuseをEC2とDockerで安価にセルフホストする方法.md",
-    "/library/2026-08-11-Herdrを用いたAIエージェントの並列実行とレビュー.md",
-    "/library/2026-08-11-Claude連携の自動調査ツール-Auto-Research.md",
+    "library/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
+    "library/2026-08-11-S3セキュリティ-8つのベストプラクティス.md",
+    "library/2026-08-11-AIを活用したプロジェクト運営とPMOの試行錯誤.md",
+    "library/2026-08-11-Claude-Codeのcompact問題点と対策.md",
+    "library/2026-08-11-ガウス過程回帰とベイズ最適化の基礎解説.md",
+    "library/2026-08-11-中間記法パターン(MNP)によるAI化手法の解説.md",
+    "library/2026-08-11-SlackベースのWBS管理とAI活用.md",
+    "library/2026-08-10-Claude-CodeのSkill設計でAIの「それっぽい説明」を防ぐ方法.md",
+    "library/2026-08-11-Deep-Researchの長文を会議用レポートに変換するスキル.md",
+    "library/2026-08-11-無限に広がるキャンバスを持つIDE-cate.md",
+    "library/2026-08-11-名古屋の治安別コスパ良いホテル18選.md",
+    "library/2026-08-11-森岡毅のTCL分析で自分の強みを見つける方法.md",
+    "library/2026-08-11-日本語技術文書の文章規範と推敲ルール.md",
+    "library/2026-08-11-MCPでスキル配布の課題を解決した体験談.md",
+    "library/2026-08-11-Claude-5世代向けコンテキストエンジニアリング.md",
+    "library/2026-08-11-Claude-Code用前端デザインツールキット.md",
+    "library/2026-08-11-Anthropic社内でのClaude活用法と情報共有.md",
+    "library/2026-08-11-文章からAI特有の表現を除去するスキルファイル.md",
+    "library/2026-08-11-Anthropic社員が使う仕事の学習用プロンプト.md",
+    "library/2026-08-11-AIで多様な図解を作成できるdiagram-design.md",
+    "library/2026-08-11-Claude-Codeで開発状況を図解化する神GitHubツール.md",
+    "/archive/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
+    "archive/2026-08-10-AI出力の抽象化を防ぐClaude-Code-Skillの設計術.md",
+    "/archive",
+    "/library/2026-08-11-無限に広がるキャンバスを持つIDE-cate.md",
+    "/library/2026-08-11-森岡毅のTCL分析で自分の強みを見つける方法.md",
+    "/library/2026-08-11-日本語技術文書の文章規範と推敲ルール.md",
     "/library",
     "/Inbox",
     "template",
@@ -217,7 +214,6 @@
     "requirements.txt",
     "scripts/media_types.py",
     "/scripts/media_types.py",
-    "/scripts/llm_client.py",
-    "/requirements.txt"
+    "/scripts/llm_client.py"
   ]
 }
