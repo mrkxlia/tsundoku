@@ -1,4 +1,20 @@
-https://zenn.dev/gsy0911/articles/a4dc76f0639576
+---
+url: https://zenn.dev/gsy0911/articles/a4dc76f0639576
+created: '2026-08-12T09:10:56'
+type: article
+tags:
+- raspberrypi
+- nixos
+- claudecode
+- ai
+- infrastructure
+summary: 'Raspberry Pi 5とNixOS環境を用いて、Claude Codeを24時間常時起動させる仕組みを構築します。
+
+  MacBookのスリープ等の影響を受けない専用機として、SDイメージのビルドからSSH設定までの手順を解説します。
+
+  宣言的な設定管理により、トラブル時も容易に環境を再構築できるようにしています。'
+---
+
 # Raspberry Pi 5でClaude Codeを動かす
 2026-08-11
 ## はじめに

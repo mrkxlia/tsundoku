@@ -1,4 +1,19 @@
-https://zenn.dev/catatsuy/scraps/7a1bb37421789b
+---
+url: https://zenn.dev/catatsuy/scraps/7a1bb37421789b
+created: '2026-08-12T09:10:56'
+type: article
+tags:
+- genrec
+- netflix
+- 推薦システム
+- llm
+summary: 'GenRecはユーザーの行動履歴を文章化してLLMに入力するNetflixの新しい推薦システムです。
+
+  作品名のテキスト生成は行わず、LLMの内部表現から専用ヘッドでカタログ内作品のスコアを直接算出します。
+
+  Prefill-only推論を用いることで生成コストを抑えつつ高速かつ高精度なランキングを実現しています。'
+---
+
 # GenRecの技術的詳細
 2026-08-12
 ## GenRec：Netflixが目指すLLMネイティブな推薦システム
