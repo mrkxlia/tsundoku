@@ -1,4 +1,19 @@
-https://qiita.com/tehito/items/356e5f1dba112a075be1?utm_source=dlvr.it&utm_medium=twitter
+---
+url: https://qiita.com/tehito/items/356e5f1dba112a075be1?utm_source=dlvr.it&utm_medium=twitter
+created: '2026-08-12T09:10:56'
+type: article
+tags:
+- claudecode
+- ai
+- 開発効率化
+- プログラミング
+summary: 'Claude Codeの活用において多くの人が陥りがちな7つのミスを解説しています。
+
+  コンテキストの無駄遣いや設計の丸投げを防ぎ、適切な設定や運用を行うための実践的なアプローチが紹介されています。
+
+  コードを書くのではなくタスクを委任するという意識改革の重要性を説いています。'
+---
+
 # 正直に言う。お前のClaude Codeの使い方は間違っている
 2026-08-12
 「Claude Code、思ったより速くならないな」と感じているなら、原因はモデルでもプランでもない。 **お前の使い方だ。**
