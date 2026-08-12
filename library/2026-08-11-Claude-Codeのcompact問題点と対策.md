@@ -12,6 +12,8 @@ summary: 'Claude Codeのcompact機能による会話履歴の要約は非可逆�
   これに対する対策として、圧縮前状態を保存するskill、復旧用マーカーを使う2段階hook、60%通知による自動圧縮回避の仕組みを実装した。
 
   1M context環境と組み合わせることで、 compactを多用しても論理破綻が起きない安定したセッション運用が可能になる。'
+title: claude codeのcompactの問題点と対策
+read: false
 ---
 
 # claude codeのcompactの問題点と対策

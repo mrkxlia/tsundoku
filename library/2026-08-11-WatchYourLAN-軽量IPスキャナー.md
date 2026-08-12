@@ -12,6 +12,8 @@ summary: 'WatchYourLANはGo言語で書かれた軽量なネットワークIPス
   Web GUIを備え、新規ホストの検知通知やオンライン履歴のモニタリングが可能です。
 
   InfluxDBやPrometheusと連携し、Grafanaでのダッシュボード構築にも対応しています。'
+title: 'aceberg/WatchYourLAN: Lightweight network IP scanner written in Go. With notifications, history, export to Grafana'
+read: false
 ---
 
 # aceberg/WatchYourLAN: Lightweight network IP scanner written in Go. With notifications, history, export to Grafana

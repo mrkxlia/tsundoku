@@ -13,6 +13,8 @@ summary: '数理最適化モデリングツール「JijModeling 2」の新版が
   Flat ASTの採用によりコンパイル時間とメモリ使用量を大幅削減しました。
 
   Claude Fable 5の活用で初期実装が実働2日に短縮され約1ヶ月でリリースされました。'
+title: JijModeling 2新版リリース Claude活用で開発短縮
+read: false
 ---
 
 数理最適化モデリングツール「JijModeling 2」の新バージョンをリリースしました 🚀

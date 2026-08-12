@@ -13,6 +13,8 @@ summary: 'Claude CodeがPlanを提示する前に自動でCodexにレビュー�
   codexのresume --lastオプションを利用することで、容易に実装することが可能となった。
 
   開発効率の向上に役立つ実践的なワークフローとして注目される。'
+title: Claude CodeでCodex自動レビューを動かす方法
+read: false
 ---
 
 # Post by @MLBear2 on X

@@ -12,6 +12,8 @@ summary: 'AIによる図解作成でよくある画一的な見た目を改善�
   アーキテクチャ図やフロー図など27種類に対応し、HTMLとSVGで完結するためビルド不要。
 
   ブランド感の調整も可能で、Figmaでの微調整作業を減らしたい人に最適。'
+title: AIで多様な図解を作成できるdiagram design
+read: false
 ---
 
 # Post by @trendtech33566 on X

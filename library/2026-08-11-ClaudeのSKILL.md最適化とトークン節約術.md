@@ -13,6 +13,8 @@ summary: 'Anthropic公式ガイドを参考にAIエージェントの構成を�
   段階的開示(Progressive Disclosure)の仕組みを取り入れることで、SKILL.mdのトークン消費量を約40-45%削減。
 
   レスポンス速度の向上やエラー時の自律対処力アップに効果的な実践的手法として紹介されている。'
+title: ClaudeのSKILL.md最適化とトークン節約術
+read: false
 ---
 
 # Post by @shocolt on X

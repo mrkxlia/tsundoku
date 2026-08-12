@@ -13,6 +13,8 @@ summary: 'Oikon氏によるZennfes Spring 2026での登壇スライド資料で�
   変化の早いAIツール「Claude Code」の情報収集や学習手法について紹介されています。
 
   Xでの情報発信や書籍執筆を行う著者による実践的なキャッチアップ法がまとめられています。'
+title: Claude Codeをどのように キャッチアップしているか
+read: false
 ---
 
 # Claude Codeをどのように キャッチアップしているか

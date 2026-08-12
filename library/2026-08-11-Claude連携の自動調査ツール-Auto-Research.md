@@ -13,6 +13,8 @@ summary: 'GitHub ActionsとClaude Codeを組み合わせた自動リサーチツ
   設定トピックの最新Web調査結果を毎日GitHub IssuesやSlackへ自動配信します。
 
   サーバー構築やコード記述は不要で、テンプレートから約5分で導入できます。'
+title: 'INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)'
+read: false
 ---
 
 # INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)
