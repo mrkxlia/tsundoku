@@ -1,4 +1,19 @@
-https://techblog.zozo.com/entry/new-employee-account-automation
+---
+url: https://techblog.zozo.com/entry/new-employee-account-automation
+created: '2026-08-11T20:15:40'
+type: article
+tags:
+- githubactions
+- powershell
+- kintone
+- activeDirectory
+summary: 'kintoneから入社データを取得し、GitHub Actionsとself-hosted runnerを用いて閉域オンプレADのアカウント作成を自動化する取り組みを解説。
+
+  散在していた業務ロジックをPowerShellスクリプトとしてコード化し、リポジトリで一元管理することで、手作業による課題を解決。
+
+  Microsoft Entra ConnectやGraph APIのオンデマンドプロビジョニングを活用し、クラウド側への即時反映を実現。'
+---
+
 # 閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化
 2026-08-11
 ![閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化](https://cdn-ak.f.st-hatena.com/images/fotolife/v/vasilyjp/20260715/20260715112341.png)
