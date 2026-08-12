@@ -1,0 +1,527 @@
+https://speakerdeck.com/recruitengineers/developerssummit2026summer_kuroda
+# 開発が速く安くなった後の話　AI時代のソフトウェアエンジニアリング組織論 #devsumi
+2026-08-12
+## Recruit PRO
+
+July 16, 2026
+
+## More Decks by Recruit
+
+[
+
+つくって納得、つかって実感！ 大規模言語モデルことはじめ ver2.0
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_kiryu "つくって納得、つかって実感！ 大規模言語モデルことはじめ ver2.0")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+4
+
+1.2k
+
+[
+
+ブラウザ研修 2026
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_furukawa "ブラウザ研修 2026")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+5
+
+800
+
+[
+
+事業価値と Engineering 2026年度版
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_kuroda "事業価値と Engineering 2026年度版")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+45
+
+22k
+
+[
+
+トヨタ⽣産⽅式(TPS)⼊⾨
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_sone "トヨタ⽣産⽅式(TPS)⼊⾨")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+3
+
+650
+
+[
+
+JavaScript 研修 (2026)
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_mizutari "JavaScript 研修 (2026)")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+460
+
+[
+
+TypeScript入門 2026
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_shizukuishi "TypeScript入門 2026")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+3
+
+500
+
+[
+
+モダンフロントエンド 開発研修
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_sato "モダンフロントエンド 開発研修")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+4
+
+560
+
+[
+
+Webアクセシビリティ入門 2026
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_web_shizukuishi "Webアクセシビリティ入門 2026")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+3
+
+460
+
+[
+
+攻撃と防御で学ぶAI時代のプロダクトセキュリティ演習
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_yamada_nakanishi "攻撃と防御で学ぶAI時代のプロダクトセキュリティ演習")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+8
+
+2.2k
+
+## Other Decks in Business
+
+[
+
+「ユーザー価値か、事業成果か？」 そんな意思決定で悩む前に PMがやるべきこと
+
+](https://speakerdeck.com/inagakikay/yuzajia-zhi-ka-shi-ye-cheng-guo-ka-yi-si-jue-ding-noqian-nisonnakotodenao-muqian-ni-pmgayarubekikoto "「ユーザー価値か、事業成果か？」 そんな意思決定で悩む前に PMがやるべきこと")
+
+[inagakikay](https://speakerdeck.com/inagakikay)
+
+2
+
+960
+
+[
+
+若手としての正解を得られなかった話~でもたぶん生きのこれる~
+
+](https://speakerdeck.com/chronoll/ruo-shou-tositenozheng-jie-wode-rarenakatutahua-demotabunsheng-kinokoreru "若手としての正解を得られなかった話~でもたぶん生きのこれる~")
+
+[chronoll](https://speakerdeck.com/chronoll)
+
+0
+
+400
+
+[
+
+令和8年度会社パンフレット
+
+](https://speakerdeck.com/wf714201/ling-he-8nian-du-hui-she-panhuretuto-8df531d5-426e-47ed-825f-3d6925507b12 "令和8年度会社パンフレット")
+
+[wf714201](https://speakerdeck.com/wf714201)
+
+0
+
+610
+
+[
+
+AWS Summit Taipei 2026: Decomposing Ontology and Agentic AI - Using Amazon Bedrock to Bring Living Water to Manufacturing ERP
+
+](https://speakerdeck.com/dwchiang/aws-summit-taipei-2026-decomposing-ontology-and-agentic-ai-using-amazon-bedrock-to-bring-living-water-to-manufacturing-erp "AWS Summit Taipei 2026: Decomposing Ontology and Agentic AI - Using Amazon Bedrock to Bring Living Water to Manufacturing ERP")
+
+[dwchiang](https://speakerdeck.com/dwchiang)
+
+0
+
+420
+
+[
+
+SimpleForm 会社紹介資料
+
+](https://speakerdeck.com/simpleform/simpleformhui-she-shuo-ming-zi-liao "SimpleForm 会社紹介資料")
+
+[simpleform](https://speakerdeck.com/simpleform)
+
+2
+
+58k
+
+[
+
+LTV, 실무에서는 이렇게 씁니다
+
+](https://speakerdeck.com/datarian/ltv-silmueseoneun-ireohge-sseubnida "LTV, 실무에서는 이렇게 씁니다")
+
+[datarian](https://speakerdeck.com/datarian)
+
+0
+
+660
+
+[
+
+医院継承G紹介資料\_エムスリー株式会社
+
+](https://speakerdeck.com/m3/yi-yuan-ji-cheng-gshao-jie-zi-liao-emusurizhu-shi-hui-she "医院継承G紹介資料_エムスリー株式会社")
+
+[m3](https://speakerdeck.com/m3)
+
+0
+
+250
+
+[
+
+＜DevLOVE関西＞関係性が育つ前にフィードバックを届ける ～関係性が育つのを待てないとき、どう渡すのか～
+
+](https://speakerdeck.com/emi0726/devloveguan-xi-guan-xi-xing-gayu-tuqian-nihuidobatukuwojie-keru-guan-xi-xing-gayu-tunowodai-tenaitoki-doudu-sunoka "＜DevLOVE関西＞関係性が育つ前にフィードバックを届ける ～関係性が育つのを待てないとき、どう渡すのか～")
+
+[emi0726](https://speakerdeck.com/emi0726)
+
+4
+
+190
+
+[
+
+堅牢でスケーラブルな働き方を構築する技術
+
+](https://speakerdeck.com/ikuodanaka/jian-lao-tesukerahurunadong-kifang-wogou-zhu-suruji-shu "堅牢でスケーラブルな働き方を構築する技術")
+
+[ikuodanaka](https://speakerdeck.com/ikuodanaka)
+
+3
+
+1.2k
+
+[
+
+OKRの本質 / Scrum Fest Osaka 2026
+
+](https://speakerdeck.com/kawaguti/okr-essence-scrum-fest-osaka-2026 "OKRの本質 / Scrum Fest Osaka 2026")
+
+[kawaguti](https://speakerdeck.com/kawaguti)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+6
+
+3.7k
+
+[
+
+AIネイティブな組織を問い直す
+
+](https://speakerdeck.com/smiyawaki0820/aineiteibunazu-zhi-wowen-izhi-su "AIネイティブな組織を問い直す")
+
+[smiyawaki0820](https://speakerdeck.com/smiyawaki0820)
+
+15
+
+6.4k
+
+[
+
+GOドライブ会社紹介資料
+
+](https://speakerdeck.com/go_drive_corp/godoraibuhui-she-shao-jie-zi-liao "GOドライブ会社紹介資料")
+
+[go\_drive\_corp](https://speakerdeck.com/go_drive_corp)
+
+0
+
+4.5k
+
+## Featured
+
+[
+
+Accessibility Awareness
+
+](https://speakerdeck.com/sabderemane/accessibility-awareness "Accessibility Awareness")
+
+[sabderemane](https://speakerdeck.com/sabderemane)
+
+1
+
+170
+
+[
+
+RailsConf 2023
+
+](https://speakerdeck.com/tenderlove/railsconf-2023 "RailsConf 2023")
+
+[tenderlove](https://speakerdeck.com/tenderlove)
+
+30
+
+1.5k
+
+[
+
+Why You Should Never Use an ORM
+
+](https://speakerdeck.com/jnunemaker/why-you-should-never-use-an-orm "Why You Should Never Use an ORM")
+
+[jnunemaker](https://speakerdeck.com/jnunemaker)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+61
+
+10k
+
+[
+
+Scaling GitHub
+
+](https://speakerdeck.com/holman/scaling-github "Scaling GitHub")
+
+[holman](https://speakerdeck.com/holman)
+
+464
+
+140k
+
+[
+
+The B2B funnel & how to create a winning content strategy
+
+](https://speakerdeck.com/katarinadahlin/the-b2b-funnel-and-how-to-create-a-winning-content-strategy "The B2B funnel & how to create a winning content strategy")
+
+[katarinadahlin](https://speakerdeck.com/katarinadahlin)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+460
+
+[
+
+Build your cross-platform service in a week with App Engine
+
+](https://speakerdeck.com/jlugia/build-your-cross-platform-service-in-a-week-with-app-engine "Build your cross-platform service in a week with App Engine")
+
+[jlugia](https://speakerdeck.com/jlugia)
+
+234
+
+19k
+
+[
+
+Building Adaptive Systems
+
+](https://speakerdeck.com/keathley/building-adaptive-systems "Building Adaptive Systems")
+
+[keathley](https://speakerdeck.com/keathley)
+
+44
+
+3.2k
+
+[
+
+Building a A Zero-Code AI SEO Workflow
+
+](https://speakerdeck.com/portentint/building-a-a-zero-code-ai-seo-workflow "Building a A Zero-Code AI SEO Workflow")
+
+[portentint](https://speakerdeck.com/portentint)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+660
+
+[
+
+Dominate Local Search Results - an insider guide to GBP, reviews, and Local SEO
+
+](https://speakerdeck.com/greggifford/dominate-local-search-results-an-insider-guide-to-gbp-reviews-and-local-seo "Dominate Local Search Results - an insider guide to GBP, reviews, and Local SEO")
+
+[greggifford](https://speakerdeck.com/greggifford)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+260
+
+[
+
+Getting science done with accelerated Python computing platforms
+
+](https://speakerdeck.com/jacobtomlinson/getting-science-done-with-accelerated-python-computing-platforms "Getting science done with accelerated Python computing platforms")
+
+[jacobtomlinson](https://speakerdeck.com/jacobtomlinson)
+
+2
+
+410
+
+[
+
+Chrome DevTools: State of the Union 2024 - Debugging React & Beyond
+
+](https://speakerdeck.com/addyosmani/chrome-devtools-state-of-the-union-2024-debugging-react-and-beyond "Chrome DevTools: State of the Union 2024 - Debugging React & Beyond")
+
+[addyosmani](https://speakerdeck.com/addyosmani)
+
+10
+
+1.3k
+
+[
+
+Evolution of real-time – Irina Nazarova, EuRuKo, 2024
+
+](https://speakerdeck.com/irinanazarova/evolution-of-real-time-irina-nazarova-euruko-2024 "Evolution of real-time – Irina Nazarova, EuRuKo, 2024")
+
+[irinanazarova](https://speakerdeck.com/irinanazarova)
+
+9
+
+1.5k
+
+## Transcript
+
+1. ### DEVELOPERS SUMMIT 2026 SUMMER 開発が速く安くなった後の話 AI時代のソフトウェアエンジニアリング組織論 Indeed Recruit Technologies Vice
+	President　黒田　樹
+2. ### はじめに 02 私たちについて リクルートのHR Tech SBUで、Indeed PLUSを提供・運用しています。 自部署のエンジニア全体に2025年6月からClaude Codeを、2025年9月からCodexを配布しました。使い方は指定せず、現場ごとに何が起きるかを観察しました。 今日の話は、この社内実証と、その後の組織の動きがベースです。
+	Indeed Plusとは・・・複数の求人サイトと採用管理システム（ ATS）を繋ぎ、企業が登録した求人内容に合わせて、 Indeedのマッチングテクノロジーが最 適な連携求人サイトに自動で求人を掲載する仕組み ※ 出典：1月30日発表 IndeedによるIndeed PLUSプレスリリース ※Indeed PLUS 利用の際には、Indeedの利用規約、掲載基準、使用制限が適用されます。Indeed PLUSは配信最適化の結果、複数ではなく単一の連携求人サイトにのみ掲載される場合があります。 掲載対象となる連携求人サイトの種類や掲載可能時期は変更の可能性があります。当該連携求人サイトのうち、求人の内容・特性や閲覧・応募状況等に照らしてIndeedが最も当該求人に相応しいと判断した連携求人サイトへ自動掲載します。
+3. ### はじめに 03 ボトルネックはどこへ移るかが、今日のテーマ AIの議論は「仕事が消えるか」と「どのモデルが賢いか」に集まりやすい。今日のテーマは三つ目、 「ボトルネックはどこへ移るか」 です。 実装が速くなっても、開発全体が同じ倍率で速くなった現場は ありませんでした 。どこかが次のボトルネックになります。 ボトルネック候補＝管が膨らむ場所
+	要求 要件 実装：AIで速く テスト 運用
+4. ### 01 歴史から始める ソフトウェアエンジニアリングの職能は、技術革新のたびに消えず に配置を変えてきました。 まず、ソフトウェア以前から確認します。産業革命、電気、そして ITの誕 生。技術と仕事の関係には、 250年分の記録があります。
+5. ### 01 · 歴史から始める 05 産業革命：移行に 1世紀。労働者も石炭消費も増えた 蒸気機関が登場してから、工場の動力が手工業や水力から置き換わるまで、およそ 1世紀かかっています。 変化がいきなり起きて明日から仕事がない。というわけではなかったようです。 そして労働者は、減らずに増えました
+	。機械化で製品が安くなり、需要がそれ以上に伸びたためです。 石炭の消費は、効率化で減るどころか増えました。英国の石炭消費は 1900年までに 3倍 。1865年にジェボンズ氏が『石炭問題』で指摘した、効率化はかえって需要を増やすとい う逆説（ ジェボンズのパラドックス ）です。 出典：Atack, Bateman, Margo／Bessen／Jevons『石炭問題』（1865）
+6. ### 01 · 歴史から始める 06 本当に仕事は消えるのか？基本構造は、置換と復権 AIの話は、「ジュニアは要らなくなるのか」「仕事は消えるのか」だいたいこの二択になりがちです。 Acemoglu–Restrepo両氏の整理では、自動化は既存タスクを機械・ソフトウェア・設備に置換すると同時に（ 代替効果 ）、人間に比較優位のある新しいタスクを創出しま す（
+	復権効果 ）。雇用の質は変容し、雇用総量は新たな均衡へ推移する。 復権は自動では起きません。 電気の時代が分かりやすい例です。電気を引くだけの工場では生産性が上がらず、モーターを前提に作業の順序まで組み替えた工場で、 はじめて効果が出ました。復権は、技術に合わせて仕事を組み替えた側に来ると言われています。 代替効果 既存タスクを機械が置換 復権効果 新しいタスクを人が担う 参考：Acemoglu & Restrepo, "Automation and New Tasks," JEP 2019 自動化で減った分だけ、新たな仕事が増え、 それにリソースが割り当てられてきた
+7. ### 01 · 歴史から始める ＜参考＞工程をモーターを前提に組み替えた工場から効果が出た 電気の時代が分かりやすい例です。初期の工場は、動力源を蒸気機関からモーターに置き換えただけでした。天井の軸とベルトが残ったため、機械の配置は動力の都合 に従属したままで、生産性は約30年上がらなかったと言われています。効果が出たのは、各機械に小さなモーターを付け、機械を作業の順序どおりに並べ替えた工場から です。天井が空いて採光やクレーンも使えるようになりました。復権は、技術に合わせて仕事を組み替えた側に来ます。 出典： ・Paul A.
+	David (1990) "The Dynamo and the Computer: An Historical Perspective on the Modern Productivity Paradox," American Economic Review, Vol.80, No.2 ・Wikipedia "Line shaft" https://en.wikipedia.org/wiki/Line\_shaft ・ASSEMBLY Magazine "Line Shafts and Belts" https://www.assemblymag.com/articles/82814-line-shafts-a nd-belts
+8. ### 01 · 歴史から始める 07 ITの誕生以降も、同じ構造が繰り返された 1960年代のメインフレームは定型的な事務処理を置換し、 COBOLやFortranを扱う専門職と、システム管理者などの間接要員を増やしました。 1980年代のオープン系はSysadminという職能を急増させ、1990年代のインターネット、2007年のスマートフォン、2010年代のクラウドも、そのたびに職能 を置換し、新しい職能を作っています。 置換された仕事
+	生まれた職能 1960s メインフレーム 1980s オープン系 1990s インターネット 2007 スマートフォン 2010s クラウド
+9. ### 01 · 歴史から始める 08 抽象化が起きると、職能は二手に分かれる エンジニアがある領域を技術で隠蔽すると、職能が二系統に分かれます。 一方は、隠蔽された基盤を 支え続ける側 。中身が見えなくなった分、求められる技術力は深くなり、人数は少数になります。 もう一方は、中身を知らなくても使える
+	抽象の上に立つ側 。参入障壁が下がり、人数がスケールします。 パンチカードの時代は、基盤を支えるプログラマーと、抽象の上でスケールするキーパンチャーに分かれました。ソフトウェアの歴史の中で、この分かれ方 は繰り返し起きています。
+10. ### 01 · 歴史から始める 09 技術の抽象化による隠蔽が進むたびに、エンジニアは増えた 日本のITエンジニアは、1985年の約32万人から2024年の約144万人へ、 4.5倍に増えました。 構造は石炭と同じです。単位コストが下がると用途が広がり、総需要が増える。 ジェボンズのパラドックスは、ソフトウェアでも繰り返されてきました。
+11. ### 01 · 歴史から始める 10 今回隠蔽されつつあるのは「実装」とその周辺 AIは、コーディングに加えて設計案・テスト・調査・移行・レビュー補助まで、開発プロセス内の生成作業を広く抽象化し始めています。 歴史の構造に従えば、この先に起きるのは史上最大級の分化と再配置です。 分化の先に何がスケールし、誰が基盤を支えるのか。それを考えるために、まず経済性の変化を見ます。 開発プロセス内の生成作業 設計案・実装・テスト・調査・移行・レビュー補助
+	… AIによる抽象化 ？？？？？ ？？？？？
+12. ### 02 開発の経済性が変わる ROIの分母であるInvestmentが、AIで下がり始めました。 ここから、開発組織の前提が順番に変わっていきます。
+13. ### 02 · 開発の経済性が変わる 12 ROIの成立する境界が下がる これまで作られなかったシステムの多くは、価値が低かったのではなく、 ROIが合わなかっただけ です。 従来は開発コストが高く、ROI成立境界上に出るのは全員で1つを共同利用するような巨大システムだけでした。AIでInvestment(開発コスト)が下がるとROI境界そのものが 下がり、部署単位・顧客単位・業務単位の
+	個別事情の開発が境界上に現れます。だから開発の総量は自然と増えていきます。石炭と同じです。 我々が直面するのは「作れない」ではなく「作る対象が増え続ける」状況です。 (旧)ROI成立境界 (新)ROI成立境界
+14. ### 02 · 開発の経済性が変わる 14 しかし、残る Iがある 下がるのは、初期開発のInvestmentです。 検証、統合、運用、保守、障害対応、セキュリティ、そして責任。作った後に掛かり続ける費用は、 開発コストが安くなっても自然には下がりません。 作るコストが下がり開発量は増える中、維持保守をコストをかけて受け止める必要があります。
+15. ### 03 現場で何が起きたか ここまでは構造の話でした。ここからは実測の話です。 AIを現場に配って観察した結果、成果は現場ごとにはっきり割れました。 我々はこの差分を6つの観点で読み解きました。 必要コンテキスト量 現実世界依存性 影響範囲の閉じやすさ 決定論的検証のしやすさ チームの経験量
+	自動化との相性
+16. ### 03 · 現場で何が起きたか 16 事例1：大規模レガシーシステム A。境界の設計と、推論を絞る経験者の暗黙知 このシステムはビジネス上、機能追加を急ぐ必要がありました。しかし JSPとサー バサイドで実装されたレガシー本体に手を入れると、影響範囲の調査とテストが 際限なく膨らむことが見えていました。何かを捨てて何かを得る水準の判断が前
+	提です。そこで構造には手を入れず、 JSPをAPIと捉え、JSPがincludeする JavaScriptの側で業務要件を満たす設計にしました。結果的にレガシーに触れな いため影響が閉じ、AIに与えるコンテキストも小さくて済みました。これはあくまで 結果論です。 進め方は経験者との対話が中心です。経験者が暗黙知で文脈を補い、 AIの推論 を必要な範囲に絞り込みました。強い境界のある領域で、 AIは安定して機能しま した。 得られた示唆 • レガシーは作り直さなくても対象にできる。本体に触れない境界を一枚設け れば影響が閉じ、一つの変更に必要なコンテキストが小さくなる。 • 経験者が暗黙知で文脈を補うと、推論は必要な範囲に絞り込める。強い境界 との組み合わせで、AIは安定して機能する。
+17. ### 03 · 現場で何が起きたか 17 事例2：『Airワーク 採用管理』暗黙知の仕組み化と結果的に推論に FITしたアーキテクチャ 『Airワーク 採用管理』では、対象システムの経験が浅いメンバーがベテランと同じ手順で開 発できる形を作りました。要件明確化から実装、テスト生成、
+	PRレビュー、振り返りまでを Skills とカスタムエージェントのパイプラインに組み、ベテランの暗黙知を仕組みの側へ外部 化しています。開発プロセスのうち仕組みにできる部分は、可能な限り AI特化で作り直しまし た。 アーキテクチャは、UI / BFF / API がリクエスト単位に独立し、変更の影響が閉じやすい構 成でした。裏返せば冗長なコード構成です。ベトナムオフショア開発で生産量を担保するた め、冗長なトランザクションスクリプトの量産を許容してきた歴史的経緯によるものです。この 「冗長だが疎結合」という性質 は、一つの変更に必要なコンテキストが小さいことを意味し、 AIの推論と相性が良いものでした。 AIを見込んで選んだ設計ではなく、後から振り返ると噛 み合っていた、という順序です。 得られた示唆 • 経験差が大きい環境ほど、暗黙知を仕組みに変換する価値が高い。 • 推論との相性を決めたのはアーキテクチャの疎結合性。冗長でも影響が閉じていれ ば、一つの変更に必要なコンテキストが小さく、推論が安定する。
+18. ### 03 · 現場で何が起きたか 18 事例3：『フロム・エー ナビ』・『はたらいく』・『とらばーゆ』・『リクナビ派遣』などの SEO。 作る順序が逆転した SEOは、Googleのガイドライン、Search Console、クローラー仕様という一般論で
+	AIの推論を拘束しやすい領域です。改修もフロントに閉じる範囲に絞れます。この 条件がそろった結果、起案から実装まで 0.5日、3か月で63施策を実装しました。 数字より大きな変化は順序の逆転 です。従来はSprint Planningのような会議で 施策を絞り、選ばれたものだけを作っていました。作るコストが下がった後は、先 にアイデアを全部作り、会議では間引く方を決めます。作ってから間引く方が、 絞ってから作るより速かった。 得られた示唆 • 「絞ってから作る」は、実装が高価だという前提での手順だった。実装のコスト が下がるとボトルネックは実装から意思決定に移る。そこで会議の役割を「作 るものを選ぶ」から「作られたものを間引く」へ組み替えた。 制約理論で言う 従属を、開発プロセスに適用した形になる。 • 一般論で推論を拘束でき、影響がフロントに閉じる領域では、推論が安定す る。どの領域から着手するかの選択が、 AI活用の成否を分ける。
+19. ### 03 · 現場で何が起きたか 19 事例4：『リクナビ NEXT』バッチ。現実がコードの外にあった 性能問題のあったバッチ処理の改善を、 AIで進めようとして苦戦しました。最終的には AIでの解決を見切り、テックリードが自力で解決しています。 支配的だったのは、再実行性、処
+	理時間、整合性、負荷制約、データ分布といったコード外の現実制約です。 コードを全部読ませても、AIには本番の物理が見えません。 見えないまま推論させた結果が偽陽性です。コンパイルも単体テストも通るのに、本番で破綻するコードが出てきます。しかも人間が書いたように見えるぶん、レビューする側の批判 的思考が止まりやすい。 得られた示唆 • 苦戦の原因はモデルの能力不足ではなく、コンテキストの不足。必要なコンテキストの大半が コードの外にある領域では、推論の限界を超えたぶんが偽陽性として出てくる。 • 偽陽性はコンパイルや単体テストでは捕まらない。本番相当の負荷とデータでの検証を推論 の外側に置くか、人が引き取る判断も含めて進め方を決めておく。
+20. ### 03 · 現場で何が起きたか 20 事例5：『Airワーク 採用管理』 のEOSL対応。 　　　　回り続けたループと、決定論に品質責任を寄せる設計 『Airワーク』のEOSL対応の主眼は、ライブラリや言語のバージョンアップを安 全に進めるため、既存挙動を担保する保全テストを大量に作ることでした。バ
+	グも含めて、今の挙動でグリーンになるテストコードです。 最初はラルフルー プ的な構造で組みました。 while:; do cat PROMPT.md | claude-code; done 人手を挟まずに改善が回り続ける、いまで言うループエンジニアリングを、名 前がつく前に手探りで組んでいたことになります。 ループは自動で回り続けました。 それでも品質は収束せず、数日で数百万円 のトークン代を溶かしました。 原因を分解すると、要件・観点・コード生成・評 価が一つの生成に混ざり、生成も評価の反映も同じ確率的な系の中にありま した。コンテキストが膨れ、周回のたびに改善方向が揺れる。失敗の原因はモ デルの性能不足ではなく、一発で正解を出させる問題設定が大きすぎたこと でした。
+21. ### 03 · 現場で何が起きたか 22 うまくいった形は、ループの形を保ったまま中身を差し替えたものです。 1 AIの役割は観点出しとYAMLのテスト仕様書の生成までに限定する。 2 YAMLからのテストコード生成は決定論的プログラムが行う。 3
+	評価はテスト実行とカバレッジ計測で決定論的に行う。 4 足りない観点だけをAIに追加生成させて、次の周回に渡す。 振り返ると、確率論ベースの生成・評価の構造から 確率論ベースの生成と 決定論ベースの評価系に品質責任を寄せる ハーネスエンジニ アリング 風の形へ移行していたことになります。 得られた示唆 • ループを回すだけでは品質は収束しない。何を確率に任せ、何を決定論に固 定するかの設計が成否を分けた。一発で正解を出させる問題設定は、探索 空間が広すぎて破綻しやすい。 • 生成は確率のままでよい。品質責任を決定論の評価系（テスト実行・カバレッ ジ計測）に寄せると、周回ごとの揺れが収まり、ループが収束に向かう。 事例5：『Airワーク 採用管理』の EOSL対応。 　　　　回り続けたループと、決定論に品質責任を寄せる設計
+22. ### 03 · 現場で何が起きたか 23 事例6：AI-OPS。運用調査は AIと相性がよかった アラート起点の障害調査は、ログ、ソースコード、運用知識、過去障害、 JIRA を横断して情報を集める仕事です。 この横断収集と仮説整理を
+	AIに任せると、24/365チームからのエスカレー ションを起点に、 一次調査から JIRAチケット起票まで一気通貫 で回りまし た。 AIは、受け止める側の仕事にも使えます。この点は後で戻ってきます。
+23. ### 03 · 現場で何が起きたか 24 成否を分けたのはモデルの性能ではなく、コンテキストの構造 6つの事例で、使ったモデルに大きな差はありません。それでも結果は分かれま した。成功した事例はいずれも、一つの変更に必要なコンテキストを、 AIが誤りな く推論できる幅に収める工夫をしています。疎結合なアーキテクチャ（『 Airワーク
+	採用管理』）、本体に触れない境界の新設（レガシー A）、一般論による拘束 （SEO）、役割の限定と決定論の評価系（ EOSL）。手段は違いますが、やっている ことは同じ操作です。失敗したバッチだけは、必要なコンテキストの大半がコード の外にあり、この幅に収められませんでした。 もう一つの共通点は人間の役割です。ベテランの暗黙知をパイプラインや対話を 通じてコンテキストとして供給し、品質責任は決定論の検証系に寄せる。人間の 仕事は、コードを書くことから、推論が安定する条件を整えることへ移っていま す。
+24. ### 03 · 現場で何が起きたか 25 現場のやり方に、あとから名前がついた 2025年から2026年にかけて、AI活用の手法に次々と名前がつきました。 登場した順に、プロンプト、コンテキスト、ハーネス、ループ。振り返ると、 6つの現場がやっていたことと重なります。 各種定義に対しては至らない点だらけだとは思いますが、やってきたことに後から名前がつくと振り返るのに便利です。 プロンプトエンジニアリング
+	レガシーシステムAの経験者対話 コンテキストエンジニアリング 『Airワーク 採用管理』の外部化、SEOの一般論拘束 ハーネスエンジニアリング 『Airワーク 採用管理』EOSLの決定論ループと決定論ハーネス ループエンジニアリング 『Airワーク 採用管理』EOSL初期のラルフループ
+25. ### 04 この観察を一般化する
+26. ### 04 · この観察を一般化する 27 生成を取り巻く構造を一般化してみる AIを用いた開発は、理想的な出力に必要なコンテキストと、実際に AIへ与えられるコンテキストの差をどう扱うかのゲームでした。 差が大きいほど推論の自由度が広がり、偽陽性とハルシネーションが増えます。
+27. ### 04 · この観察を一般化する 27 生成を取り巻く構造を一般化してみる（のだが、すぐ性能があがり前提が壊れる） AIを用いた開発は、理想的な出力に必要なコンテキストと、実際に AIへ与えられるコンテキストの差をどう扱うかのゲームでした。 差が大きいほど推論の自由度が広がり、偽陽性とハルシネーションが増えます。 最近は要求を的確に伝え AI自身にプロンプト
+	書かせるほうが良い気がしてきている
+28. ### 04 · この観察を一般化する 27 操作できるレバーは、実質 2つ 必要なコンテキストを減らす 与えるコンテキストを増やす レガシーシステム Aは、分割操作により強い境界を構築することで必要コンテキスト量を減らし推論を安定させた。『
+	Airワーク 採用管理』はskillsとagentsでコン テキスト供給量を増やすことで推論を安定させた。『リクナビ NEXT』バッチは、コード外の現実制約を載せきれずに差が残った。
+29. ### 04 · この観察を一般化する 27 明確な差がでた２つ SEOは、ほぼほぼ一般論ベースで推論を拘束できていたように見える。逆に、『リクナビ NEXT』のバッチは、ソースコード外の現実世界の情報があまりにも必要 であったが、そこが適切にコンテキストとして AIに提供できなかったため偽陽性を生み破綻したと考察できる。 SEO
+	『リクナビ NEXT』のバッチ
+30. ### 04 · この観察を一般化する 28 生成は確率的でもよい。受け止め方は決定論で LLMの生成は確率的であるため、だから品質責任は、別系統の決定論的機構に置きます。 受け入れ条件のコード化、契約テスト、観測設計、段階リリース、ロールバック。 「AIに正しさを期待するのではなく、間違っても壊れにくい系を先に設計する」 。『Airワーク 採用管理』EOSLの決定論ループは、この原則の実装例です。
+31. ### 04 · この観察を一般化する 29 開発でのLLMの使い方は 2つの流派に収斂した 協働型（コパイロット型） 経験者が暗黙知を内側に持ち、対話でAIの推論を制御する。レガシーシステムAが こちらです。 委託型（オーケストレーター型）
+	Skills、sub-agents、契約、テンプレートで暗黙知を外部化し、仕組みとして再現性 を作る。『Airワーク 採用管理』がこちらです。 優劣はありません。 チームの経験量と現場特性で使い分けます。どちらも、コンテキスト差を埋めるための適応戦略という点では同じです。 協働型：対話で推論を制御 委託型：仕組みで再現性を作る
+32. ### 04 · この観察を一般化する 30 アーキテクチャは、推論を小さくする装置になる 一つの変更に必要なコンテキスト量を、どこまで局所化できるか。 が、アーキテクチャとして重要になってくる（気がします）。 境界が明確で、契約が強く、影響範囲が閉じ、観測と検証ができる構造は、人間にも AIにも読みやすい。 本質は、推論に必要なコンテキスト総量を減らせるかどうかです。
+	推論の幅をどう狭めるか。 マイクロサービス化そのものは正義ではありません。
+33. ### 04 · この観察を一般化する 30 アーキテクチャは、推論を小さくする装置になる（考え中） とはいえ・・・・・現在の AI性能を前提にコンテキストウィンドウに収めることを頑張りすぎないほうがいい。 過剰なマイクロサービス化で、今この瞬間は AIシナジーが出るように一見みえるが、未来から見ると分割損を生んでいるだけの可能性もある。 現在
+	未来 分割 分割いる？ コンテキストウィンドウサイズ ソースコード等 ソースコード等 これでよくない？ ・・・とも言える のらない、あふれる
+34. ### 04 · この観察を一般化する 30 アーキテクチャは、推論を小さくする装置になる（考え中） 「一つの変更に必要なコンテキスト量を、どこまで局所化できるか。」 を設計思想を元に見てみると、どんな設計思想にしろ一貫性があることが重要なのではな いか・・・・？これはいまだ答えはなく考えている最中です。
+35. ### 04 · この観察を一般化する 30 アプリケーションコードとデータベースのパワーバランスが逆転する？？？（妄想） 人間にとってDBス キーマよりも、ソース コードのほうが圧倒 的に変更しやすい 本来DBスキーマや制
+	約で扱うべき業務の意 味がソースコード上に 散らばっている DBは「真実のモデル」では なく、アプリケーションの 都合を吸収する 「単なる永 続化層」としてあつかわれ る 既存データ、スキーマ、制約、不 変条件は容易に作り直せない。し たがって、アーキテクチャ上の重 心はソースコードからデータモデ ルへ移る。 ソースコードは、DBと契約 と制約から生成される派生 物（ほぼ無料） 現在 そう遠くない未来 振り回す側 振り回される側 振り回す側 振り回される側 さらにさらに、想像をふくらませると、データベースとアプリケーションソースコードの力関係が反転するのでは？とか思い始めてます。が、妄想。
+36. ### 05 では、人間と組織はどうなるか 人間の仕事は全工程に薄く残り、どの一工程からも丸ごとは消えません。 問いを立てる 判断する 境界を引く 品質責任を持つ 異常時に介入する この形が、組織設計の前提になります。
+37. ### 05 · 人間と組織はどうなるか 32 生成が安くなると、コミュニケーションコストが高く見えてくる 我々の正義は「速さ」です。大規模開発で速さを壊すのは、コミュニケーション コストです。 このコストは人数で決まります。 8人が相互にやり取りすると、パスは 56本。
+	要求、設計、実装、確認は、このパスの上を流れます。人数が増えれば、パ スは二乗で増えます。 そしてこのコストは、 AIでは縮みません。各工程の作業は AIで速くなります が、工程間の受け渡しはそのまま残ります。生成コストが下がるほど、受け 渡しの比率が相対的に上がる。実装がボトルネックだった時代には見えな かったこのコストが、次のボトルネックになります。 要求・設計・実装・確認の受け渡し 各工程の実作業 各工程の実作業(AI利用)
+38. ### 05 · 人間と組織はどうなるか 33 対処は2系統。壁を作るか、 Nを減らすか これは古典的な問題です。Brooks氏が人月の神話で、Conway氏が組織とシステムの相似で指摘した構造が、 AIによって再び前に出てきました。 モノ的アプローチ アーキテクチャで境界を切り、パスを断つ。
+	ヒト的アプローチ 一人が担う範囲を広げ、人数Nそのものを減らす。 竹内氏・野中氏のThe New New Product Development Gameが示したラグビー型、つまり工程をオーバーラップして進む形は、ヒト的アプローチの原型です。 モノ的：境界（壁）でパスを断つ ヒト的：一人の範囲を広げ、 Nを減らす 出展 The New New Product Development Game
+39. ### 05 · 人間と組織はどうなるか 34 フルフル：フルスタック × フルプロセス ヒト的アプローチ、つまりNを減らす側の私たちの形がフルフルです。突き詰めれば、ビジネス 検討からコードまで一人で進めるのが最速です。受け渡しが発生しないからです。実際にそこ までは難しいので、工程を重ねながら進めるオーバーラップ型になります。それでも、一人が担
+	う範囲が広がるほど工程間の受け渡しは減り、パスの数そのものが減ります。 • フルスタック・・・一人のメンバーがBE、FE、インフラなど複数の技術領域をカバーする。 技術的な制約によるコミュニケーションの壁が低くなり、チーム全体で最適な解決策を 早く見つけられます。 • フルプロセス・・・一人のメンバーが要件定義から実装、テストまで複数の工程を理解・ 担当する。工程間の断絶がなくなり、スムーズなオーバーラップが生まれます。 フルスタック（FEもBEもインフラも）に加えて、フルプロセス（要求整理も設計もコーディングも）。 我々はこれを「フルフル」と呼んでいます。
+40. ### 05 · 人間と組織はどうなるか 35 座組も変えた。階層を浅くする フルフルを進めた現場では、コミュニケーションコストを抑え、各自が自走しやすいために座組そのものがフラットになりました。 従来の深い階層は、事前調整で不確実性を抑え込む設計で計画の見通しが立ちやすい代わりに、代わりに各自のストレッチ幅に制約がかかります。 フラットな座組は、 事前調整を最小にしてリアルタイム調整を最大に します。現場では実際にこの形で運営し、メンバーが通常より広い責務と判断範囲を担いました。
+	個人のストレッチ幅 個人のストレッチ幅 不確実性を計画時点で下げたい 型化したワークで計画性を担保 現場判断でリアルタイムに 調整したい(業務理解高い)
+41. ### 06 増えた後の話。 KTLO （Keep The Light On） ここで、経済性の章で見た非対称に戻ります。作るコストは下がる。動 かし続けるコストは残る。 ROI成立境界の低下で小さなシステムが増えるほど、維持保
+	守対象のロングテールが伸びます。個別システム同士が API とデータで絡み合い、依存関係も増えます。 一つ一つは合理的な開発でも、総体では維持保守対象が爆発します。
+42. ### 06 · 増えた後の話。 KTLO 38 作るコストは下がる。動かし続けるコストは自然には下がらない 個別にテーラーメードされたシステム群は、独立しては存在しません。データや APIを通じて互いに絡み合います。システムがマイクロ化して増え続けると、一箇所の変更が予測しに くい連鎖障害を招く「依存関係のスパゲッティ化」が、これまでにない規模で起きる。これが我々の見立てです。 AIで作るコストは下がります。しかし、動かし続けるコストは自然には下がりません。開発対象が増えるほど、維持保守の負荷はむしろ増幅します。したがって今後の重点投資は、生
+	成能力や開発支援だけでは足りず、増えたシステムを受け止める維持保守の側にも置く必要があります。
+43. ### 06 · 増えた後の話。 KTLO 39 KTLOセンター：維持保守の受け皿を集約する 維持保守対象の爆発を人員の線形増加で受けると、いずれ限界が来ます。労働力の確保を前提としつつ、少人数で大きな保守対象を受けるための AIレバレッジが必要になりま す。我々はKTLOセンターとして受け皿を集約し、まず 70リポジトリ規模のマイクロサービス群から着手しています。担うのは一般的な
+	KTLO業務です。24/365のトラブル対応、各種 パッチ当て、EOSL対応、バージョン管理、問い合わせ対応。これを、 AI-OPSをフル活用するベトナムオフショアの体制で受ける形を検証しています。 70 repos
+44. ### 06 · 増えた後の話。 KTLO 40 市場側の出口：現場最前線で作るエンジニアリング 個別最適がROIに乗る時代は、売り方も変えていくはずです。 1つのパッケージを作ってN社に売るモデルは、「全社で 1つのシステムを我慢して使 う」前提の上に成り立っていました。その前提が崩れると、クライアント業務に合わせ
+	た個別実装が採算に乗ります。 これを担うのは、顧客の現場最前線で業務文脈を理解し、その場で実装し、運用に乗 せ、再利用可能なパターンとして共通基盤に還流させる職能になるでしょう。世の中 では FDE（Forward Deployed Engineer） と呼ばれ始めています。 中身を見れば、フルフル人材が社外の現場に立つ形です。 量産される個別システムは、そのまま維持保守対象になります。前線が個別最適を作 り、KTLOセンターが支える。この2つがそろったとき、量産が事業として回ります。 共通基盤 現場文脈 個別実装 パターン化 KTLOセンターが支える
+45. ### まとめ 今日の話を、まとめます。
+46. ### まとめ 42 結論 今日の結論は、 ボトルネックに合わせた組み替え で す。 現場で成果が出たのも、この形でした。 SEOは「会議で絞ってから作る」をやめ、先に全部作って会議で間引く順序 に変えました。ボトルネックだった判断に、実装を従属させた形です。
+	『Air ワーク 採用管理』のEOSL対応は、生成をそのまま流さず、決定論の検証 ループに従属させました。KTLOでは、増える開発を、受け皿が受けられる 形に従属させていきます。 制約理論が「制約に他の工程を従属させる」 と呼ぶ発想です。
+47. ### まとめ 43 同じ操作を、組織とアーキテクチャでも 同じ従属を、組織とアーキテクチャでもやっていました。 組織では、生成が安くなるほど、判断の受け渡し（ハンドオフ）がボトルネックになり ます。だから階層を浅くし、フルフルで判断と実装の往復を短くする。 組織の形 を、判断の速さに従属させた 形です。 アーキテクチャでは、推論の幅が広いほど偽陽性が増え、検証がボトルネックにな
+	ります。だから境界と契約で、推論の幅を狭める。 アーキテクチャを、検証のしや すさに従属させた形です。 プロセスの順序も、組織の形も、推論の幅も、ボトルネックに合わせて組み替え る。振り返ると、やっていた操作は同じでした。 プロセス 判断に、実装の順序を従属 組織 判断の速さに、組織の形を従属 アーキテクチャ 検証しやすさに、推論の幅を従属 ボトルネック＝制約
+48. ### DEVELOPERS SUMMIT 2026 SUMMER 44 最後に 制約は消えずに、移動する。今日はこの見方でお話ししてきまし た。 産業革命では、蒸気への移行に 1世紀かかり、労働者は増えました。電気
+	は、引くだけの工場では効果が出ず、作業を組み替えた工場で効果が出まし た。 AIでも同じことが起きるのではないか。現場に AIを配って1年観察してきた、 いまの我々の見立てです。 だから我々は、速くなった実装をそのまま最大化せず、ボトルネックの工程に 合わせて、組織・プロセス・アーキテクチャを組み替えるところから始めていま す。 皆さんの現場の参考になれば幸いです。
+49. ### APPENDIX 45 参考にした理論・資料 理論 Jevons（『石炭問題』 1865） 効率化と需要増 → 01・02章 Allen
+	Engels' pause → 01章 Bessen 自動化と雇用の二世紀データ（繊維・鉄鋼・自動車）→ 01章 Goldin & Katz 技術と技能の補完性 → 01章 Paul David 電気化と組織再設計（ダイナモとコンピュータ）→ 01章 Acemoglu & Restrepo "Automation and New Tasks," JEP 2019 → 01章 Brooks／Conway 人月の神話／組織とシステムの相似 → 05章 Takeuchi & Nonaka（1986） The New New Product Development Game → 05章 Goldratt 制約理論。本講演の「ボトルネック」の見方はここに拠る → 全体
