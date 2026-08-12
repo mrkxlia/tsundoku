@@ -12,6 +12,8 @@ summary: 'Active Directoryが標的となる理由や代表的な侵害プロセ
   従来型の境界防御やログ監視のみでは防げない攻撃の特徴と誤解を指摘しています。
 
   最小権限管理や攻撃パスの可視化を通じた継続的なセキュリティ改善を提唱しています。'
+title: Active Directory の保護
+read: false
 ---
 
 # Active Directory の保護

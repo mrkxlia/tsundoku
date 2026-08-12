@@ -12,6 +12,8 @@ summary: 'NDLOCR-LiteをWebブラウザに移植した「NDLOCR-Lite Web」が�
   ブラウザ上で手軽に画像やPDFのOCR処理を試すことができます。
 
   処理はローカルで完結するため、データが外部に送信される心配はありません。'
+title: NDLOCR Lite Webの公開
+read: false
 ---
 
 # Post by @yuta1984 on X

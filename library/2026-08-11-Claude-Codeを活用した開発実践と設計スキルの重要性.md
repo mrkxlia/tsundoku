@@ -12,6 +12,8 @@ summary: 'Claude Codeは実装を自動化しエンジニアの役割を設計�
   明示的な指示やCLAUDE.md、カスタムコマンドの活用で効果的な開発が可能です。
 
   ガードレールを整えることで試行錯誤を繰り返し高品質な成果を実現します。'
+title: Claude Code どこまでも/ Claude Code Everywhere
+read: false
 ---
 
 # Claude Code どこまでも/ Claude Code Everywhere

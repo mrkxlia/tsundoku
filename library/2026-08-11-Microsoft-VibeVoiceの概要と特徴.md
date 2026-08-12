@@ -13,6 +13,8 @@ summary: 'Microsoftが開発したオープンソースの音声AIフレーム�
   音声認識(ASR)や音声合成(TTS)などのモデルを含み、長時間の音声処理や高効率な連続音声トークナイザーを特徴としています。
 
   エッジCPU向けの軽量推移エンジンやAzure AIへの統合など、最新のアップデート情報も網羅されています。'
+title: 'microsoft/VibeVoice: Open-Source Frontier Voice AI'
+read: false
 ---
 
 # microsoft/VibeVoice: Open-Source Frontier Voice AI

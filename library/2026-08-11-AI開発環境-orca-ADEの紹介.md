@@ -12,6 +12,8 @@ summary: 'Warpやtmuxの代替として使えるWorktreeベースのADE「orca A
   マルチベンダー対応やスマホ連携、エージェント・オーケストレーション機能を備えています。
 
   人間がAIエージェントの司令塔となる新しい開発体験を提供します。'
+title: AI開発環境 orca ADEの紹介
+read: false
 ---
 
 # Post by @_mantaroh_ on X

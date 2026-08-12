@@ -12,6 +12,8 @@ summary: 'kintoneから入社データを取得し、GitHub Actionsとself-hoste
   散在していた業務ロジックをPowerShellスクリプトとしてコード化し、リポジトリで一元管理することで、手作業による課題を解決。
 
   Microsoft Entra ConnectやGraph APIのオンデマンドプロビジョニングを活用し、クラウド側への即時反映を実現。'
+title: 閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化
+read: false
 ---
 
 # 閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化
