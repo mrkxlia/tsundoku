@@ -13,6 +13,8 @@ summary: 'ネットワーク機器のインターフェースに設定するDesc
   大抵の用途を網羅しており、実務での効率化に役立つ内容となっています。
 
   追加や修正のフィードバックも募集中です。'
+title: NW機器のIF用Descriptionチートシート
+read: false
 ---
 
 # Post by @athlonz on X

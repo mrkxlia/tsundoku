@@ -12,6 +12,8 @@ summary: 'AIのDeep Researchが出力する読みにくい長文を、会議で�
   結論を先頭にし、数字や比較を表やグラフへ適切に変換しつつ、原文にない事実の追加を防ぐ厳格な検証機能を備えています。
 
   SKILL.mdは全文公開されており、誰でも簡単にインストールして利用可能です。'
+title: Deep Researchの長文を会議用レポートに変換するスキル
+read: false
 ---
 
 # Post by @kotetsu_0321 on X

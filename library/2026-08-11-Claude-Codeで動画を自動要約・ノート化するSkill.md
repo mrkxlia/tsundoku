@@ -12,6 +12,8 @@ summary: 'Claude Codeの「/watch-video」で動画処理を自動化できま�
   URLを渡すだけで文字起こし・重要フレーム抽出・要約ノート化を実行。
 
   YouTubeやLoomなどの動画視聴・分析時間を大幅に短縮可能です。'
+title: Claude Codeで動画を自動要約・ノート化するSkill
+read: false
 ---
 
 【発見】  

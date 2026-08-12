@@ -8,8 +8,9 @@
    Geminiで説明+OCRを生成して本文の「## 画像の内容」セクションに残す
 4. LLM(llm_client)で タイトル・3行要約・タグ(3〜5個)を生成
    (PDFはGeminiのPDF入力、字幕が取れないYouTubeは動画URL直接入力で要約)
-5. frontmatter(url, created, type, tags, summary)を付与
-   (自動取得できなかったものは needs-review、メディア添付ありは has-media タグ)
+5. frontmatter(title, url, created, type, tags, summary, read)を付与
+   (自動取得できなかったものは needs-review、メディア添付ありは has-media タグ。
+   read は常に false で作成する — 既読管理はtsundoku-siteからの書き戻しのみが変更する)
 6. library/ の既存ノートと突き合わせ、同一URL・酷似内容なら統合
    (情報量の多い方を残し、他方のURLを sources に追記、重複側は archive/ へ)
 7. library/YYYY-MM-DD-<タイトルスラッグ>.md へ移動
@@ -223,7 +224,11 @@ def load_library() -> list[LibraryNote]:
 
 
 def dump_note(fm: dict, body: str) -> str:
-    front = yaml.safe_dump(fm, allow_unicode=True, sort_keys=False, default_flow_style=False)
+    # width指定なしだとPyYAMLが80桁超のプレーンスカラー(長いtitle等)を折り返してしまい、
+    # fm_edit.py の「対象キーは常に1行」という前提が崩れるため、十分大きな値で無効化する。
+    front = yaml.safe_dump(
+        fm, allow_unicode=True, sort_keys=False, default_flow_style=False, width=1000
+    )
     return f"---\n{front}---\n\n{body.strip()}\n"
 
 
@@ -303,11 +308,13 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
         meta = client.generate_note_meta(clip.url, hint, info.llm_body)
 
     fm: dict = {
+        "title": meta["title"],
         "url": clip.url,
         "created": clip.created,
         "type": info.type,
         "tags": list(dict.fromkeys(meta["tags"] + info.extra_tags)),
         "summary": meta["summary"],
+        "read": False,
     }
     date = clip.created[:10]
     filename = f"{date}-{slugify(meta['title'])}.md"

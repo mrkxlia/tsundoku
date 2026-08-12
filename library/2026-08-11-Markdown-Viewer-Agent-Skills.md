@@ -12,6 +12,8 @@ summary: 'AIコーディングエージェント向けにMarkdownで直接美し
   ソフトウェアモデリング、クラウド・ネットワーク構成、データ分析など多様な用途に対応する14のスキルを提供します。
 
   Claude CodeやCursorなどの複数エージェントに対応し、手動またはnpxコマンドで簡単に導入できます。'
+title: 'markdown-viewer/skills: Opinionated skills for AI coding agents to create stunning diagrams and visualizations directly in Markdown. These skills extend agent capabilities across diagram generation, data visualization, and technical documentation.'
+read: false
 ---
 
 # markdown-viewer/skills: Opinionated skills for AI coding agents to create stunning diagrams and visualizations directly in Markdown. These skills extend agent capabilities across diagram generation, data visualization, and technical documentation.

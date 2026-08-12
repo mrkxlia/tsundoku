@@ -13,6 +13,8 @@ summary: 'Langfuseを低コストでセルフホスティングする構成案�
   2台のAWS EC2インスタンスとDocker Composeを使用します。
 
   コストを抑えつつLLMのモニタリング環境を構築できます。'
+title: AWS Builder Center
+read: false
 ---
 
 # AWS Builder Center

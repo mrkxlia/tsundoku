@@ -13,6 +13,8 @@ summary: 'Claude CodeのHTML出力をコンサル風の美しいデザインに�
   余白と文字の階層構造、コンサル特有の図解型を活用し、そのまま会議や印刷に使える品質に引き上げます。
 
   デスクトップ版やCLIでの簡単インストールのほか、仕組みやChatGPT派向けの利用法も解説されています。'
+title: Claude CodeのHTML出力をコンサル資料級にするskills
+read: false
 ---
 
 # Post by @kotetsu_0321 on X

@@ -12,6 +12,8 @@ summary: '大規模なコードベースやレガシーシステムでClaude Cod
   エージェント型検索の仕組みや、CLAUDE.md、フック、スキル、LSP連携といった拡張機能の重要性について紹介。
 
   開発現場での組織的展開と環境構築を成功させるための具体的なアプローチを提示。'
+title: 'How Claude Code works in large codebases: Best practices and where to start'
+read: false
 ---
 
 # How Claude Code works in large codebases: Best practices and where to start

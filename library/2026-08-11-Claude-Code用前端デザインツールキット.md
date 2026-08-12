@@ -14,6 +14,8 @@ summary: 'Claude Codeを使った前端開発でAI特有のテンプレート感
   デザインスキルやテーマ設定、動效ツール、UI/UXインテリジェンスなど、ワーク流を補完する多彩な内容を網羅。
 
   ReactやTailwindなど多様なフレームワークに対応し、実践的な前端開発の品質向上をサポート。'
+title: Claude Code用前端デザインツールキット
+read: false
 ---
 
 # Post by @wsl8297 on X
