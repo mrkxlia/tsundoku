@@ -1,4 +1,21 @@
-https://x.com/voidwarriorchan/status/2073166022128140747?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+title: 敵対的技術レビュープロンプト Hype Killer
+url: https://x.com/voidwarriorchan/status/2073166022128140747?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-12T11:30:26'
+type: post
+tags:
+- ai
+- プロンプト
+- 技術選定
+- レビュー
+summary: '話題性や権威に惑わされず技術やAIツール等を敵対的に評価するプロンプトです。
+
+  良い点よりも採用しない理由を優先して探すことで実務での真の採用価値を判定します。
+
+  主張の検証や反証、代替手段の検討から最終評価のフォーマットまでを規定しています。'
+read: false
+---
+
 # Skill: Hype Killer (驚き屋殺し)
 2026-08-12
 役割

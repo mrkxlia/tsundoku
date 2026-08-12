@@ -1,4 +1,21 @@
-https://x.com/voidwarriorchan/status/2073166022128140747?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+title: AIや技術を厳しく客観評価するスキル「Hype Killer」
+url: https://x.com/voidwarriorchan/status/2073166022128140747?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-12T11:30:26'
+type: post
+tags:
+- ai
+- プロンプト
+- 技術評価
+- レビュー
+summary: '話題性やマーケティングに惑わされず、技術やツールを敵対的に検証するプロンプト定義です。
+
+  良い点よりも採用しない理由を優先し、実務での価値や運用コストを客観的かつ辛口に評価します。
+
+  批判的観点や代替手段を精査し、バズ先行の技術に惑わされず実務採用の妥当性を判断します。'
+read: false
+---
+
 # Skill: Hype Killer (驚き屋殺し)
 2026-08-12
 役割
