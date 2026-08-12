@@ -13,6 +13,8 @@ summary: 'Data Formulatorは、AIエージェントを活用して多様なデ�
   会話を通じたデータベースの読み込みや、編集・分岐が可能な高度なチャートギャラリーを備え、データ分析の効率を大幅に向上させます。
 
   最新のv0.8アルファ版では、Databricks連携や企業向け認証機能、永続的なアナリスト添付ファイルなどの新機能が追加されています。'
+title: 'microsoft/data-formulator: 🪄 Data Formulator is an interactive AI-powered data analysis system makes it easy to connect, explore and visualize data.'
+read: false
 ---
 
 # microsoft/data-formulator: 🪄 Data Formulator is an interactive AI-powered data analysis system makes it easy to connect, explore and visualize data.

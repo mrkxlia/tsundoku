@@ -12,6 +12,8 @@ tags:
 summary: '誰も更新しなくなってしまうWBSの課題を解決するため、Slackベースのタスク管理仕組みを構築。
 
   日頃から使っているSlack上での手軽な運用を重視し、AIを活用してタスクの反映やリスク管理を試みている。'
+title: SlackベースのWBS管理とAI活用
+read: false
 ---
 
 # Post by @suh_sunaneko on X

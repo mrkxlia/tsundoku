@@ -13,6 +13,8 @@ summary: 'Claude Codeにリンクを渡してフロー図解スキルとして�
   開発状況やTODOを自動で図解化してくれるため、作業内容が整理され仕事が捗ると評判です。
 
   開発の進捗管理やタスクの可視化に悩む人におすすめの便利な活用法となっています。'
+title: Claude Codeで開発状況を図解化する神GitHubツール
+read: false
 ---
 
 # Post by @shupeiman on X

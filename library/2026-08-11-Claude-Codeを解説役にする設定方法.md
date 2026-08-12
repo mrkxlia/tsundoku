@@ -13,6 +13,8 @@ summary: 'CLAUDEmdに1行追加することでClaude Codeにプロジェクト�
   技術的な判断の理由や暗黙知を形式知化し、初見コードの理解や初心者エンジニアの学習効率を高める効果があります。
 
   生成されたファイルはgitignoreへの追加が推奨され、チーム開発のオンボーディング資料としても応用可能です。'
+title: Claude Codeを解説役にする設定方法
+read: false
 ---
 
 # Post by @AI_masaou on X

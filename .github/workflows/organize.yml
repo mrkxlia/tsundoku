@@ -23,6 +23,18 @@ jobs:
           ref: main
           fetch-depth: 0 # ノートの作成日時をgit履歴から取得するため
 
+      - name: 未回収のbot-conflict退避ブランチがないか確認
+        run: |
+          # 前回実行がmainへのpushに失敗し bot-conflict-* へ退避したまま放置されていると、
+          # 今回もinboxの同じクリップを再処理してLLM呼び出しが重複する。
+          # 未回収の退避ブランチがある限り新規実行を止め、先にPRとして回収してもらう。
+          leftover=$(git ls-remote --heads origin 'bot-conflict-*')
+          if [ -n "$leftover" ]; then
+            echo "::error::未回収の bot-conflict-* ブランチが残っています。先にPRとしてマージ/クローズしてください:"
+            echo "$leftover"
+            exit 1
+          fi
+
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -58,7 +70,25 @@ jobs:
             # directoryRenames=false: 大量ファイルのInbox->library移動と、モバイルが
             # 同時にInbox/へ追加した新規クリップとが、gitの「ディレクトリリネーム推測」で
             # 曖昧な衝突として扱われるのを防ぐ(新規ファイルはInbox/に留まるのが正)
-            git -c merge.directoryRenames=false pull --rebase origin main
+            if ! git -c merge.directoryRenames=false pull --rebase origin main; then
+              # rebaseがコンフリクトした場合、このまま続けても直らないので中断する
+              git rebase --abort
+              break
+            fi
           done
-          echo "pushに失敗しました" >&2
+          # 通常経路で着地できなかった場合、成果(新規ノート・inbox削除等)を失わないよう
+          # 退避ブランチへpushする。次回実行はこのブランチが残っている限り即失敗するので
+          # (前段の確認ステップ)、必ずPRとして回収すること。
+          branch="bot-conflict-${GITHUB_RUN_ID}"
+          echo "::error::main へのpushに失敗したため ${branch} へ退避しました。PRとして回収してください"
+          git push origin "HEAD:refs/heads/${branch}"
           exit 1
+
+      - name: tsundoku-siteの再ビルドを起動
+        env:
+          GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: |
+          # コンテンツ変更ゼロの日でも常に送る(前日分の既読トグルを次のビルドで焼き込むため)。
+          # 前段の "Commit and push" が失敗した場合はこのステップに到達しない
+          # (= mainの更新に失敗した実行ではdispatchしない)。
+          gh api repos/mrkxlia/tsundoku-site/dispatches -f event_type=content-updated

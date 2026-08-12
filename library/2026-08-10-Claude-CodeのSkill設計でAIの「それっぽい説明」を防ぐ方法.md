@@ -14,6 +14,8 @@ summary: 'AIのプロジェクトキャッチアップ説明が抽象的にな�
   抽象的な指示ではなく実例と形式の指定を行うことで、AIの回答の質を向上させるアプローチをまとめています。'
 sources:
 - https://zenn.dev/p/ncdc
+title: '[Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話'
+read: false
 ---
 
 # [Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話
