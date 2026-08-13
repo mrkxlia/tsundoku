@@ -9,13 +9,18 @@ create_client() の分岐を変えるだけでよい。
     LLM_MODEL_CHAIN    : カンマ区切りのモデル名。先頭から順に試し、
                          枠超過(429)等で次のモデルへフォールバックする
     LLM_SLEEP_SECONDS  : API呼び出し後のスリープ秒数(無料枠のRPM対策)
+    EMBEDDING_MODEL    : 埋め込みモデル名(既定 gemini-embedding-2)
+    EMBED_DIM          : 埋め込み次元数(既定 768)
+    EMBED_SLEEP_SECONDS: 埋め込みAPI呼び出し後のスリープ秒数(生成系とは別枠のため独立変数)
     DRY_RUN            : "1" で外部APIを呼ばないモッククライアントを使う
 """
 
 from __future__ import annotations
 
 import base64
+import hashlib
 import json
+import math
 import os
 import re
 import sys
@@ -27,6 +32,11 @@ DEFAULT_MODEL_CHAIN = "gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it
 DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
+
+DEFAULT_EMBEDDING_MODEL = "gemini-embedding-2"
+DEFAULT_EMBED_DIM = 768
+DEFAULT_EMBED_SLEEP_SECONDS = 6.0
+EMBED_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
 
 PROMPT_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事を読み、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
 
@@ -102,6 +112,17 @@ class LLMClient:
         """画像[(bytes, mime), ...]の説明+OCR全文を日本語フリーテキストで返す。"""
         raise NotImplementedError
 
+    def embed_content(self, parts: list[dict]) -> list[float]:
+        """テキスト(+画像等)のpartsから正規化済み埋め込みベクトルを返す。"""
+        raise NotImplementedError
+
+
+def l2_normalize(values: list[float]) -> list[float]:
+    """非デフォルト次元指定時はAPI側が自動再正規化するとされているが、手動での
+    再正規化は冪等(既に単位ベクトルなら無害)なため保険として常に適用する。"""
+    norm = math.sqrt(sum(v * v for v in values))
+    return values if norm == 0 else [v / norm for v in values]
+
 
 class GeminiClient(LLMClient):
     """Google AI Studio (Generative Language API) をRESTで直接呼ぶ実装。
@@ -111,12 +132,23 @@ class GeminiClient(LLMClient):
     プロンプト内指示 + レスポンスからのJSON抽出で対応する。
     """
 
-    def __init__(self, api_key: str, model_chain: list[str], sleep_seconds: float):
+    def __init__(
+        self,
+        api_key: str,
+        model_chain: list[str],
+        sleep_seconds: float,
+        embedding_model: str = DEFAULT_EMBEDDING_MODEL,
+        embed_dim: int = DEFAULT_EMBED_DIM,
+        embed_sleep_seconds: float = DEFAULT_EMBED_SLEEP_SECONDS,
+    ):
         if not api_key:
             raise LLMError("GEMINI_API_KEY が設定されていません")
         self.api_key = api_key
         self.model_chain = model_chain
         self.sleep_seconds = sleep_seconds
+        self.embedding_model = embedding_model
+        self.embed_dim = embed_dim
+        self.embed_sleep_seconds = embed_sleep_seconds
 
     def generate_note_meta(self, url: str, title_hint: str, body: str) -> dict:
         prompt = PROMPT_TEMPLATE.format(
@@ -156,6 +188,43 @@ class GeminiClient(LLMClient):
         ]
         # OCRには既定解像度が必要なため mediaResolution は指定しない
         return self._generate_text_with_parts(parts, self._multimodal_chain())
+
+    def embed_content(self, parts: list[dict]) -> list[float]:
+        payload = {
+            "content": {"parts": parts},
+            "outputDimensionality": self.embed_dim,
+        }
+        req = urllib.request.Request(
+            EMBED_ENDPOINT.format(model=self.embedding_model),
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "x-goog-api-key": self.api_key,
+            },
+            method="POST",
+        )
+        last_err: Exception | None = None
+        for attempt in range(2):  # 一時的な429/503は1回だけ待って再試行
+            try:
+                with urllib.request.urlopen(req, timeout=90) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+                if self.embed_sleep_seconds > 0:
+                    time.sleep(self.embed_sleep_seconds)
+                values = data["embedding"]["values"]
+                return l2_normalize(values)
+            except urllib.error.HTTPError as e:
+                last_err = e
+                if self.embed_sleep_seconds > 0:
+                    time.sleep(self.embed_sleep_seconds)
+                if e.code in (429, 500, 503) and attempt == 0:
+                    time.sleep(max(self.embed_sleep_seconds, 10))
+                    continue
+                raise LLMError(f"embed_content失敗: HTTP {e.code}")
+            except (KeyError, IndexError) as e:
+                raise LLMError(f"embed_content失敗: 想定外のレスポンス形式: {e}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                raise LLMError(f"embed_content失敗: {e}")
+        raise LLMError(f"embed_content失敗: {last_err}")
 
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
@@ -277,6 +346,14 @@ class MockClient(LLMClient):
     def describe_images(self, url: str, images: list[tuple[bytes, str]]) -> str:
         return "\n\n".join(f"### 画像{i}\n(画像モック説明)" for i in range(1, len(images) + 1))
 
+    def embed_content(self, parts: list[dict]) -> list[float]:
+        # テキスト内容のハッシュから決定的な単位ベクトルを生成する(同じ入力は常に同じベクトル、
+        # 異なる入力は異なるベクトルになるため、検索ロジック自体のテストに使える)。
+        text = " ".join(p.get("text", "") for p in parts if "text" in p)
+        digest = hashlib.sha256(text.encode("utf-8")).digest()
+        raw = [digest[i % len(digest)] / 255.0 * 2 - 1 for i in range(DEFAULT_EMBED_DIM)]
+        return l2_normalize(raw)
+
 
 def _parse_meta_json(text: str) -> dict | None:
     """LLM出力からJSONを取り出して検証する。Gemma等が前後に文字を付けても拾う。"""
@@ -316,4 +393,14 @@ def create_client() -> LLMClient:
         if m.strip()
     ]
     sleep_seconds = float(os.environ.get("LLM_SLEEP_SECONDS") or DEFAULT_SLEEP_SECONDS)
-    return GeminiClient(os.environ.get("GEMINI_API_KEY", ""), chain, sleep_seconds)
+    embedding_model = os.environ.get("EMBEDDING_MODEL") or DEFAULT_EMBEDDING_MODEL
+    embed_dim = int(os.environ.get("EMBED_DIM") or DEFAULT_EMBED_DIM)
+    embed_sleep_seconds = float(os.environ.get("EMBED_SLEEP_SECONDS") or DEFAULT_EMBED_SLEEP_SECONDS)
+    return GeminiClient(
+        os.environ.get("GEMINI_API_KEY", ""),
+        chain,
+        sleep_seconds,
+        embedding_model,
+        embed_dim,
+        embed_sleep_seconds,
+    )
