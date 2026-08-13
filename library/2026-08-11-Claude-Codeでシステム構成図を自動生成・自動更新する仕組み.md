@@ -15,6 +15,7 @@ summary: 'Claude Codeを活用してシステム構成図を自動生成・自�
   さらに、GitHub Actionsを用いたCIによる自動更新の仕組みや、Claude Codeのスキル活用について紹介しています。'
 title: システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み
 read: false
+shelf_life: medium
 ---
 
 # システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み

@@ -14,6 +14,7 @@ summary: 'NDLOCR-LiteをWebブラウザに移植した「NDLOCR-Lite Web」が�
   処理はローカルで完結するため、データが外部に送信される心配はありません。'
 title: NDLOCR Lite Webの公開
 read: false
+shelf_life: medium
 ---
 
 # Post by @yuta1984 on X

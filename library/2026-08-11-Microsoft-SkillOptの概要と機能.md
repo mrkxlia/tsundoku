@@ -15,6 +15,7 @@ summary: 'Microsoftが開発したSkillOptは、LLMのモデル重みを変更�
   多様なベンチマークやモデルにおいて、推論時のコストを増やさずにAIエージェントの性能を大幅に向上させることが可能です。'
 title: 'microsoft/SkillOpt: SkillOpt is a text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates, and deployable best_skill.md artifacts.'
 read: false
+shelf_life: medium
 ---
 
 # microsoft/SkillOpt: SkillOpt is a text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates, and deployable best_skill.md artifacts.

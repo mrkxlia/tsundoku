@@ -15,6 +15,7 @@ summary: 'ネットワーク機器のインターフェースに設定するDesc
   追加や修正のフィードバックも募集中です。'
 title: NW機器のIF用Descriptionチートシート
 read: false
+shelf_life: long
 ---
 
 # Post by @athlonz on X

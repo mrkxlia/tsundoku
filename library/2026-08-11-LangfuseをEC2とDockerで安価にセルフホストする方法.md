@@ -15,6 +15,7 @@ summary: 'Langfuseを低コストでセルフホスティングする構成案�
   コストを抑えつつLLMのモニタリング環境を構築できます。'
 title: AWS Builder Center
 read: false
+shelf_life: medium
 ---
 
 # AWS Builder Center

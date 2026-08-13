@@ -15,6 +15,7 @@ summary: 'Anthropicの社員がClaudeに関する最新情報をどのように�
   開発現場におけるAI活用の現場の知見が垣間見える内容となっています。'
 title: Anthropic社内でのClaude活用法と情報共有
 read: false
+shelf_life: medium
 ---
 
 # Post by @trq212 on X

@@ -15,6 +15,7 @@ summary: 'CLAUDEmdに1行追加することでClaude Codeにプロジェクト�
   生成されたファイルはgitignoreへの追加が推奨され、チーム開発のオンボーディング資料としても応用可能です。'
 title: Claude Codeを解説役にする設定方法
 read: false
+shelf_life: medium
 ---
 
 # Post by @AI_masaou on X

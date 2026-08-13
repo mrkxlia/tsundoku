@@ -15,6 +15,7 @@ summary: 'Claude Codeを安全に運用するための日本語のセキュリ�
   公式ドキュメントを補完し、最小権限の原則に基づく多層防御の運用をサポート。'
 title: 'okdt/claude-code-hardening-cheatsheet: A minimal, opinionated security hardening template for Claude Code settings.json'
 read: false
+shelf_life: medium
 ---
 
 # okdt/claude-code-hardening-cheatsheet: A minimal, opinionated security hardening template for Claude Code settings.json

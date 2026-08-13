@@ -15,6 +15,7 @@ summary: 'MicrosoftがAIを活用して一人あたり17時間の業務時間削
   日々の業務効率化やAIの活用方法を考える上で非常に参考になる内容です。'
 title: Microsoftの業務効率化ゴールデンプロンプト活用法
 read: false
+shelf_life: medium
 ---
 
 # Post by @SuguruKun_ai on X

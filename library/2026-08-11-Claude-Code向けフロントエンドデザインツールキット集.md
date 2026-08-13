@@ -15,6 +15,7 @@ summary: 'Claude Codeが生成するフロントエンドのデザイン性を�
   ありきたりなAI生成のデザインから脱却し、多様な美学や一貫したテーマを適用するための実践的なツールが揃っています。'
 title: 'wilwaldon/Claude-Code-Frontend-Design-Toolkit: Everything I''ve found that actually makes Claude Code output better-looking frontends. Skills, plugins, MCP servers, CLAUDE.md tricks'
 read: false
+shelf_life: medium
 ---
 
 # wilwaldon/Claude-Code-Frontend-Design-Toolkit: Everything I've found that actually makes Claude Code output better-looking frontends. Skills, plugins, MCP servers, CLAUDE.md tricks

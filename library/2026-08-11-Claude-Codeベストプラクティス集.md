@@ -14,6 +14,7 @@ summary: 'Claude Codeを活用した開発のエージェント的エンジニ�
   開発効率を最大化するための設定やMCPサーバーの活用方法についても解説されています。'
 title: 'shanraisshan/claude-code-best-practice: from vibe coding to agentic engineering - practice makes claude perfect'
 read: false
+shelf_life: medium
 ---
 
 # shanraisshan/claude-code-best-practice: from vibe coding to agentic engineering - practice makes claude perfect

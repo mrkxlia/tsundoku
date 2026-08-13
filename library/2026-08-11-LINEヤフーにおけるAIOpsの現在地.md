@@ -14,6 +14,7 @@ summary: 'LINEヤフーにおけるインフラ運用の効率化を目指した
   効果測定の重要性や、AIを活かしやすい組織設計に向けた課題と展望について述べています。'
 title: LINEヤフーにおけるAIOpsの現在地
 read: false
+shelf_life: medium
 ---
 
 # LINEヤフーにおけるAIOpsの現在地

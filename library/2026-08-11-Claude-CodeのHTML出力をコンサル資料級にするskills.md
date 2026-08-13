@@ -15,6 +15,7 @@ summary: 'Claude CodeのHTML出力をコンサル風の美しいデザインに�
   デスクトップ版やCLIでの簡単インストールのほか、仕組みやChatGPT派向けの利用法も解説されています。'
 title: Claude CodeのHTML出力をコンサル資料級にするskills
 read: false
+shelf_life: medium
 ---
 
 # Post by @kotetsu_0321 on X

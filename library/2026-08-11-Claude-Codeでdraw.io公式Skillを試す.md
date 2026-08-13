@@ -14,6 +14,7 @@ summary: 'draw.io公式のClaude Code向けSkillを導入し、AWSアーキテ�
   AWS 2026のアイコンスタイルやグループコンテナの定義など、実践的なガイドラインがまとめられている。'
 title: Claude Code × draw.io公式Skillで、AWSアーキテクチャ図の生成を自動化してみた
 read: false
+shelf_life: medium
 ---
 
 # Claude Code × draw.io公式Skillで、AWSアーキテクチャ図の生成を自動化してみた

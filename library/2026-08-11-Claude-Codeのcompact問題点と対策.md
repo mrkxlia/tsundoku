@@ -14,6 +14,7 @@ summary: 'Claude Codeのcompact機能による会話履歴の要約は非可逆�
   1M context環境と組み合わせることで、 compactを多用しても論理破綻が起きない安定したセッション運用が可能になる。'
 title: claude codeのcompactの問題点と対策
 read: false
+shelf_life: medium
 ---
 
 # claude codeのcompactの問題点と対策
