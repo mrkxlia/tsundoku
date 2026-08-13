@@ -38,14 +38,20 @@ DEFAULT_EMBED_DIM = 768
 DEFAULT_EMBED_SLEEP_SECONDS = 6.0
 EMBED_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:embedContent"
 
+SHELF_LIFE_INSTRUCTION = """- shelf_life は記事の情報が陳腐化するまでの目安期間を次の3値から選ぶこと
+  - "short": 速報・ニュース・キャンペーン・価格等、数日〜数週間で古くなる情報
+  - "medium": 技術トレンド・製品情報・統計等、数か月〜1年程度で古くなる情報
+  - "long": 原理解説・リファレンス・歴史等、長期間陳腐化しない情報"""
+
 PROMPT_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事を読み、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
 
-{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "記事の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "記事の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"], "shelf_life": "short/medium/longのいずれか"}}
 
 制約:
 - tags は3〜5個。日本語または英小文字で、スペースを含めないこと(例: "生成ai", "プログラミング", "キャリア")
 - title にはファイル名に使えない記号(/ \\ : * ? " < > |)を使わないこと
 - 本文が無い場合はURLから推測できる範囲で構わない
+{shelf_life_instruction}
 
 URL: {url}
 タイトルのヒント: {title_hint}
@@ -55,11 +61,12 @@ URL: {url}
 
 PDF_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付のスライドPDFを読み、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
 
-{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "スライドの要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "スライドの要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"], "shelf_life": "short/medium/longのいずれか"}}
 
 制約:
 - tags は3〜5個。日本語または英小文字で、スペースを含めないこと(例: "生成ai", "プログラミング", "キャリア")
 - title にはファイル名に使えない記号(/ \\ : * ? " < > |)を使わないこと
+{shelf_life_instruction}
 
 URL: {url}
 タイトルのヒント: {title_hint}
@@ -78,14 +85,44 @@ URL: {url}
 
 VIDEO_PROMPT_TEMPLATE = """あなたはWebクリップを整理する司書です。添付の動画の内容を確認し、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
 
-{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "動画内容の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+{{"title": "内容を表す簡潔な日本語タイトル(30字以内)", "summary": "動画内容の要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"], "shelf_life": "short/medium/longのいずれか"}}
 
 制約:
 - tags は3〜5個。日本語または英小文字で、スペースを含めないこと(例: "生成ai", "プログラミング", "キャリア")
 - title にはファイル名に使えない記号(/ \\ : * ? " < > |)を使わないこと
+{shelf_life_instruction}
 
 URL: {url}
 タイトルのヒント: {title_hint}
+"""
+
+SHELF_LIFE_CLASSIFY_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事のタイトルと要約から、情報が陳腐化するまでの目安期間を判定し、次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"shelf_life": "short/medium/longのいずれか"}}
+
+判定基準:
+{shelf_life_instruction}
+
+タイトル: {title}
+要約:
+{summary}
+"""
+
+SUPERSESSION_JUDGE_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。新しい記事(new)が、古い記事(old)の内容を更新・上書きしている、\
+または明確に矛盾する情報を含んでいるかを判定してください。単に話題が似ているだけ、関連トピックというだけでは\
+supersedesはfalseとしてください。次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"supersedes": true または false, "reason": "判定理由(日本語1文)"}}
+
+[new] タイトル: {new_title}
+[new] 要約: {new_summary}
+[new] 本文抜粋:
+{new_excerpt}
+
+[old] タイトル: {old_title}
+[old] 要約: {old_summary}
+[old] 本文抜粋:
+{old_excerpt}
 """
 
 
@@ -114,6 +151,22 @@ class LLMClient:
 
     def embed_content(self, parts: list[dict]) -> list[float]:
         """テキスト(+画像等)のpartsから正規化済み埋め込みベクトルを返す。"""
+        raise NotImplementedError
+
+    def classify_shelf_life(self, title: str, summary: str) -> str:
+        """既存ノート(タイトル+要約)から shelf_life ("short"/"medium"/"long") を判定する。"""
+        raise NotImplementedError
+
+    def judge_supersession(
+        self,
+        new_title: str,
+        new_summary: str,
+        new_excerpt: str,
+        old_title: str,
+        old_summary: str,
+        old_excerpt: str,
+    ) -> dict:
+        """新ノートが旧ノートを上書き/矛盾させるかを判定し {"supersedes": bool, "reason": str} を返す。"""
         raise NotImplementedError
 
 
@@ -155,11 +208,14 @@ class GeminiClient(LLMClient):
             url=url,
             title_hint=title_hint or "(なし)",
             body=(body or "(本文なし)")[:MAX_BODY_CHARS],
+            shelf_life_instruction=SHELF_LIFE_INSTRUCTION,
         )
         return self._generate_with_parts([{"text": prompt}], self.model_chain)
 
     def generate_note_meta_from_pdf(self, url: str, title_hint: str, pdf_bytes: bytes) -> dict:
-        prompt = PDF_PROMPT_TEMPLATE.format(url=url, title_hint=title_hint or "(なし)")
+        prompt = PDF_PROMPT_TEMPLATE.format(
+            url=url, title_hint=title_hint or "(なし)", shelf_life_instruction=SHELF_LIFE_INSTRUCTION
+        )
         parts = [
             {"text": prompt},
             {
@@ -172,7 +228,9 @@ class GeminiClient(LLMClient):
         return self._generate_with_parts(parts, self._multimodal_chain())
 
     def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
-        prompt = VIDEO_PROMPT_TEMPLATE.format(url=url, title_hint=title_hint or "(なし)")
+        prompt = VIDEO_PROMPT_TEMPLATE.format(
+            url=url, title_hint=title_hint or "(なし)", shelf_life_instruction=SHELF_LIFE_INSTRUCTION
+        )
         parts = [{"text": prompt}, {"file_data": {"file_uri": video_uri}}]
         # 動画はトークン消費が大きいため低解像度で処理する
         return self._generate_with_parts(
@@ -225,6 +283,55 @@ class GeminiClient(LLMClient):
             except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
                 raise LLMError(f"embed_content失敗: {e}")
         raise LLMError(f"embed_content失敗: {last_err}")
+
+    def classify_shelf_life(self, title: str, summary: str) -> str:
+        prompt = SHELF_LIFE_CLASSIFY_TEMPLATE.format(
+            shelf_life_instruction=SHELF_LIFE_INSTRUCTION, title=title, summary=summary or "(要約なし)"
+        )
+        errors = []
+        for model in self.model_chain:
+            try:
+                text = self._call_model(model, [{"text": prompt}])
+                value = _parse_shelf_life_json(text)
+                if value:
+                    return value
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+        raise LLMError("classify_shelf_life失敗: " + "; ".join(errors))
+
+    def judge_supersession(
+        self,
+        new_title: str,
+        new_summary: str,
+        new_excerpt: str,
+        old_title: str,
+        old_summary: str,
+        old_excerpt: str,
+    ) -> dict:
+        prompt = SUPERSESSION_JUDGE_TEMPLATE.format(
+            new_title=new_title,
+            new_summary=new_summary,
+            new_excerpt=(new_excerpt or "")[:MAX_BODY_CHARS],
+            old_title=old_title,
+            old_summary=old_summary,
+            old_excerpt=(old_excerpt or "")[:MAX_BODY_CHARS],
+        )
+        errors = []
+        for model in self.model_chain:
+            try:
+                text = self._call_model(model, [{"text": prompt}])
+                result = _parse_supersession_json(text)
+                if result is not None:
+                    return result
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+        raise LLMError("judge_supersession失敗: " + "; ".join(errors))
 
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
@@ -333,15 +440,25 @@ class MockClient(LLMClient):
         title = title_hint or (lines[0][:30] if lines else url[:30]) or "無題"
         title = re.sub(r"^#+\s*", "", title)[:30]
         summary = "\n".join(lines[:3])[:200] or "(本文なし)"
-        return {"title": title, "summary": summary, "tags": ["未分類", "mock"]}
+        return {"title": title, "summary": summary, "tags": ["未分類", "mock"], "shelf_life": self._mock_shelf_life(url)}
 
     def generate_note_meta_from_pdf(self, url: str, title_hint: str, pdf_bytes: bytes) -> dict:
         title = (title_hint or url)[:30] or "無題"
-        return {"title": title, "summary": "(PDFモック要約)", "tags": ["未分類", "mock-pdf"]}
+        return {
+            "title": title,
+            "summary": "(PDFモック要約)",
+            "tags": ["未分類", "mock-pdf"],
+            "shelf_life": self._mock_shelf_life(url),
+        }
 
     def generate_note_meta_from_video(self, url: str, title_hint: str, video_uri: str) -> dict:
         title = (title_hint or url)[:30] or "無題"
-        return {"title": title, "summary": "(動画モック要約)", "tags": ["未分類", "mock-video"]}
+        return {
+            "title": title,
+            "summary": "(動画モック要約)",
+            "tags": ["未分類", "mock-video"],
+            "shelf_life": self._mock_shelf_life(url),
+        }
 
     def describe_images(self, url: str, images: list[tuple[bytes, str]]) -> str:
         return "\n\n".join(f"### 画像{i}\n(画像モック説明)" for i in range(1, len(images) + 1))
@@ -354,16 +471,42 @@ class MockClient(LLMClient):
         raw = [digest[i % len(digest)] / 255.0 * 2 - 1 for i in range(DEFAULT_EMBED_DIM)]
         return l2_normalize(raw)
 
+    def classify_shelf_life(self, title: str, summary: str) -> str:
+        return self._mock_shelf_life(title)
 
-def _parse_meta_json(text: str) -> dict | None:
-    """LLM出力からJSONを取り出して検証する。Gemma等が前後に文字を付けても拾う。"""
+    def judge_supersession(
+        self,
+        new_title: str,
+        new_summary: str,
+        new_excerpt: str,
+        old_title: str,
+        old_summary: str,
+        old_excerpt: str,
+    ) -> dict:
+        # 決定的な検証用: タイトルが同一なら上書きとみなす(実運用ではLLMが判定)
+        return {"supersedes": new_title == old_title, "reason": "(mock判定)"}
+
+    @staticmethod
+    def _mock_shelf_life(seed: str) -> str:
+        digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
+        return VALID_SHELF_LIVES[digest[0] % len(VALID_SHELF_LIVES)]
+
+
+VALID_SHELF_LIVES = ("short", "medium", "long")
+
+
+def _extract_json_candidates(text: str) -> list[str]:
     candidates = [text.strip()]
     m = re.search(r"\{.*\}", text, re.DOTALL)
     if m:
         candidates.append(m.group(0))
-    for cand in candidates:
-        # ```json ... ``` フェンスを剥がす
-        cand = re.sub(r"^```(?:json)?\s*|\s*```$", "", cand.strip())
+    # ```json ... ``` フェンスを剥がす
+    return [re.sub(r"^```(?:json)?\s*|\s*```$", "", c.strip()) for c in candidates]
+
+
+def _parse_meta_json(text: str) -> dict | None:
+    """LLM出力からJSONを取り出して検証する。Gemma等が前後に文字を付けても拾う。"""
+    for cand in _extract_json_candidates(text):
         try:
             # strict=False: 文字列中の生改行(Gemmaのプロンプトモード出力)を許容
             obj = json.loads(cand, strict=False)
@@ -379,7 +522,36 @@ def _parse_meta_json(text: str) -> dict | None:
         tags = [re.sub(r"\s+", "-", str(t).strip()) for t in tags if str(t).strip()]
         if not tags:
             continue
-        return {"title": title, "summary": summary, "tags": tags[:5]}
+        shelf_life = str(obj.get("shelf_life", "")).strip()
+        if shelf_life not in VALID_SHELF_LIVES:
+            shelf_life = "medium"  # モデルが省略/不正値を返した場合の安全側フォールバック
+        return {"title": title, "summary": summary, "tags": tags[:5], "shelf_life": shelf_life}
+    return None
+
+
+def _parse_shelf_life_json(text: str) -> str | None:
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict):
+            continue
+        value = str(obj.get("shelf_life", "")).strip()
+        if value in VALID_SHELF_LIVES:
+            return value
+    return None
+
+
+def _parse_supersession_json(text: str) -> dict | None:
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict) or not isinstance(obj.get("supersedes"), bool):
+            continue
+        return {"supersedes": obj["supersedes"], "reason": str(obj.get("reason", "")).strip()}
     return None
 
 

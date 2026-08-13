@@ -271,8 +271,11 @@ def append_image_section(body: str, asset_paths: list[Path], image_text: str) ->
 
 # ---------------------------------------------------------------- メイン処理
 
-def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[LibraryNote]) -> str:
-    """1クリップを処理し、結果ラベル(organized/merged/absorbed)を返す。"""
+def process_clip(
+    clip: Clip, client: llm_client.LLMClient, library: list[LibraryNote]
+) -> tuple[str, Path | None]:
+    """1クリップを処理し、(結果ラベル(organized/merged/absorbed), 新規/更新されたlibraryノートのパス)を返す。
+    absorbed(既存ノートへの吸収)はlibraryに新規コンテンツを生まないためパスはNone。"""
     info = media_types.enrich(clip.url, clip.body, dry_run=is_dry_run())
     body = info.note_body
     hint = clip.title_hint or info.title_hint
@@ -315,6 +318,7 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
         "tags": list(dict.fromkeys(meta["tags"] + info.extra_tags)),
         "summary": meta["summary"],
         "read": False,
+        "shelf_life": meta.get("shelf_life", "medium"),
     }
     date = clip.created[:10]
     filename = f"{date}-{slugify(meta['title'])}.md"
@@ -337,7 +341,7 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
             LibraryNote(path=new_path, fm=fm, body=body_final, urls={url_norm})
         )
         print(f"  -> library/{new_path.name}")
-        return "organized"
+        return "organized", new_path
 
     # 重複: 情報量(本文の長さ)が多い方を library に残す
     if len(normalize_body(compare_body)) > len(normalize_body(dup.body)):
@@ -356,7 +360,7 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
         dup.path, dup.fm, dup.body = new_path, fm, body_final
         dup.urls |= {url_norm}
         print(f"  -> library/{new_path.name} (既存 {archived.name} を統合し archive へ)")
-        return "merged"
+        return "merged", new_path
 
     # 既存の方が充実 → 既存に sources 追記し、新クリップは archive へ
     if url_norm not in dup.urls:
@@ -369,7 +373,7 @@ def process_clip(clip: Clip, client: llm_client.LLMClient, library: list[Library
     archived.write_text(dump_note(fm, body), encoding="utf-8")
     clip.path.unlink()
     print(f"  -> archive/{archived.name} (既存 {dup.path.name} に統合)")
-    return "absorbed"
+    return "absorbed", None
 
 
 def main() -> int:
@@ -389,6 +393,7 @@ def main() -> int:
     client = llm_client.create_client()
     library = load_library()
     stats = {"organized": 0, "merged": 0, "absorbed": 0, "failed": 0}
+    new_notes: list[Path] = []
 
     for path in candidates:
         rel = path.relative_to(ROOT)
@@ -398,13 +403,25 @@ def main() -> int:
             if clip is None:
                 print("  -> スキップ(クリップ形式でない)")
                 continue
-            stats[process_clip(clip, client, library)] += 1
+            label, new_path = process_clip(clip, client, library)
+            stats[label] += 1
+            if new_path is not None:
+                new_notes.append(new_path)
         except llm_client.LLMError as e:
             stats["failed"] += 1
             print(f"  -> 保留(LLM失敗、次回再試行): {e}", file=sys.stderr)
         except Exception as e:  # 1件の失敗で全体を止めない
             stats["failed"] += 1
             print(f"  -> 保留(エラー、次回再試行): {e}", file=sys.stderr)
+
+    # detect_superseded.py が今回新規に作られた/更新されたノートだけを対象にできるよう、
+    # 相対パス一覧を一時ファイルに書き出す(index/はgit管理外の作業ディレクトリ)。
+    if new_notes:
+        new_notes_path = ROOT / "index" / "new_notes.txt"
+        new_notes_path.parent.mkdir(exist_ok=True)
+        new_notes_path.write_text(
+            "\n".join(str(p.relative_to(ROOT)) for p in new_notes) + "\n", encoding="utf-8"
+        )
 
     print(
         f"完了: 整理 {stats['organized']} / 統合 {stats['merged'] + stats['absorbed']} / 保留 {stats['failed']}"

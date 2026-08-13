@@ -22,7 +22,13 @@ flowchart LR
 | `scripts/organize.py` | 整理スクリプト本体 |
 | `scripts/media_types.py` | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF) |
 | `scripts/llm_client.py` | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能) |
-| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー |
+| `scripts/fm_edit.py` | frontmatterの単一フィールドを行レベルで編集するヘルパー(既存ノートへの安全なバックフィル用) |
+| `scripts/build_embeddings.py` | `library/` 全ノートをチャンク化しGemini埋め込みを生成、`index/embeddings.json` へ出力(tsundoku-siteの `/api/ask` 用) |
+| `scripts/detect_superseded.py` | 新規/更新ノートと類似度の高い既存ノートをLLMで突き合わせ、上書き/矛盾と判定されたノートに `status: superseded` を付与 |
+| `scripts/backfill_shelf_life.py` | 既存ノートに情報の陳腐化目安(`shelf_life`)を一括分類してバックフィル |
+| `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
+| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開) |
+| `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル |
 
 ### クリップの形式
 
@@ -52,6 +58,10 @@ flowchart LR
 | `tags` | LLM生成タグ(3〜5個)+ 必要に応じてシステムタグ(下記) |
 | `summary` | 3行程度の要約 |
 | `sources` | (統合時のみ)統合された他方のURL |
+| `read` | 既読フラグ。tsundoku-siteからの書き戻しのみが変更する(新規作成時は常に`false`) |
+| `shelf_life` | 情報が陳腐化するまでの目安。`short`(数日〜数週間)/ `medium`(数か月〜1年)/ `long`(長期間陳腐化しない)のいずれか |
+| `status` | `superseded`(他ノートに内容が上書きされた)が付くことがある。`detect_superseded.py` が付与 |
+| `superseded_by` | (`status: superseded`時のみ)上書きした新ノートの相対パス(`library/xxx.md`) |
 
 #### URL種別と処理内容
 
@@ -82,6 +92,28 @@ Obsidianの全文検索でスクリーンショットの中身までヒットす
 動画URL直接入力(無料枠は公開動画1日8時間まで)で要約します。それも失敗した場合は
 タイトルのみ+`needs-review` になります。
 
+### 埋め込み・鮮度管理・重複矛盾検知(tsundoku-site連携)
+
+`organize.yml` は整理処理に続けて以下も実行し、tsundoku-siteの `/api/ask`(マルチモーダルRAG検索)
+用のindexを更新します。
+
+1. **埋め込み生成**(`build_embeddings.py`): `library/` を段落単位でチャンク化し、Gemini埋め込みで
+   ベクトル化。文書側は `title: {title} | text: {text}` の接頭辞を付けて非対称検索の精度を確保。
+   ノートごとのcontentHashで差分判定し、変更があったノートのみ再埋め込み(1回の実行では
+   `MAX_EMBEDS_PER_RUN` 件まで、超過分は次回へ持ち越し)
+2. **superseded検知**(`detect_superseded.py`): 今回新規/更新されたノートごとに、チャンク最大コサイン
+   類似度0.80以上・自分より古い既存ノートの上位1〜2件をLLM(`judge_supersession`)で「内容を
+   上書き/矛盾させるか」判定し、該当すれば旧ノートに `status: superseded` / `superseded_by` を付与
+3. **メタデータ再同期**(`build_embeddings.py --metadata-only`): frontmatterの最新値(`status` /
+   `shelf_life` 等)をindexへ反映
+4. 上記で `library/` に変更があれば`main`へcommit・push → 生成物一式(`index/embeddings.json`)を
+   GitHub Release `embeddings-index` へ `--clobber` アップロード(git管理外、iPhoneのObsidian Git
+   同期には影響しない)→ tsundoku-siteへ `repository_dispatch` で再ビルドを通知
+
+`shelf_life` は新規ノート作成時に `generate_note_meta` の一部として同時取得されるため、追加の
+API呼び出しは発生しません。既存ノートへのバックフィルは `backfill_shelf_life.py`(タイトル+要約の
+みを渡す軽量な専用分類)を使います。
+
 ## セットアップ
 
 ### 1. Gemini APIキーの取得
@@ -105,6 +137,10 @@ Obsidianの全文検索でスクリーンショットの中身までヒットす
 | `LLM_MODEL_CHAIN` | `gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
 | `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
+| `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
+| `EMBED_DIM` | `768` | 埋め込み次元数 |
+| `EMBED_SLEEP_SECONDS` | `6` | 埋め込みAPI呼び出し間のスリープ秒数(生成系とは別枠) |
+| `MAX_EMBEDS_PER_RUN` | `20` | 1回の実行で新規に埋め込むノート数の上限。超過分は次回実行へ持ち越し |
 
 ### 4. iPhone(Obsidian)側の推奨設定
 
@@ -121,6 +157,10 @@ Obsidianの全文検索でスクリーンショットの中身までヒットす
 
 - **自動実行**: 毎日 3:00 JST(18:00 UTC)に `main` ブランチで実行され、結果は直接コミットされます
 - **手動実行**: GitHubの **Actions → Organize inbox → Run workflow**
+- **バックフィル**: GitHubの **Actions → Backfill → Run workflow** で `task` を選択して手動実行
+  (`embeddings`: 差分埋め込み / `metadata-only`: indexメタデータのみ再同期 / `shelf_life`: 既存ノートの
+  鮮度分類バックフィル / `superseded`: 全ノートを対象にした重複矛盾の一括検知)。
+  いずれも `organize.yml` と同じ `concurrency` グループに参加するため、通常実行とは重なりません
 - **並行実行防止**: `concurrency` 設定済み。実行が重なることはありません
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
