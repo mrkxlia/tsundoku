@@ -1,8 +1,8 @@
 name: Backfill
 
-# 手動実行専用。既存135ノートの初回埋め込みバックフィル(複数日かかる想定でレジューム前提)や、
-# メタデータのみの一括再同期に使う。organize.yml と同じconcurrencyグループに参加し、
-# 通常実行やモバイルからのpushと衝突しないようにする。
+# 手動実行専用。初回埋め込みバックフィル(複数日かかる想定でレジューム前提)、メタデータのみの
+# 一括再同期、shelf_life一括分類、superseded一括検知に使う。organize.yml と同じconcurrency
+# グループに参加し、通常実行やモバイルからのpushと衝突しないようにする。
 on:
   workflow_dispatch:
     inputs:
@@ -13,9 +13,11 @@ on:
         options:
           - embeddings
           - metadata-only
+          - shelf_life
+          - superseded
         default: embeddings
       max_embeds:
-        description: "このジョブで新規に埋め込むノート数の上限(embeddingsタスクのみ有効)"
+        description: "このジョブで新規に処理する件数の上限(embeddings/shelf_lifeタスクのみ有効)"
         required: false
         type: string
         default: "50"
@@ -59,7 +61,8 @@ jobs:
             --clobber \
             || echo "embeddings-index リリースが見つかりません(初回実行のため許容)"
 
-      - name: build_embeddings.py を実行
+      - name: build_embeddings.py を実行(embeddings/metadata-onlyタスクのみ)
+        if: inputs.task == 'embeddings' || inputs.task == 'metadata-only'
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
@@ -81,6 +84,60 @@ jobs:
             fi
           fi
           python scripts/build_embeddings.py "${args[@]}"
+
+      - name: backfill_shelf_life.py を実行(shelf_lifeタスクのみ)
+        if: inputs.task == 'shelf_life'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_MODEL_CHAIN: ${{ vars.LLM_MODEL_CHAIN }}
+          LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+          INPUT_MAX_EMBEDS: ${{ inputs.max_embeds }}
+        run: python scripts/backfill_shelf_life.py --max-items "$INPUT_MAX_EMBEDS"
+
+      - name: detect_superseded.py を実行(supersededタスクのみ、全ノート対象)
+        if: inputs.task == 'superseded'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_MODEL_CHAIN: ${{ vars.LLM_MODEL_CHAIN }}
+          LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+        run: python scripts/detect_superseded.py --all
+
+      - name: frontmatterの変更をcommit・push(shelf_life/supersededタスクのみ)
+        if: inputs.task == 'shelf_life' || inputs.task == 'superseded'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- library/
+          if git diff --cached --quiet; then
+            echo "変更なし"
+            exit 0
+          fi
+          git commit -m "backfill: ${{ inputs.task }} ($(date -u +%Y-%m-%d))"
+          for wait in 2 4 8 16 0; do
+            if git push origin main; then
+              exit 0
+            fi
+            [ "$wait" = "0" ] && break
+            sleep "$wait"
+            if ! git -c merge.directoryRenames=false pull --rebase origin main; then
+              git rebase --abort
+              break
+            fi
+          done
+          branch="bot-conflict-${GITHUB_RUN_ID}"
+          echo "::error::main へのpushに失敗したため ${branch} へ退避しました。PRとして回収してください"
+          git push origin "HEAD:refs/heads/${branch}"
+          exit 1
+
+      - name: メタデータをindexへ再同期(shelf_life/supersededタスクのみ)
+        if: inputs.task == 'shelf_life' || inputs.task == 'superseded'
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+          EMBED_DIM: ${{ vars.EMBED_DIM }}
+        run: python scripts/build_embeddings.py --metadata-only
 
       - name: 埋め込みindexをReleaseアセットとして公開
         env:
