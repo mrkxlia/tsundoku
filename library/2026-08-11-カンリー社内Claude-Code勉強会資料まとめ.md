@@ -14,6 +14,7 @@ summary: '株式会社カンリーが全エンジニア向けに実施したClau
   AIコーディングツールをチームで再現性高く運用し、開発生産性を向上させるためのノウハウが網羅されている。'
 title: カンリー社内Claude Code勉強会の資料を公開します
 read: false
+shelf_life: medium
 ---
 
 # カンリー社内Claude Code勉強会の資料を公開します

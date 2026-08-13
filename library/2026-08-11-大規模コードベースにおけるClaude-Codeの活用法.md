@@ -14,6 +14,7 @@ summary: '大規模なコードベースやレガシーシステムでClaude Cod
   開発現場での組織的展開と環境構築を成功させるための具体的なアプローチを提示。'
 title: 'How Claude Code works in large codebases: Best practices and where to start'
 read: false
+shelf_life: medium
 ---
 
 # How Claude Code works in large codebases: Best practices and where to start

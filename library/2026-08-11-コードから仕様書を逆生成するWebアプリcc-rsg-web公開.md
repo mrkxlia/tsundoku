@@ -14,6 +14,7 @@ summary: 'コードベースからAIと対話しながら仕様書のたたき�
   Redmineを用いた実証実験では約5000行の仕様書生成に成功し、論文としてもプレプリントが公開されています。'
 title: コードから仕様書を逆生成するWebアプリ「cc-rsg-web」を公開しました
 read: false
+shelf_life: medium
 ---
 
 # コードから仕様書を逆生成するWebアプリ「cc-rsg-web」を公開しました
