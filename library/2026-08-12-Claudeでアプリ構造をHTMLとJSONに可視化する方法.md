@@ -14,6 +14,7 @@ summary: 'Claudeにアプリの全アーキテクチャをHTMLとJSONで出力�
 
   この手法によりコードベース自身が構造を説明可能になります。'
 read: false
+shelf_life: medium
 ---
 
 # Post by @Vivek4real_ on X

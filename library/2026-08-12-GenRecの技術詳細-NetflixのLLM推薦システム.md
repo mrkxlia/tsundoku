@@ -14,6 +14,7 @@ summary: 'GenRecはユーザーの行動履歴を文章化してLLMに入力す�
   Prefill-only推論を用いることで生成コストを抑えつつ高速かつ高精度なランキングを実現しています。'
 title: GenRecの技術的詳細
 read: false
+shelf_life: medium
 ---
 
 # GenRecの技術的詳細

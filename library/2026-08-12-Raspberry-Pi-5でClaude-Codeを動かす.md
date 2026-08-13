@@ -15,6 +15,7 @@ summary: 'Raspberry Pi 5とNixOS環境を用いて、Claude Codeを24時間常�
   宣言的な設定管理により、トラブル時も容易に環境を再構築できるようにしています。'
 title: Raspberry Pi 5でClaude Codeを動かす
 read: false
+shelf_life: medium
 ---
 
 # Raspberry Pi 5でClaude Codeを動かす
