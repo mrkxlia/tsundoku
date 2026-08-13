@@ -1,0 +1,445 @@
+https://speakerdeck.com/cyberagentdevelopers/introduction-and-effectiveness-verification-of-a-content-based-recommendation-system-using-llm-at-abema
+# ABEMAにおけるLLMを用いたコンテンツベース推薦システム導入と効果検証
+2026-08-12
+## More Decks by CyberAgent
+
+[
+
+”AIを使う” から ”AIに任せる” へ ─ 開発プロセスを再設計してAIを組織標準にするまで
+
+](https://speakerdeck.com/cyberagentdevelopers/aiwoshi-u-kara-ainiren-seru-he-kai-fa-purosesuwozai-she-ji-siteaiwozu-zhi-biao-zhun-nisurumade "”AIを使う” から ”AIに任せる” へ ─ 開発プロセスを再設計してAIを組織標準にするまで")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+190
+
+[
+
+Databricks 導入から Genie 活用まで、全部やった話
+
+](https://speakerdeck.com/cyberagentdevelopers/databricks-dao-ru-kara-genie-huo-yong-made-quan-bu-yatutahua "Databricks 導入から Genie 活用まで、全部やった話")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+1.2k
+
+[
+
+専任DEゼロからの データ基盤構築 - Databricks x IaC x AIで 進める「データの民主化」-
+
+](https://speakerdeck.com/cyberagentdevelopers/zhuan-ren-dezerokarano-detaji-pan-gou-zhu-databricks-x-iac-x-aide-jin-meru-detanomin-zhu-hua "専任DEゼロからの データ基盤構築  - Databricks x IaC x AIで 進める「データの民主化」-")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+870
+
+[
+
+「エンジニア進化論」2028年の開発完全自動化、エンジニアはどう進化するか
+
+](https://speakerdeck.com/cyberagentdevelopers/the-evolution-of-engineers "「エンジニア進化論」2028年の開発完全自動化、エンジニアはどう進化するか")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+10
+
+9.3k
+
+[
+
+NAB Show 2026 動画技術関連レポート / NAB Show 2026 Report
+
+](https://speakerdeck.com/cyberagentdevelopers/nab-show-2026-report "NAB Show 2026 動画技術関連レポート / NAB Show 2026 Report")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+360
+
+[
+
+Local LLM Meetup #1 Opening
+
+](https://speakerdeck.com/cyberagentdevelopers/local-llm-meetup-number-1-opening "Local LLM Meetup #1 Opening")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+460
+
+[
+
+LocalLLMで機密データを匿名化したい
+
+](https://speakerdeck.com/cyberagentdevelopers/localllmdeji-mi-detawoni-ming-hua-sitai "LocalLLMで機密データを匿名化したい")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+500
+
+[
+
+Vibe Fine-Tuning Version 2 — RunPod SSH で安く学習してみた
+
+](https://speakerdeck.com/cyberagentdevelopers/vibe-fine-tuning-version-2-runpod-ssh-dean-kuxue-xi-sitemita "Vibe Fine-Tuning Version 2 — RunPod SSH で安く学習してみた")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+460
+
+[
+
+2026年度新卒技術研修 サイバーエージェントのデータベース 活用事例とパフォーマンス調査入門
+
+](https://speakerdeck.com/cyberagentdevelopers/introduction-to-database-use-cases-and-performance-investigations "2026年度新卒技術研修 サイバーエージェントのデータベース 活用事例とパフォーマンス調査入門")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+11
+
+12k
+
+## Other Decks in Technology
+
+[
+
+Pavlokで始める電撃駆動開発
+
+](https://speakerdeck.com/sgrsn/pavlokdeshi-merudian-ji-qu-dong-kai-fa "Pavlokで始める電撃駆動開発")
+
+[sgrsn](https://speakerdeck.com/sgrsn)
+
+0
+
+180
+
+[
+
+20分でわかるセキュアAPI
+
+](https://speakerdeck.com/nwiizo/20fen-dewakarusekiyuaapi "20分でわかるセキュアAPI")
+
+[nwiizo](https://speakerdeck.com/nwiizo)
+
+2
+
+230
+
+[
+
+メルカリのグローバルアプリで挑んだ AlloyDB 運用と課題解決の実践記
+
+](https://speakerdeck.com/hatappi/mercari-global-alloydb-gcp-next-tokyo-26-310e28b6-43bf-4c23-bf60-2c38f4bb5851 "メルカリのグローバルアプリで挑んだ AlloyDB 運用と課題解決の実践記")
+
+[hatappi](https://speakerdeck.com/hatappi)
+
+0
+
+240
+
+[
+
+オートロックマンションなのに、各部屋は施錠なし！？ 攻撃者が組織内ネットワークで大暴れする理由 / The Front Door Is Locked, but the Rooms Are Wide Open: Why Attackers Move Freely Inside Enterprise Networks
+
+](https://speakerdeck.com/nttcom/the-front-door-is-locked-but-the-rooms-are-wide-open-why-attackers-move-freely-inside-enterprise-networks "オートロックマンションなのに、各部屋は施錠なし！？ 攻撃者が組織内ネットワークで大暴れする理由 / The Front Door Is Locked, but the Rooms Are Wide Open: Why Attackers Move Freely Inside Enterprise Networks")
+
+[nttcom](https://speakerdeck.com/nttcom)
+
+1
+
+1.6k
+
+[
+
+Issue設計から始める仕様駆動開発 / 20260731 Mizuki Hirata
+
+](https://speakerdeck.com/shift_evolve/20260731-mizuki-hirata "Issue設計から始める仕様駆動開発 / 20260731 Mizuki Hirata")
+
+[shift\_evolve](https://speakerdeck.com/shift_evolve)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+150
+
+[
+
+え？フロントエンドエンジニアの ワイがインフラも！？
+
+](https://speakerdeck.com/puku0x/e-hurontoendoenziniano-waigainhuramo "え？フロントエンドエンジニアの ワイがインフラも！？")
+
+[puku0x](https://speakerdeck.com/puku0x)
+
+1
+
+480
+
+[
+
+システム思考で問題に対処する
+
+](https://speakerdeck.com/yussak/sisutemusi-kao-dewen-ti-nidui-chu-suru "システム思考で問題に対処する")
+
+[yussak](https://speakerdeck.com/yussak)
+
+0
+
+220
+
+[
+
+QAエンジニア起点で進める、SmartHRにおける信頼性向上について
+
+](https://speakerdeck.com/kaomi_wombat/qaenziniaqi-dian-dejin-meru-smarthrniokeruxin-lai-xing-xiang-shang-nituite "QAエンジニア起点で進める、SmartHRにおける信頼性向上について")
+
+[kaomi\_wombat](https://speakerdeck.com/kaomi_wombat)
+
+1
+
+120
+
+[
+
+認知負荷をGemini で溶かす — GKE 基盤「Orbit」における AI エージェントの実践
+
+](https://speakerdeck.com/sansantech/260731 "認知負荷をGemini で溶かす — GKE 基盤「Orbit」における AI エージェントの実践")
+
+[sansantech](https://speakerdeck.com/sansantech)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+280
+
+[
+
+GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計
+
+](https://speakerdeck.com/yuriemori/github-copilotnofinops "GitHub CopilotのFinOps- AI CreditのObservabilityと価値を生むためのエージェント設計 ")
+
+[yuriemori](https://speakerdeck.com/yuriemori)
+
+0
+
+150
+
+[
+
+【AG-UI × A2UI × MCP Apps】Generative UIをやさしく解説する
+
+](https://speakerdeck.com/nrinetcom/ag-ui-x-a2ui-x-mcp-apps-generative-uiwoyasasikujie-shuo-suru "【AG-UI × A2UI × MCP Apps】Generative UIをやさしく解説する")
+
+[nrinetcom](https://speakerdeck.com/nrinetcom)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+110
+
+[
+
+OSPN.JPバージョンアップ作業進捗のご報告 / 20260801-osc26kyoto
+
+](https://speakerdeck.com/akkiesoft/20260801-osc26kyoto "OSPN.JPバージョンアップ作業進捗のご報告 / 20260801-osc26kyoto")
+
+[akkiesoft](https://speakerdeck.com/akkiesoft)
+
+0
+
+450
+
+## Featured
+
+[
+
+The Illustrated Children's Guide to Kubernetes
+
+](https://speakerdeck.com/chrisshort/the-illustrated-childrens-guide-to-kubernetes "The Illustrated Children's Guide to Kubernetes")
+
+[chrisshort](https://speakerdeck.com/chrisshort)
+
+51
+
+53k
+
+[
+
+Navigating Algorithm Shifts & AI Overviews - #SMXNext
+
+](https://speakerdeck.com/aleyda/navigating-algorithm-shifts-and-ai-overviews-number-smxnext "Navigating Algorithm Shifts & AI Overviews - #SMXNext")
+
+[aleyda](https://speakerdeck.com/aleyda)
+
+1
+
+1.5k
+
+[
+
+My Coaching Mixtape
+
+](https://speakerdeck.com/mlcsv/my-coaching-mixtape "My Coaching Mixtape")
+
+[mlcsv](https://speakerdeck.com/mlcsv)
+
+0
+
+210
+
+[
+
+The Psychology of Web Performance \[Beyond Tellerrand 2023\]
+
+](https://speakerdeck.com/tammyeverts/the-psychology-of-web-performance-beyond-tellerrand-2023 "The Psychology of Web Performance [Beyond Tellerrand 2023]")
+
+[tammyeverts](https://speakerdeck.com/tammyeverts)
+
+49
+
+3.5k
+
+[
+
+職位にかかわらず全員がリーダーシップを発揮するチーム作り / Building a team where everyone can demonstrate leadership regardless of position
+
+](https://speakerdeck.com/madoxten/building-a-team-where-everyone-can-demonstrate-leadership-regardless-of-position "職位にかかわらず全員がリーダーシップを発揮するチーム作り / Building a team where everyone can demonstrate leadership regardless of position")
+
+[madoxten](https://speakerdeck.com/madoxten)
+
+64
+
+56k
+
+[
+
+Crafting Experiences
+
+](https://speakerdeck.com/bethany/crafting-experiences "Crafting Experiences")
+
+[bethany](https://speakerdeck.com/bethany)
+
+1
+
+250
+
+[
+
+Neural Spatial Audio Processing for Sound Field Analysis and Control
+
+](https://speakerdeck.com/skoyamalab/neural-spatial-audio-processing-for-sound-field-analysis-and-control "Neural Spatial Audio Processing for Sound Field Analysis and Control")
+
+[skoyamalab](https://speakerdeck.com/skoyamalab)
+
+0
+
+400
+
+[
+
+HDC tutorial
+
+](https://speakerdeck.com/michielstock/hdc-tutorial "HDC tutorial")
+
+[michielstock](https://speakerdeck.com/michielstock)
+
+2
+
+790
+
+[
+
+sira's awesome portfolio website redesign presentation
+
+](https://speakerdeck.com/elsirapls/siras-awesome-portfolio-website-redesign-presentation "sira's awesome portfolio website redesign presentation")
+
+[elsirapls](https://speakerdeck.com/elsirapls)
+
+0
+
+320
+
+[
+
+Let's Do A Bunch of Simple Stuff to Make Websites Faster
+
+](https://speakerdeck.com/chriscoyier/lets-do-a-bunch-of-simple-stuff-to-make-websites-faster "Let's Do A Bunch of Simple Stuff to Make Websites Faster")
+
+[chriscoyier](https://speakerdeck.com/chriscoyier)
+
+508
+
+140k
+
+[
+
+The Pragmatic Product Professional
+
+](https://speakerdeck.com/lauravandoore/the-pragmatic-product-professional "The Pragmatic Product Professional")
+
+[lauravandoore](https://speakerdeck.com/lauravandoore)
+
+37
+
+7.4k
+
+[
+
+A better future with KSS
+
+](https://speakerdeck.com/kneath/a-better-future-with-kss "A better future with KSS")
+
+[kneath](https://speakerdeck.com/kneath)
+
+240
+
+18k
+
+## Transcript
+
+1. ### AbemaTV, Inc. All Rights Reserved  本日伝えたいこと 3 \[Topic\] ABEMAの推薦でLLMを用いたコンテンツベース推薦を導入した \[成果\]
+	効果検証を通して推薦指標の向上を確認した \[Why\] なぜコンテンツベース推薦が必要になったか？ • 新規コンテンツ・消費サイクルが短いコンテンツに対して効果的なロジックが必要になっ たため ◦ スケーラビリティー: 大量にコンテンツ来た時耐えるのか? ◦ リードタイム: コンテンツ配信から推薦が機能するまでの時間 \[Why\] なぜ今まで導入されていなかったのか？ • コンテンツベース推薦に必要なメタデータ付与が課題だったため ◦ メタ品質: LLMの登場でサービス導入に耐えうるメタが付与可能になった ◦ 運用負荷: AlloyDBとVertex AIにより完全システム化可能になった
+2. ### AbemaTV, Inc. All Rights Reserved  11 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖ 新規コンテンツ： ABEMAにとって新しいコンテンツ
+3. ### AbemaTV, Inc. All Rights Reserved  12 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖ 消費サイクルが短いコンテンツ：ニュースなどユーザの興味関心に時間的減衰が大 きいもの
+4. ### AbemaTV, Inc. All Rights Reserved  13 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖
+5. ### AbemaTV, Inc. All Rights Reserved  既存推薦の課題とコンテンツベース推薦の導入の流れ 20 課題のまとめ ヒューリスティック •
+	新規コンテンツ ◦ 夜中に対応しなくてはいけない ◦ 人間が設定するのでタイムラグが生じる • 消費サイクルが短いコンテンツ ◦ 人間が設定しても劣化してしまう ルールベース • 新規コンテンツ ◦ ABEMA内の知見が貯まるまで時間がかかる 機械学習 • 新規コンテンツ ◦ 視聴履歴が貯まるまで時間がかかる • 消費サイクルが短いコンテンツ ◦ 視聴履歴が貯まるまで時間がかかるのでそもそも相性が悪い 既存の3つの推薦システムだと解決できない →新システムの開発
+6. ### AbemaTV, Inc. All Rights Reserved  29 コンテンツベース推薦システムの説明 AlloyDBの選定理由 - コンテンツデータをAlloyDBに移行していた
+	\- AlloyDB AIの機能でVertexAIのモデルを利用できる - AlloyDBからVertexAIの定義済みモデルが直接利用することができる - EmbeddingなどがSQLで完結し、実装コストが低く検証フェーズとも相性がよ い - AlloyDB パフォーマンス - ベクトル検索における近似最近傍探索(ANN)のインデックスを改良したものを 利用できる - 開発に便利な機能が揃っていた - EXPLAINやクエリインサイトでパフォーマンスを確認できる - 読み取り専用のレプリカが作成できる
+7. ### AbemaTV, Inc. All Rights Reserved  まとめ 38 \[Topic\] ABEMAの推薦でLLMを用いたコンテンツベース推薦を導入した \[成果\]
+	効果検証を通して推薦指標の向上を確認した \[Why\] なぜコンテンツベース推薦が必要になったか？ • 新規コンテンツ・消費サイクルが短いコンテンツに対して効果的なロジックが必要になっ たため ◦ スケーラビリティー: 大量にコンテンツ来た時耐えるのか? ◦ リードタイム: コンテンツ配信から推薦が機能するまでの時間 \[Why\] なぜ今まで導入されていなかったのか？ • コンテンツベース推薦に必要なメタデータ付与が課題だったため ◦ メタ品質: LLMの登場でサービス導入に耐えうるメタが付与可能になった ◦ 運用負荷: AlloyDBとVertex AIにより完全システム化可能になった
