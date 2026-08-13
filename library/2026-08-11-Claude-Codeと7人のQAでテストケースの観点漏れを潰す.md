@@ -14,6 +14,7 @@ summary: 'AI作成のテストケースが正常系に偏る問題に対し7人�
   一人QAでも再現可能で網羅性の高いテスト設計の仕組みを解説する。'
 title: Claude Code に「7人の意地悪なQA」を仕込んでテストケースの観点漏れを潰した
 read: false
+shelf_life: medium
 ---
 
 # Claude Code に「7人の意地悪なQA」を仕込んでテストケースの観点漏れを潰した

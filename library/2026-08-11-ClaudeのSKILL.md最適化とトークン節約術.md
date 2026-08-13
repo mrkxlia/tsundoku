@@ -15,6 +15,7 @@ summary: 'Anthropic公式ガイドを参考にAIエージェントの構成を�
   レスポンス速度の向上やエラー時の自律対処力アップに効果的な実践的手法として紹介されている。'
 title: ClaudeのSKILL.md最適化とトークン節約術
 read: false
+shelf_life: medium
 ---
 
 # Post by @shocolt on X

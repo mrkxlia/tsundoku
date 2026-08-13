@@ -15,6 +15,7 @@ summary: 'Microsoftが開発したオープンソースの音声AIフレーム�
   エッジCPU向けの軽量推移エンジンやAzure AIへの統合など、最新のアップデート情報も網羅されています。'
 title: 'microsoft/VibeVoice: Open-Source Frontier Voice AI'
 read: false
+shelf_life: medium
 ---
 
 # microsoft/VibeVoice: Open-Source Frontier Voice AI

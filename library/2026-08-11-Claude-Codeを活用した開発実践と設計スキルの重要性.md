@@ -14,6 +14,7 @@ summary: 'Claude Codeは実装を自動化しエンジニアの役割を設計�
   ガードレールを整えることで試行錯誤を繰り返し高品質な成果を実現します。'
 title: Claude Code どこまでも/ Claude Code Everywhere
 read: false
+shelf_life: medium
 ---
 
 # Claude Code どこまでも/ Claude Code Everywhere

@@ -15,6 +15,7 @@ summary: 'Anthropic公式がClaude Codeで重い処理を行う際のベスト�
   あわせてトークン枯渇を防ぐための節約ノウハウの重要性についても触れている。'
 title: Anthropic公式のClaude Code活用ベストプラクティス
 read: false
+shelf_life: medium
 ---
 
 # Post by @ClaudeCode_love on X

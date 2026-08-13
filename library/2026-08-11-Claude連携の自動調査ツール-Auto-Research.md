@@ -15,6 +15,7 @@ summary: 'GitHub ActionsとClaude Codeを組み合わせた自動リサーチツ
   サーバー構築やコード記述は不要で、テンプレートから約5分で導入できます。'
 title: 'INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)'
 read: false
+shelf_life: medium
 ---
 
 # INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)

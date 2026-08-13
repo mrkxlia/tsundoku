@@ -15,6 +15,7 @@ summary: 'Oikon氏によるZennfes Spring 2026での登壇スライド資料で�
   Xでの情報発信や書籍執筆を行う著者による実践的なキャッチアップ法がまとめられています。'
 title: Claude Codeをどのように キャッチアップしているか
 read: false
+shelf_life: medium
 ---
 
 # Claude Codeをどのように キャッチアップしているか

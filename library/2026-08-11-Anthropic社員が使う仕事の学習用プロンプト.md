@@ -14,6 +14,7 @@ summary: 'Anthropicのメンバーが実践している、深い理解を促す�
   問題の本質や解決策の「なぜ」を深く掘り下げることで、確実な知識の習得をサポートする。'
 title: Anthropic社員が使う仕事の学習用プロンプト
 read: false
+shelf_life: long
 ---
 
 # Post by @oikon48 on X

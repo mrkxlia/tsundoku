@@ -14,6 +14,7 @@ summary: 'AIのDeep Researchが出力する読みにくい長文を、会議で�
   SKILL.mdは全文公開されており、誰でも簡単にインストールして利用可能です。'
 title: Deep Researchの長文を会議用レポートに変換するスキル
 read: false
+shelf_life: medium
 ---
 
 # Post by @kotetsu_0321 on X

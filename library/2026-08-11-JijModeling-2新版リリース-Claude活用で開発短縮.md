@@ -15,6 +15,7 @@ summary: '数理最適化モデリングツール「JijModeling 2」の新版が
   Claude Fable 5の活用で初期実装が実働2日に短縮され約1ヶ月でリリースされました。'
 title: JijModeling 2新版リリース Claude活用で開発短縮
 read: false
+shelf_life: medium
 ---
 
 数理最適化モデリングツール「JijModeling 2」の新バージョンをリリースしました 🚀
