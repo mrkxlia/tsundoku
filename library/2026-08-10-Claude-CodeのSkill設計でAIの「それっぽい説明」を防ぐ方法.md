@@ -16,6 +16,7 @@ sources:
 - https://zenn.dev/p/ncdc
 title: '[Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話'
 read: false
+shelf_life: medium
 ---
 
 # [Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話
