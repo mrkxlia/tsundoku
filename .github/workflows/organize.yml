@@ -51,6 +51,7 @@ jobs:
         run: python scripts/organize.py
 
       - name: Commit and push
+        id: commit_and_push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -83,6 +84,41 @@ jobs:
           echo "::error::main へのpushに失敗したため ${branch} へ退避しました。PRとして回収してください"
           git push origin "HEAD:refs/heads/${branch}"
           exit 1
+
+      - name: 前回の埋め込みindexをダウンロード(Releaseアセット、初回は無くて良い)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p index
+          gh release download embeddings-index \
+            --repo mrkxlia/tsundoku \
+            --pattern embeddings.json \
+            --dir index \
+            --clobber \
+            || echo "embeddings-index リリースが見つかりません(初回実行のため許容)"
+
+      - name: 埋め込みを生成(差分のみ、1回の実行では上限件数まで)
+        env:
+          MAX_EMBEDS_PER_RUN: ${{ vars.MAX_EMBEDS_PER_RUN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+          EMBED_DIM: ${{ vars.EMBED_DIM }}
+          EMBED_SLEEP_SECONDS: ${{ vars.EMBED_SLEEP_SECONDS }}
+        run: python scripts/build_embeddings.py --max-embeds "${MAX_EMBEDS_PER_RUN:-20}"
+
+      - name: 埋め込みindexをReleaseアセットとして公開
+        # 前段 "Commit and push" が失敗した場合はジョブが停止しこのステップに到達しない
+        # (= mainの更新に失敗した実行ではindexを公開しない。indexがmainより先に進まないようにするため)。
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view embeddings-index --repo mrkxlia/tsundoku >/dev/null 2>&1; then
+            gh release create embeddings-index --repo mrkxlia/tsundoku \
+              --title "embeddings-index" \
+              --notes "tsundoku-site の /api/ask 用埋め込みindex(自動更新)"
+          fi
+          gh release upload embeddings-index index/embeddings.json \
+            --repo mrkxlia/tsundoku --clobber
 
       - name: tsundoku-siteの再ビルドを起動
         env:
