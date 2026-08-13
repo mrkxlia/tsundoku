@@ -1,0 +1,100 @@
+name: Backfill
+
+# 手動実行専用。既存135ノートの初回埋め込みバックフィル(複数日かかる想定でレジューム前提)や、
+# メタデータのみの一括再同期に使う。organize.yml と同じconcurrencyグループに参加し、
+# 通常実行やモバイルからのpushと衝突しないようにする。
+on:
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "実行するタスク"
+        required: true
+        type: choice
+        options:
+          - embeddings
+          - metadata-only
+        default: embeddings
+      max_embeds:
+        description: "このジョブで新規に埋め込むノート数の上限(embeddingsタスクのみ有効)"
+        required: false
+        type: string
+        default: "50"
+      full:
+        description: "変更検知を無視して全ノートを再埋め込みする(embeddingsタスクのみ有効)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: organize-inbox
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: 前回の埋め込みindexをダウンロード(Releaseアセット、初回は無くて良い)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p index
+          gh release download embeddings-index \
+            --repo mrkxlia/tsundoku \
+            --pattern embeddings.json \
+            --dir index \
+            --clobber \
+            || echo "embeddings-index リリースが見つかりません(初回実行のため許容)"
+
+      - name: build_embeddings.py を実行
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+          EMBED_DIM: ${{ vars.EMBED_DIM }}
+          EMBED_SLEEP_SECONDS: ${{ vars.EMBED_SLEEP_SECONDS }}
+          # workflow_dispatch入力は書き込み権限者のみ設定できるが、シェルへの直接展開(${{ }})は
+          # 引用符を含む値でコマンドインジェクションになり得るため、env経由で安全に渡す。
+          INPUT_TASK: ${{ inputs.task }}
+          INPUT_MAX_EMBEDS: ${{ inputs.max_embeds }}
+          INPUT_FULL: ${{ inputs.full }}
+        run: |
+          args=()
+          if [ "$INPUT_TASK" = "metadata-only" ]; then
+            args+=(--metadata-only)
+          else
+            args+=(--max-embeds "$INPUT_MAX_EMBEDS")
+            if [ "$INPUT_FULL" = "true" ]; then
+              args+=(--full)
+            fi
+          fi
+          python scripts/build_embeddings.py "${args[@]}"
+
+      - name: 埋め込みindexをReleaseアセットとして公開
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if ! gh release view embeddings-index --repo mrkxlia/tsundoku >/dev/null 2>&1; then
+            gh release create embeddings-index --repo mrkxlia/tsundoku \
+              --title "embeddings-index" \
+              --notes "tsundoku-site の /api/ask 用埋め込みindex(自動更新)"
+          fi
+          gh release upload embeddings-index index/embeddings.json \
+            --repo mrkxlia/tsundoku --clobber
+
+      - name: tsundoku-siteの再ビルドを起動
+        env:
+          GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: gh api repos/mrkxlia/tsundoku-site/dispatches -f event_type=content-updated
