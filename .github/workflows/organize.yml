@@ -106,8 +106,48 @@ jobs:
           EMBED_SLEEP_SECONDS: ${{ vars.EMBED_SLEEP_SECONDS }}
         run: python scripts/build_embeddings.py --max-embeds "${MAX_EMBEDS_PER_RUN:-20}"
 
+      - name: 重複・矛盾(superseded)を検知(今回新規/更新されたノートのみ対象)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          LLM_MODEL_CHAIN: ${{ vars.LLM_MODEL_CHAIN }}
+          LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+        run: python scripts/detect_superseded.py
+
+      - name: メタデータをindexへ再同期(status/shelf_lifeの最新値を反映)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          EMBEDDING_MODEL: ${{ vars.EMBEDDING_MODEL }}
+          EMBED_DIM: ${{ vars.EMBED_DIM }}
+        run: python scripts/build_embeddings.py --metadata-only
+
+      - name: superseded分をcommit・push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git add -A -- library/
+          if git diff --cached --quiet; then
+            echo "supersededによる変更なし"
+            exit 0
+          fi
+          git commit -m "detect_superseded: 重複・矛盾ノートにsuperseded付与 ($(date -u +%Y-%m-%d))"
+          for wait in 2 4 8 16 0; do
+            if git push origin main; then
+              exit 0
+            fi
+            [ "$wait" = "0" ] && break
+            sleep "$wait"
+            if ! git -c merge.directoryRenames=false pull --rebase origin main; then
+              git rebase --abort
+              break
+            fi
+          done
+          branch="bot-conflict-${GITHUB_RUN_ID}"
+          echo "::error::main へのpushに失敗したため ${branch} へ退避しました。PRとして回収してください"
+          git push origin "HEAD:refs/heads/${branch}"
+          exit 1
+
       - name: 埋め込みindexをReleaseアセットとして公開
-        # 前段 "Commit and push" が失敗した場合はジョブが停止しこのステップに到達しない
+        # 前段いずれかのcommit&pushが失敗した場合はジョブが停止しこのステップに到達しない
         # (= mainの更新に失敗した実行ではindexを公開しない。indexがmainより先に進まないようにするため)。
         env:
           GH_TOKEN: ${{ github.token }}
@@ -125,6 +165,6 @@ jobs:
           GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
         run: |
           # コンテンツ変更ゼロの日でも常に送る(前日分の既読トグルを次のビルドで焼き込むため)。
-          # 前段の "Commit and push" が失敗した場合はこのステップに到達しない
+          # 前段2回のcommit&pushのいずれかが失敗した場合はこのステップに到達しない
           # (= mainの更新に失敗した実行ではdispatchしない)。
           gh api repos/mrkxlia/tsundoku-site/dispatches -f event_type=content-updated
