@@ -14,6 +14,7 @@ summary: 'CodeCommitはAWSのIAMやKMSと統合されたフルマネージドGit
   2025年にGA復帰し、AWS内で開発基盤を完結させたい組織に適しています。'
 title: AWS Code シリーズで CodeCommit を使うメリット
 read: false
+shelf_life: medium
 ---
 
 # AWS Code シリーズで CodeCommit を使うメリット
