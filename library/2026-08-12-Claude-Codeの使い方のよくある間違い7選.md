@@ -14,6 +14,7 @@ summary: 'Claude Codeの活用において多くの人が陥りがちな7つの�
   コードを書くのではなくタスクを委任するという意識改革の重要性を説いています。'
 title: 正直に言う。お前のClaude Codeの使い方は間違っている
 read: false
+shelf_life: medium
 ---
 
 # 正直に言う。お前のClaude Codeの使い方は間違っている
