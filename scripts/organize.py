@@ -269,6 +269,14 @@ def append_image_section(body: str, asset_paths: list[Path], image_text: str) ->
     return f"{body.strip()}\n\n{IMAGE_SECTION_HEADER}\n\n{blocks}"
 
 
+def reverify_hook(note: LibraryNote) -> None:
+    """将来の定期再検証機能の呼び出し口(現状no-op)。
+
+    詳細設計は docs/future-reverification.md を参照。呼び出しても何もしないため、
+    organize.py 全体の挙動には影響しない(呼び出し忘れ防止のための予約フック)。
+    """
+
+
 # ---------------------------------------------------------------- メイン処理
 
 def process_clip(
@@ -407,6 +415,9 @@ def main() -> int:
             stats[label] += 1
             if new_path is not None:
                 new_notes.append(new_path)
+                note = next((n for n in library if n.path == new_path), None)
+                if note is not None:
+                    reverify_hook(note)
         except llm_client.LLMError as e:
             stats["failed"] += 1
             print(f"  -> 保留(LLM失敗、次回再試行): {e}", file=sys.stderr)
