@@ -29,6 +29,7 @@ flowchart LR
 | `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
 | `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開) |
 | `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル |
+| `docs/future-reverification.md` | 将来拡張(定期再検証)の設計メモ。現時点では未実装(`organize.py`の`reverify_hook`はno-opスタブ) |
 
 ### クリップの形式
 
