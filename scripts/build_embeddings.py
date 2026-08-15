@@ -13,6 +13,9 @@ index/embeddings.json (git管理外、ローカル/CI作業用) に書き出す�
   マルチモーダル入力として追加し、その分テキスト予算を控除する(8,192トークンは
   全モダリティ合算のため)。外部ホスト画像(ダウンロードされていないもの)は対象外
   (テキストとしてはそのまま埋め込み対象に含まれる)。
+- 1チャンクあたりの画像は MAX_IMAGES_PER_CHUNK(4枚)までとし、超過する場合は
+  段落単位でさらにサブチャンクへ分割し、全画像が埋め込み対象に含まれるようにする
+  (スライドのページ画像列など、1ノートに画像点数が多いセクション向け)。
 - 1件処理するごとに index/embeddings.json 全体を書き直す(レジューム可能にするため)。
 - lintの2値規則: ファイルは在るがfrontmatterを解析できない場合は前回indexのエントリを
   保持したまま警告するだけに留め、library/に実在しなくなったノート(削除/統合でarchiveへ
@@ -176,39 +179,79 @@ def split_chunks(body: str) -> list[str]:
     return chunks or [""]
 
 
+def split_chunk_by_image_count(chunk_text: str, max_images: int) -> list[str]:
+    """1チャンク内のローカル画像参照が max_images 枚を超える場合、段落単位でさらに
+    サブチャンクへ分割する(スライドのページ画像列のように、1チャンクの文字数上限には
+    収まるが画像枚数だけが多いケースで、後段の埋め込み対象から画像が漏れないようにする)。
+    """
+    paragraphs = [p for p in re.split(r"\n{2,}", chunk_text.strip()) if p.strip()]
+    sub_chunks: list[str] = []
+    current: list[str] = []
+    current_images = 0
+    for para in paragraphs:
+        para_images = len(LOCAL_IMAGE_RE.findall(para))
+        if current and current_images + para_images > max_images:
+            sub_chunks.append("\n\n".join(current))
+            current, current_images = [], 0
+        current.append(para)
+        current_images += para_images
+    if current:
+        sub_chunks.append("\n\n".join(current))
+    return sub_chunks or [chunk_text]
+
+
 def embed_note(
     client: llm_client.LLMClient, rel_path: str, title: str, body: str
 ) -> list[dict]:
     """1ノート分のチャンクを埋め込み、[{"text": 抜粋, "vector": [...]}] を返す。"""
     out = []
-    for i, chunk_text in enumerate(split_chunks(body)):
-        chunk_images = [p for p in local_image_paths(chunk_text) if p.exists()][:MAX_IMAGES_PER_CHUNK]
-        budget = CHUNK_CHARS - IMAGE_CHARS_BUDGET * len(chunk_images)
-        text = chunk_text
-        if chunk_images and len(text) > budget:
-            print(
-                f"  [chunk] {rel_path}#{i}: 画像{len(chunk_images)}枚の予算控除により"
-                f"{len(text)}→{max(budget, 200)}字に切り詰め",
-                file=sys.stderr,
-            )
-            text = text[: max(budget, 200)]
+    chunk_index = 0
+    for raw_chunk in split_chunks(body):
+        raw_image_count = len(LOCAL_IMAGE_RE.findall(raw_chunk))
+        sub_chunks = (
+            split_chunk_by_image_count(raw_chunk, MAX_IMAGES_PER_CHUNK)
+            if raw_image_count > MAX_IMAGES_PER_CHUNK
+            else [raw_chunk]
+        )
+        for chunk_text in sub_chunks:
+            all_chunk_images = [p for p in local_image_paths(chunk_text) if p.exists()]
+            chunk_images = all_chunk_images[:MAX_IMAGES_PER_CHUNK]
+            if len(all_chunk_images) > MAX_IMAGES_PER_CHUNK:
+                # 1段落に max_images 枚を超える画像が並んでいる等、分割しても収まらない
+                # 想定外のケース。黙って捨てず警告だけ出して先頭 max_images 枚に絞る。
+                print(
+                    f"  [chunk] {rel_path}#{chunk_index}: 画像{len(all_chunk_images)}枚が"
+                    f"MAX_IMAGES_PER_CHUNK({MAX_IMAGES_PER_CHUNK})を超過、先頭"
+                    f"{MAX_IMAGES_PER_CHUNK}枚のみ埋め込み対象にする",
+                    file=sys.stderr,
+                )
+            budget = CHUNK_CHARS - IMAGE_CHARS_BUDGET * len(chunk_images)
+            text = chunk_text
+            if chunk_images and len(text) > budget:
+                print(
+                    f"  [chunk] {rel_path}#{chunk_index}: 画像{len(chunk_images)}枚の予算控除により"
+                    f"{len(text)}→{max(budget, 200)}字に切り詰め",
+                    file=sys.stderr,
+                )
+                text = text[: max(budget, 200)]
 
-        parts: list[dict] = [{"text": DOC_PREFIX_TEMPLATE.format(title=title, text=text)}]
-        for img_path in chunk_images:
-            try:
-                data = img_path.read_bytes()
-            except OSError:
-                continue
-            parts.append(
-                {
-                    "inline_data": {
-                        "mime_type": image_mime(img_path),
-                        "data": base64.b64encode(data).decode("ascii"),
+            parts: list[dict] = [{"text": DOC_PREFIX_TEMPLATE.format(title=title, text=text)}]
+            for img_path in chunk_images:
+                try:
+                    data = img_path.read_bytes()
+                except OSError:
+                    continue
+                parts.append(
+                    {
+                        "inline_data": {
+                            "mime_type": image_mime(img_path),
+                            "data": base64.b64encode(data).decode("ascii"),
+                        }
                     }
-                }
-            )
-        vector = client.embed_content(parts)
-        out.append({"text": text, "vector": vector})
+                )
+            vector = client.embed_content(parts)
+            out.append({"text": text, "vector": vector})
+            chunk_index += 1
     return out
 
 
