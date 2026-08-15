@@ -1,4 +1,23 @@
-https://zenn.dev/nozomi720/articles/claude_code_hooks_feedback
+---
+title: Claude Codeに同じ指摘をさせないhookの仕組み
+url: https://zenn.dev/nozomi720/articles/claude_code_hooks_feedback
+created: '2026-08-15T19:16:42'
+type: article
+tags:
+- claudecode
+- ai
+- hook
+- 開発効率化
+- python
+summary: 'Claude Codeでの同じ指摘の繰り返しを防ぐため、指摘内容をファイルに記録・管理する仕組みを構築。
+
+  指摘回数に応じてhookの強制力を3段階で引き上げ、コマンド実行やファイル編集の制限を行う。
+
+  読ませる・やらせない・終わらせないの3段階hookでAIの行動を自動的に制御している。'
+read: false
+shelf_life: medium
+---
+
 # Claude Code に「同じ指摘を二度させない」仕組みを hook で作った
 2026-08-15
 ## 同じ指摘を、何度も繰り返している

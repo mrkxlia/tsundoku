@@ -1,4 +1,23 @@
-https://wp-kyoto.net/configure-iam-polify-to-exec-agentcore-runtime/?utm_source=x&utm_medium=social&utm_campaign=blog-sns-automation&utm_content=configure-iam-polify-to-exec-agentcore-runtime
+---
+title: LambdaからAgentCoreを実行するIAMとCDK設定
+url: https://wp-kyoto.net/configure-iam-polify-to-exec-agentcore-runtime/?utm_source=x&utm_medium=social&utm_campaign=blog-sns-automation&utm_content=configure-iam-polify-to-exec-agentcore-runtime
+created: '2026-08-15T23:07:33'
+type: article
+tags:
+- aws
+- iam
+- lambda
+- cdk
+- bedrock
+summary: 'AWS LambdaからBedrock AgentCoreを実行するIAMポリシー設定を解説。
+
+  実行権限としてInvokeAgentRuntimeの許可と2種類のリソースARN指定が必要。
+
+  AWS CDKを用いた具体的なポリシー付与コード例も紹介している。'
+read: false
+shelf_life: medium
+---
+
 # AWS Lambda から AgentCore を実行する際の IAM ポリシー設定と CDK での設定方法
 2026-08-15
 最終更新日: 2025年9月14日

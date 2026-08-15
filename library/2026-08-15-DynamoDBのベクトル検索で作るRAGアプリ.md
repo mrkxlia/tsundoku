@@ -1,4 +1,23 @@
-https://zenn.dev/tosuri13/articles/567f25a4f3e9b5
+---
+title: DynamoDBのベクトル検索で作るRAGアプリ
+url: https://zenn.dev/tosuri13/articles/567f25a4f3e9b5
+created: '2026-08-15T19:16:42'
+type: article
+tags:
+- aws
+- dynamodb
+- rag
+- ベクトル検索
+- python
+summary: 'DynamoDBでリアルタイムベクトル検索機能が一般提供され、単体でRAGが構築可能になりました。
+
+  ベクトルインデックスの設定項目やAWS SDKを用いたインデックス作成、データ投入の具体的な手順を解説しています。
+
+  既存のテーブルにも後からインデックスを追加できるため、手軽にRAG機能を統合できます。'
+read: false
+shelf_life: medium
+---
+
 # DynamoDBのベクトル検索で簡単にRAGができるようになったぞ！
 2026-08-15
 こんにちは👋
