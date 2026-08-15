@@ -1,0 +1,457 @@
+https://speakerdeck.com/cyberagentdevelopers/introduction-and-effectiveness-verification-of-a-content-based-recommendation-system-using-llm-at-abema
+# ABEMAにおけるLLMを用いたコンテンツベース推薦システム導入と効果検証
+2026-08-15
+## More Decks by CyberAgent
+
+[
+
+”AIを使う” から ”AIに任せる” へ ─ 開発プロセスを再設計してAIを組織標準にするまで
+
+](https://speakerdeck.com/cyberagentdevelopers/aiwoshi-u-kara-ainiren-seru-he-kai-fa-purosesuwozai-she-ji-siteaiwozu-zhi-biao-zhun-nisurumade "”AIを使う” から ”AIに任せる” へ ─ 開発プロセスを再設計してAIを組織標準にするまで")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+200
+
+[
+
+Databricks 導入から Genie 活用まで、全部やった話
+
+](https://speakerdeck.com/cyberagentdevelopers/databricks-dao-ru-kara-genie-huo-yong-made-quan-bu-yatutahua "Databricks 導入から Genie 活用まで、全部やった話")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+1.2k
+
+[
+
+専任DEゼロからの データ基盤構築 - Databricks x IaC x AIで 進める「データの民主化」-
+
+](https://speakerdeck.com/cyberagentdevelopers/zhuan-ren-dezerokarano-detaji-pan-gou-zhu-databricks-x-iac-x-aide-jin-meru-detanomin-zhu-hua "専任DEゼロからの データ基盤構築  - Databricks x IaC x AIで 進める「データの民主化」-")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+890
+
+[
+
+「エンジニア進化論」2028年の開発完全自動化、エンジニアはどう進化するか
+
+](https://speakerdeck.com/cyberagentdevelopers/the-evolution-of-engineers "「エンジニア進化論」2028年の開発完全自動化、エンジニアはどう進化するか")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+10
+
+9.3k
+
+[
+
+NAB Show 2026 動画技術関連レポート / NAB Show 2026 Report
+
+](https://speakerdeck.com/cyberagentdevelopers/nab-show-2026-report "NAB Show 2026 動画技術関連レポート / NAB Show 2026 Report")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+370
+
+[
+
+Local LLM Meetup #1 Opening
+
+](https://speakerdeck.com/cyberagentdevelopers/local-llm-meetup-number-1-opening "Local LLM Meetup #1 Opening")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+470
+
+[
+
+LocalLLMで機密データを匿名化したい
+
+](https://speakerdeck.com/cyberagentdevelopers/localllmdeji-mi-detawoni-ming-hua-sitai "LocalLLMで機密データを匿名化したい")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+510
+
+[
+
+Vibe Fine-Tuning Version 2 — RunPod SSH で安く学習してみた
+
+](https://speakerdeck.com/cyberagentdevelopers/vibe-fine-tuning-version-2-runpod-ssh-dean-kuxue-xi-sitemita "Vibe Fine-Tuning Version 2 — RunPod SSH で安く学習してみた")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+460
+
+[
+
+2026年度新卒技術研修 サイバーエージェントのデータベース 活用事例とパフォーマンス調査入門
+
+](https://speakerdeck.com/cyberagentdevelopers/introduction-to-database-use-cases-and-performance-investigations "2026年度新卒技術研修 サイバーエージェントのデータベース 活用事例とパフォーマンス調査入門")
+
+[cyberagentdevelopers](https://speakerdeck.com/cyberagentdevelopers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+11
+
+12k
+
+## Other Decks in Technology
+
+[
+
+モダンフロントエンド 開発研修
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_sato "モダンフロントエンド 開発研修")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+4
+
+630
+
+[
+
+システム思考で問題に対処する
+
+](https://speakerdeck.com/yussak/sisutemusi-kao-dewen-ti-nidui-chu-suru "システム思考で問題に対処する")
+
+[yussak](https://speakerdeck.com/yussak)
+
+0
+
+270
+
+[
+
+【CEDEC2026】専門性の高いデフォルメチームが挑んだ人材育成戦略 〜Cygames Academiaの企画から実施まで〜
+
+](https://speakerdeck.com/cygames/cygames_202607_cedec2026_02 "【CEDEC2026】専門性の高いデフォルメチームが挑んだ人材育成戦略 〜Cygames Academiaの企画から実施まで〜")
+
+[cygames](https://speakerdeck.com/cygames)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+600
+
+[
+
+取引先から届く 「セキュリティチェックシート」の読み解き方
+
+](https://speakerdeck.com/kamadamakoto/qu-yin-xian-karajie-ku-sekiyuriteitietukusito-nodu-mijie-kifang "取引先から届く 「セキュリティチェックシート」の読み解き方")
+
+[kamadamakoto](https://speakerdeck.com/kamadamakoto)
+
+0
+
+150
+
+[
+
+Forza Horizon 6 のテレメトリ機能で 自動運転に使えそうな学習データを集める話
+
+](https://speakerdeck.com/henjin0/forza-horizon-6-noteremetoriji-neng-de-zi-dong-yun-zhuan-nishi-esounaxue-xi-detawoji-meruhua "Forza Horizon 6 のテレメトリ機能で 自動運転に使えそうな学習データを集める話")
+
+[henjin0](https://speakerdeck.com/henjin0)
+
+0
+
+170
+
+[
+
+カートの信頼性を担保するWireMockを使ったe2eテスト
+
+](https://speakerdeck.com/ykagano/katonoxin-lai-xing-wodan-bao-suruwiremockwoshi-tutae2etesuto "カートの信頼性を担保するWireMockを使ったe2eテスト")
+
+[ykagano](https://speakerdeck.com/ykagano)
+
+0
+
+260
+
+[
+
+Goでデータパイプラインを作ろう
+
+](https://speakerdeck.com/sansantech/260805-2 "Goでデータパイプラインを作ろう")
+
+[sansantech](https://speakerdeck.com/sansantech)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+440
+
+[
+
+会社紹介資料 / Sansan Company Profile
+
+](https://speakerdeck.com/sansan33/sansan-company-profile "会社紹介資料 / Sansan Company Profile")
+
+[sansan33](https://speakerdeck.com/sansan33)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+23
+
+430k
+
+[
+
+Bits Agent Builder の⼊⾨と活⽤事例
+
+](https://speakerdeck.com/nulabinc/introduction-to-bits-agent-builder-and-practical-use-cases "Bits Agent Builder の⼊⾨と活⽤事例")
+
+[nulabinc](https://speakerdeck.com/nulabinc)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+140
+
+[
+
+LanceDB入門
+
+](https://speakerdeck.com/mocobeta/lancedb-nyuumon "LanceDB入門")
+
+[mocobeta](https://speakerdeck.com/mocobeta)
+
+7
+
+480
+
+[
+
+つくって納得、つかって実感！ 大規模言語モデルことはじめ ver2.0
+
+](https://speakerdeck.com/recruitengineers/fy2026_bootcamp_kiryu "つくって納得、つかって実感！ 大規模言語モデルことはじめ ver2.0")
+
+[recruitengineers](https://speakerdeck.com/recruitengineers)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+4
+
+1.6k
+
+[
+
+LLM・AIエージェントシステムベストプラクティス
+
+](https://speakerdeck.com/shibuiwilliam/llm-ai "LLM・AIエージェントシステムベストプラクティス")
+
+[shibuiwilliam](https://speakerdeck.com/shibuiwilliam)
+
+6
+
+1.2k
+
+## Featured
+
+[
+
+Max Prin - Stacking Signals: How International SEO Comes Together (And Falls Apart)
+
+](https://speakerdeck.com/techseoconnect/max-prin-stacking-signals-how-international-seo-comes-together-and-falls-apart "Max Prin - Stacking Signals: How International SEO Comes Together (And Falls Apart)")
+
+[techseoconnect](https://speakerdeck.com/techseoconnect)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+0
+
+400
+
+[
+
+Redefining SEO in the New Era of Traffic Generation
+
+](https://speakerdeck.com/szymonslowik/redefining-seo-in-the-new-era-of-traffic-generation "Redefining SEO in the New Era of Traffic Generation")
+
+[szymonslowik](https://speakerdeck.com/szymonslowik)
+
+1
+
+380
+
+[
+
+Navigating the moral maze — ethical principles for Al-driven product design
+
+](https://speakerdeck.com/skipperchong/navigating-the-moral-maze "Navigating the moral maze — ethical principles for Al-driven product design")
+
+2
+
+480
+
+[
+
+Understanding Cognitive Biases in Performance Measurement
+
+](https://speakerdeck.com/bluesmoon/understanding-cognitive-biases-in-performance-measurement "Understanding Cognitive Biases in Performance Measurement")
+
+[bluesmoon](https://speakerdeck.com/bluesmoon)
+
+32
+
+3k
+
+[
+
+The untapped power of vector embeddings
+
+](https://speakerdeck.com/frankvandijk/the-untapped-power-of-vector-embeddings "The untapped power of vector embeddings")
+
+[frankvandijk](https://speakerdeck.com/frankvandijk)
+
+2
+
+1.8k
+
+[
+
+What does AI have to do with Human Rights?
+
+](https://speakerdeck.com/axbom/what-does-ai-have-to-do-with-human-rights "What does AI have to do with Human Rights?")
+
+[axbom](https://speakerdeck.com/axbom)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+2.3k
+
+[
+
+Build your cross-platform service in a week with App Engine
+
+](https://speakerdeck.com/jlugia/build-your-cross-platform-service-in-a-week-with-app-engine "Build your cross-platform service in a week with App Engine")
+
+[jlugia](https://speakerdeck.com/jlugia)
+
+234
+
+19k
+
+[
+
+What the history of the web can teach us about the future of AI
+
+](https://speakerdeck.com/inesmontani/what-the-history-of-the-web-can-teach-us-about-the-future-of-ai "What the history of the web can teach us about the future of AI")
+
+[inesmontani](https://speakerdeck.com/inesmontani)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+1
+
+650
+
+[
+
+How to optimise 3,500 product descriptions for ecommerce in one day using ChatGPT
+
+](https://speakerdeck.com/katarinadahlin/brightonseo-2024 "How to optimise 3,500 product descriptions for ecommerce in one day using ChatGPT")
+
+[katarinadahlin](https://speakerdeck.com/katarinadahlin)
+
+[PRO](https://speakerdeck.com/pro?utm_campaign=PRO&utm_medium=web&utm_source=user_pro_badge)
+
+2
+
+3.8k
+
+[
+
+The Power of CSS Pseudo Elements
+
+](https://speakerdeck.com/geoffreycrofte/the-power-of-css-pseudo-elements "The Power of CSS Pseudo Elements")
+
+[geoffreycrofte](https://speakerdeck.com/geoffreycrofte)
+
+82
+
+6.5k
+
+[
+
+Leo the Paperboy
+
+](https://speakerdeck.com/mayatellez/leo-the-paperboy "Leo the Paperboy")
+
+[mayatellez](https://speakerdeck.com/mayatellez)
+
+8
+
+2.1k
+
+[
+
+Why Mistakes Are the Best Teachers: Turning Failure into a Pathway for Growth
+
+](https://speakerdeck.com/auna/why-mistakes-are-the-best-teachers-turning-failure-into-a-pathway-for-growth " Why Mistakes Are the Best Teachers: Turning Failure into a Pathway for Growth")
+
+[auna](https://speakerdeck.com/auna)
+
+0
+
+200
+
+## Transcript
+
+1. ### AbemaTV, Inc. All Rights Reserved  本日伝えたいこと 3 \[Topic\] ABEMAの推薦でLLMを用いたコンテンツベース推薦を導入した \[成果\]
+	効果検証を通して推薦指標の向上を確認した \[Why\] なぜコンテンツベース推薦が必要になったか？ • 新規コンテンツ・消費サイクルが短いコンテンツに対して効果的なロジックが必要になっ たため ◦ スケーラビリティー: 大量にコンテンツ来た時耐えるのか? ◦ リードタイム: コンテンツ配信から推薦が機能するまでの時間 \[Why\] なぜ今まで導入されていなかったのか？ • コンテンツベース推薦に必要なメタデータ付与が課題だったため ◦ メタ品質: LLMの登場でサービス導入に耐えうるメタが付与可能になった ◦ 運用負荷: AlloyDBとVertex AIにより完全システム化可能になった
+2. ### AbemaTV, Inc. All Rights Reserved  11 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖ 新規コンテンツ： ABEMAにとって新しいコンテンツ
+3. ### AbemaTV, Inc. All Rights Reserved  12 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖ 消費サイクルが短いコンテンツ：ニュースなどユーザの興味関心に時間的減衰が大 きいもの
+4. ### AbemaTV, Inc. All Rights Reserved  13 既存推薦の課題とコンテンツベース推薦の導入の流れ 課題：視聴履歴が十分に蓄積されていないコンテンツに適した推薦システムがない - スケーラビリティー
+	：大量にコンテンツ来た時耐えるのか? - リードタイム ：コンテンツ配信から推薦が機能するまでの時間 新規コンテンツ 消費サイクルが短いコンテンツ スケーラビリティー リードタイム スケーラビリティー リードタイム ヒューリスティッ ク ✖ ✖ ✖ ✖ ルールベース ◯ ✖ ◯ △ 機械学習 ◯ ✖ ◯ ✖
+5. ### AbemaTV, Inc. All Rights Reserved  既存推薦の課題とコンテンツベース推薦の導入の流れ 20 課題のまとめ ヒューリスティック •
+	新規コンテンツ ◦ 夜中に対応しなくてはいけない ◦ 人間が設定するのでタイムラグが生じる • 消費サイクルが短いコンテンツ ◦ 人間が設定しても劣化してしまう ルールベース • 新規コンテンツ ◦ ABEMA内の知見が貯まるまで時間がかかる 機械学習 • 新規コンテンツ ◦ 視聴履歴が貯まるまで時間がかかる • 消費サイクルが短いコンテンツ ◦ 視聴履歴が貯まるまで時間がかかるのでそもそも相性が悪い 既存の3つの推薦システムだと解決できない →新システムの開発
+6. ### AbemaTV, Inc. All Rights Reserved  29 コンテンツベース推薦システムの説明 AlloyDBの選定理由 - コンテンツデータをAlloyDBに移行していた
+	\- AlloyDB AIの機能でVertexAIのモデルを利用できる - AlloyDBからVertexAIの定義済みモデルが直接利用することができる - EmbeddingなどがSQLで完結し、実装コストが低く検証フェーズとも相性がよ い - AlloyDB パフォーマンス - ベクトル検索における近似最近傍探索(ANN)のインデックスを改良したものを 利用できる - 開発に便利な機能が揃っていた - EXPLAINやクエリインサイトでパフォーマンスを確認できる - 読み取り専用のレプリカが作成できる
+7. ### AbemaTV, Inc. All Rights Reserved  まとめ 38 \[Topic\] ABEMAの推薦でLLMを用いたコンテンツベース推薦を導入した \[成果\]
+	効果検証を通して推薦指標の向上を確認した \[Why\] なぜコンテンツベース推薦が必要になったか？ • 新規コンテンツ・消費サイクルが短いコンテンツに対して効果的なロジックが必要になっ たため ◦ スケーラビリティー: 大量にコンテンツ来た時耐えるのか? ◦ リードタイム: コンテンツ配信から推薦が機能するまでの時間 \[Why\] なぜ今まで導入されていなかったのか？ • コンテンツベース推薦に必要なメタデータ付与が課題だったため ◦ メタ品質: LLMの登場でサービス導入に耐えうるメタが付与可能になった ◦ 運用負荷: AlloyDBとVertex AIにより完全システム化可能になった
