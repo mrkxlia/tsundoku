@@ -27,7 +27,8 @@ flowchart LR
 | `scripts/detect_superseded.py` | 新規/更新ノートと類似度の高い既存ノートをLLMで突き合わせ、上書き/矛盾と判定されたノートに `status: superseded` を付与 |
 | `scripts/backfill_shelf_life.py` | 既存ノートに情報の陳腐化目安(`shelf_life`)を一括分類してバックフィル |
 | `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
-| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開) |
+| `scripts/dispatch_site.sh` | tsundoku-siteへの再ビルド通知(`repository_dispatch`)を、前回送信時からVaultまたはembeddings.jsonに変更がある場合のみ送る(organize.yml / backfill.ymlの最終ステップから呼び出し) |
+| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開 → 変更があればサイト再ビルドをdispatch) |
 | `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル |
 | `docs/future-reverification.md` | 将来拡張(定期再検証)の設計メモ。現時点では未実装(`organize.py`の`reverify_hook`はno-opスタブ) |
 
@@ -109,7 +110,10 @@ Obsidianの全文検索でスクリーンショットの中身までヒットす
    `shelf_life` 等)をindexへ反映
 4. 上記で `library/` に変更があれば`main`へcommit・push → 生成物一式(`index/embeddings.json`)を
    GitHub Release `embeddings-index` へ `--clobber` アップロード(git管理外、iPhoneのObsidian Git
-   同期には影響しない)→ tsundoku-siteへ `repository_dispatch` で再ビルドを通知
+   同期には影響しない)→ `scripts/dispatch_site.sh` が「前回dispatch時からVaultのmain先頭SHA
+   または `embeddings.json` のSHA-256に変更がある場合のみ」tsundoku-siteへ `repository_dispatch`
+   で再ビルドを通知(状態は同じReleaseアセット `site-dispatch-state.json` に保存。
+   変更なしの日は通知しない。dispatch失敗時は状態を更新しないため次回実行で必ず再送される)
 
 `shelf_life` は新規ノート作成時に `generate_note_meta` の一部として同時取得されるため、追加の
 API呼び出しは発生しません。既存ノートへのバックフィルは `backfill_shelf_life.py`(タイトル+要約の
@@ -140,7 +144,7 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 | `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
 | `EMBED_DIM` | `768` | 埋め込み次元数 |
-| `EMBED_SLEEP_SECONDS` | `6` | 埋め込みAPI呼び出し間のスリープ秒数(生成系とは別枠) |
+| `EMBED_SLEEP_SECONDS` | `6` | 埋め込みAPI呼び出し間のスリープ秒数(生成系とは別枠)。[AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で`EMBEDDING_MODEL`のembedContent無料枠RPMを確認し、RPM≥30なら`2`、RPM≥100なら`1`まで下げてよい(429が出れば戻す。リトライ+バックオフあり)。`LLM_SLEEP_SECONDS`(生成系)は無料枠5RPMの下限なので下げないこと |
 | `MAX_EMBEDS_PER_RUN` | `20` | 1回の実行で新規に埋め込むノート数の上限。超過分は次回実行へ持ち越し |
 
 ### 4. iPhone(Obsidian)側の推奨設定
@@ -161,7 +165,10 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 - **バックフィル**: GitHubの **Actions → Backfill → Run workflow** で `task` を選択して手動実行
   (`embeddings`: 差分埋め込み / `metadata-only`: indexメタデータのみ再同期 / `shelf_life`: 既存ノートの
   鮮度分類バックフィル / `superseded`: 全ノートを対象にした重複矛盾の一括検知)。
-  いずれも `organize.yml` と同じ `concurrency` グループに参加するため、通常実行とは重なりません
+  いずれも `organize.yml` と同じ `concurrency` グループに参加するため、通常実行とは重なりません。
+  複数バッチに分けて実行する場合、`dispatch_site` を途中バッチでは `false`、最終バッチでのみ
+  `true`(既定)にすると、バッチごとにtsundoku-siteの再デプロイが走るのを防げます
+  (途中バッチの変更は次に `dispatch_site=true` で実行した時にまとめて検知・通知されます)
 - **並行実行防止**: `concurrency` 設定済み。実行が重なることはありません
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。

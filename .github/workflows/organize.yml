@@ -17,6 +17,7 @@ concurrency:
 jobs:
   organize:
     runs-on: ubuntu-latest
+    timeout-minutes: 90 # 実測最大31分(sleepが支配的)の約3倍。デフォルト360分のハング課金事故を防止
     steps:
       - uses: actions/checkout@v4
         with:
@@ -38,6 +39,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+          cache: 'pip'
 
       - name: Install dependencies
         run: pip install -r requirements.txt
@@ -160,11 +162,11 @@ jobs:
           gh release upload embeddings-index index/embeddings.json \
             --repo mrkxlia/tsundoku --clobber
 
-      - name: tsundoku-siteの再ビルドを起動
+      - name: tsundoku-siteの再ビルドを起動(前回dispatch時から変更がある場合のみ)
         env:
-          GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
-        run: |
-          # コンテンツ変更ゼロの日でも常に送る(前日分の既読トグルを次のビルドで焼き込むため)。
-          # 前段2回のcommit&pushのいずれかが失敗した場合はこのステップに到達しない
-          # (= mainの更新に失敗した実行ではdispatchしない)。
-          gh api repos/mrkxlia/tsundoku-site/dispatches -f event_type=content-updated
+          GITHUB_TOKEN: ${{ github.token }}
+          SITE_DISPATCH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: bash scripts/dispatch_site.sh
+        # 前段2回のcommit&pushのいずれかが失敗した場合はこのステップに到達しない
+        # (= mainの更新に失敗した実行ではdispatchしない)。
+        # dispatch自体の要否(前回送信時からの変更有無)は scripts/dispatch_site.sh が判定する。
