@@ -11,10 +11,12 @@
             "id": "7e88a68ec62b8db5",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
-              "icon": "lucide-file",
-              "title": "新規タブ"
+              "type": "image",
+              "state": {
+                "file": "assets/2026-08-11-定例資料の冒頭に入れるべき1枚のスライド-1.jpg"
+              },
+              "icon": "lucide-image",
+              "title": "2026-08-11-定例資料の冒頭に入れるべき1枚のスライド-1"
             }
           }
         ]
