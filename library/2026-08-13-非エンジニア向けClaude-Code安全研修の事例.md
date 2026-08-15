@@ -1,4 +1,23 @@
-https://x.com/aieducationlabo/status/2087368701968564419?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+---
+title: 非エンジニア向けClaude Code安全研修の事例
+url: https://x.com/aieducationlabo/status/2087368701968564419?s=12&t=22GY_jUSQsg0NcuE2S9fmA
+created: '2026-08-13T10:21:10'
+type: post
+tags:
+- claude
+- 生成ai
+- セキュリティ
+- 開発手法
+- 社内研修
+summary: 'サイバーエージェントグループのWINTICKETが実施した非エンジニア向けのClaude Code研修事例を解説。
+
+  設定による物理的な制限だけでなく、社員の判断力を育てる研修を両輪で行う重要性を説いている。
+
+  GitHubでの共有やサプライチェーン攻撃対策などを組み込んだカリキュラム設計の工夫を紹介している。'
+read: false
+shelf_life: medium
+---
+
 # サイバーエージェントはどうやって社内でClaude Codeを安全に使わせたのか
 2026-08-12
 「うちは開発部門はもうClaude Codeを使ってます。でも、営業とか人事とか、コードを書いたことがない人にまでAIにコマンドを打たせるのは、さすがに早すぎませんか?」
