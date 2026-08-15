@@ -27,7 +27,10 @@ STATE_DIR=".dispatch-state"
 CURRENT_HEAD="$(git ls-remote origin refs/heads/main | cut -f1)"
 CURRENT_EMB="absent"
 if [ -f index/embeddings.json ]; then
-  CURRENT_EMB="$(sha256sum index/embeddings.json | cut -d' ' -f1)"
+  # embeddings.json は再同期のたびに generatedAt(実行時刻)が書き換わるため、
+  # ファイル全体をそのままハッシュすると内容が同じでも毎回値が変わってしまう。
+  # 実質的な内容(notes等)のみを対象にハッシュする(jq -S でキー順も正規化)。
+  CURRENT_EMB="$(jq -S 'del(.generatedAt)' index/embeddings.json | sha256sum | cut -d' ' -f1)"
 fi
 
 mkdir -p "$STATE_DIR"
