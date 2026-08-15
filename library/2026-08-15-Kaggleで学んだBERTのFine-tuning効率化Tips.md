@@ -1,4 +1,23 @@
-https://www.ai-shift.co.jp/techblog/2138
+---
+title: Kaggleで学んだBERTのFine-tuning効率化Tips
+url: https://www.ai-shift.co.jp/techblog/2138
+created: '2026-08-15T19:16:42'
+type: article
+tags:
+- bert
+- kaggle
+- 深層学習
+- pytorch
+- 自然言語処理
+summary: 'Kaggle等で役立つBERT事前学習モデルのFine-tuning効率化手法を解説。
+
+  混合精度の利用や文章切り詰め、Dynamic Paddingなどのテクニックを紹介。
+
+  さらに勾配累積を用いることでメモリを節約しつつ安定した高速学習を実現する。'
+read: false
+shelf_life: long
+---
+
 # 株式会社AI Shift | サイバーエージェントグループ
 2026-08-15
 2021.8.13
