@@ -6,6 +6,11 @@
    コンテンツを取得(media_types.py 参照。YouTube字幕・SpeakerDeck PDF・X oEmbed等)
 3. X添付画像・画像直リンクは実体を取得して assets/ に保存し、
    Geminiで説明+OCRを生成して本文の「## 画像の内容」セクションに残す
+3.5. type: slides(Speaker Deck/SlideShare/Docswell)はダウンロードできた場合、
+   スライド実体(PDF原本+ページ画像)を assets/ に保存し、本文の「## スライド」
+   セクションに残す(media_types.enrich()が取得、詳細は同ファイル参照)。
+   assets/ 自体はpublicなvaultリポジトリにはcommitされず、CI実行中のみ
+   private側(tsundoku-site の vault-assets/)との一時的な同期先として使う
 4. LLM(llm_client)で タイトル・3行要約・タグ(3〜5個)を生成
    (PDFはGeminiのPDF入力、字幕が取れないYouTubeは動画URL直接入力で要約)
 5. frontmatter(title, url, created, type, tags, summary, read)を付与
@@ -269,6 +274,41 @@ def append_image_section(body: str, asset_paths: list[Path], image_text: str) ->
     return f"{body.strip()}\n\n{IMAGE_SECTION_HEADER}\n\n{blocks}"
 
 
+SLIDE_SECTION_HEADER = "## スライド"
+
+
+def write_slide_assets(
+    stem: str, slide_pdf: bytes | None, slide_images: list[media_types.ImageAsset]
+) -> tuple[Path | None, list[Path]]:
+    """スライドPDF原本を assets/<stem>.pdf、ページ画像を assets/<stem>-slide-NN.<ext> に
+    書き出す。write_assets()の`<stem>-N.<ext>`(通常のスクレイプ画像)とは命名規則を分け、
+    衝突しないようにする。1ノートあたりの枚数上限は media_types.SLIDE_MAX_PAGES 側で
+    既に掛かっているため、ここでは掛けない。"""
+    pdf_path = None
+    if slide_pdf is not None:
+        pdf_path = unique_path(ASSETS, f"{stem}.pdf")
+        pdf_path.write_bytes(slide_pdf)
+    image_paths = []
+    for i, asset in enumerate(slide_images, 1):
+        path = unique_path(ASSETS, f"{stem}-slide-{i:02d}.{asset.ext}")
+        path.write_bytes(asset.data)
+        image_paths.append(path)
+    return pdf_path, image_paths
+
+
+def append_slide_section(body: str, pdf_path: Path | None, image_paths: list[Path]) -> str:
+    """本文末尾に「## スライド」セクション(PDFリンク+ページ画像列)を付加する。
+    tsundoku-site側のtsundoku-slides-linkプラグインがこのセクションのみを抽出して表示するため、
+    1行(段落)につき1つのリンク/画像のみとし、空行で区切る形式を厳密に守る。"""
+    if pdf_path is None and not image_paths:
+        return body
+    blocks = []
+    if pdf_path is not None:
+        blocks.append(f"[スライドPDF](../assets/{pdf_path.name})")
+    blocks += [f"![](../assets/{p.name})" for p in image_paths]
+    return f"{body.strip()}\n\n{SLIDE_SECTION_HEADER}\n\n" + "\n\n".join(blocks)
+
+
 def reverify_hook(note: LibraryNote) -> None:
     """将来の定期再検証機能の呼び出し口(現状no-op)。
 
@@ -343,6 +383,10 @@ def process_clip(
         new_path = unique_path(LIBRARY, filename)
         asset_paths = write_assets(new_path.stem, info.images)
         body_final = append_image_section(body, asset_paths, image_text)
+        slide_pdf_path, slide_image_paths = write_slide_assets(
+            new_path.stem, info.slide_pdf, info.slide_images
+        )
+        body_final = append_slide_section(body_final, slide_pdf_path, slide_image_paths)
         new_path.write_text(dump_note(fm, body_final), encoding="utf-8")
         clip.path.unlink()
         library.append(
@@ -363,6 +407,10 @@ def process_clip(
         new_path = unique_path(LIBRARY, filename)
         asset_paths = write_assets(new_path.stem, info.images)
         body_final = append_image_section(body, asset_paths, image_text)
+        slide_pdf_path, slide_image_paths = write_slide_assets(
+            new_path.stem, info.slide_pdf, info.slide_images
+        )
+        body_final = append_slide_section(body_final, slide_pdf_path, slide_image_paths)
         new_path.write_text(dump_note(fm, body_final), encoding="utf-8")
         clip.path.unlink()
         dup.path, dup.fm, dup.body = new_path, fm, body_final

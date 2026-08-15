@@ -5,3 +5,10 @@ __pycache__/
 # scripts/build_embeddings.py の出力(ローカル/CI作業用)。tsundoku-siteへは
 # GitHub Releaseアセットとして配布するためgit管理には入れない。
 index/
+
+# ノート本文が参照する画像・PDF・スライドページ画像などのバイナリアセット。
+# このリポジトリはpublicなため、第三者コンテンツの再配布を避け、実体は
+# private側(tsundoku-site の vault-assets/)に集約する。organize.py/fetch_slides.py/
+# build_embeddings.py はCI実行中のみ、この作業ディレクトリへ一時的にコピーして使う。
+assets/*
+!assets/.gitkeep

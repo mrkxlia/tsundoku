@@ -8,6 +8,12 @@
 再実行しても、既に「## 画像の内容」セクションを持つノートはスキップされるため冪等。
 
 環境変数: organize.py / llm_client.py と共通(GEMINI_API_KEY, DRY_RUN等)
+
+注記(スライドアセットのprivate側移行、2026-08): このスクリプトが書き出す画像は
+organize.write_assets() 経由で assets/ に保存されるが、assets/ は現在 .gitignore
+対象(実体は tsundoku-site の vault-assets/ で管理)。このスクリプトを再実行する場合は
+organize.yml と同様に、事前に tsundoku-site の vault-assets/ を assets/ へ同期し、
+実行後に新規ファイルを vault-assets/ へ書き戻すステップが別途必要(未実装)。
 """
 
 from __future__ import annotations

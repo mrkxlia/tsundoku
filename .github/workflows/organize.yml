@@ -44,6 +44,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: tsundoku-site の vault-assets/ をcheckout(スライド等バイナリアセットの集約先)
+        uses: actions/checkout@v4
+        with:
+          repository: mrkxlia/tsundoku-site
+          token: ${{ secrets.SITE_CONTENT_TOKEN }}
+          sparse-checkout: |
+            vault-assets
+          path: site-assets-checkout
+
+      - name: vault-assets/ を assets/ へ同期(既存アセットの解決・fetch_slidesの冪等判定に必要)
+        run: |
+          mkdir -p assets
+          rsync -a --exclude 'README.md' site-assets-checkout/vault-assets/ assets/
+
       - name: Run organizer
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -52,12 +66,52 @@ jobs:
           MAX_ITEMS_PER_RUN: ${{ vars.MAX_ITEMS_PER_RUN }}
         run: python scripts/organize.py
 
+      - name: スライド実体の取得漏れをリカバリ(前回失敗分の再挑戦+バックフィルの日次消化)
+        run: python scripts/fetch_slides.py --max-items "${MAX_SLIDES_PER_RUN:-3}"
+        env:
+          MAX_SLIDES_PER_RUN: ${{ vars.MAX_SLIDES_PER_RUN }}
+
+      - name: 新規アセットをtsundoku-siteへcommit・push
+        # vaultノートのcommitより先にこちらを成功させる(順序が重要)。逆順だと、
+        # vault側だけ「## スライド」セクション付きでcommitされた直後にこちらが失敗した場合、
+        # 参照先の実体が存在しないままvaultにcommitされてしまい、次回実行時は本文に
+        # セクションが既にある(=fetch_slides.pyの処理済み判定)ため二度と自動回収されない。
+        # 先にアセットを公開し、それに成功した場合のみvault側をcommitすることで、
+        # 「vaultのノートが存在しないアセットを参照する」状態を作らないようにする。
+        id: push_site_assets
+        working-directory: site-assets-checkout
+        # 認証情報は前段のcheckoutステップ(token: secrets.SITE_CONTENT_TOKEN)が
+        # このディレクトリのgit configに設定済みのため、通常のgit push/pullがそのまま使う。
+        run: |
+          rsync -a --ignore-existing ../assets/ vault-assets/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- vault-assets/
+          if git diff --cached --quiet; then
+            echo "新規アセットなし"
+            exit 0
+          fi
+          git commit -m "assets: 新規スライド/画像アセットを追加 ($(date -u +%Y-%m-%d))"
+          for wait in 2 4 8 0; do
+            if git push origin main; then
+              exit 0
+            fi
+            [ "$wait" = "0" ] && break
+            sleep "$wait"
+            if ! git pull --rebase origin main; then
+              git rebase --abort
+              break
+            fi
+          done
+          echo "::error::tsundoku-site の vault-assets/ へのpushに失敗しました。今回のvault側commitは中断します(次回実行で再試行されます)"
+          exit 1
+
       - name: Commit and push
         id: commit_and_push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A -- . ':!site-assets-checkout' ':!assets'
           if git diff --cached --quiet; then
             echo "変更なし"
             exit 0

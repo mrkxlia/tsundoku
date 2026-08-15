@@ -1,5 +1,9 @@
 name: Backfill images (one-off)
 
+# 注記(2026-08): assets/ は現在 .gitignore 対象で、実体は tsundoku-site の vault-assets/
+# で管理している(organize.yml参照)。このワークフローは vault-assets/ との同期・書き戻し
+# ステップを含んでいないため、実行しても assets/ への書き込みはpushされない。
+# 再実行する場合は先に scripts/backfill_images.py の注記を確認すること。
 on:
   workflow_dispatch:
 
