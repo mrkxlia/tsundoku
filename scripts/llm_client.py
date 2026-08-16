@@ -125,6 +125,42 @@ supersedesはfalseとしてください。次のJSONだけを出力してくだ�
 {old_excerpt}
 """
 
+MERGE_JUDGE_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。2つの記事(A, B)が同一トピックについて\
+密接に関連する内容であり、1つのノートに統合すべきかを判定してください。単に話題が近い・\
+カテゴリが同じというだけではmergeはfalseとしてください(例: 同じ製品カテゴリの別サービス紹介、\
+同じ技術領域の別トピックの解説はfalse)。統合すべきなのは、内容の主題が実質的に同一、\
+片方がもう片方の断片的な言及に過ぎない、続報・詳細版の関係にある、といった場合です。\
+次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"merge": true または false, "reason": "判定理由(日本語1文)"}}
+
+[A] タイトル: {a_title}
+[A] 要約: {a_summary}
+[A] 本文抜粋:
+{a_excerpt}
+
+[B] タイトル: {b_title}
+[B] 要約: {b_summary}
+[B] 本文抜粋:
+{b_excerpt}
+"""
+
+MERGE_META_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。2つの記事を1つのノートに統合しました。\
+統合後の本文(結合済み、末尾に統合元記事の内容を含む)を読み、新しい要約とタグを次のJSONだけで\
+出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"summary": "統合後の内容を表す要約(日本語で3行程度。行は\\nで区切る)", "tags": ["タグ1", "タグ2", "タグ3"]}}
+
+制約:
+- tags は3〜5個。**必ず次の候補タグ一覧から選ぶこと(新規のタグを作らないこと)**
+- 候補になければ最も近い意味の候補を選ぶ。候補が3個未満の場合はそのまま全部使う
+
+タイトル: {title}
+候補タグ一覧: {candidate_tags}
+統合後本文(抜粋):
+{merged_body_excerpt}
+"""
+
 
 class LLMError(Exception):
     """全モデルで生成に失敗した場合に送出される。"""
@@ -167,6 +203,24 @@ class LLMClient:
         old_excerpt: str,
     ) -> dict:
         """新ノートが旧ノートを上書き/矛盾させるかを判定し {"supersedes": bool, "reason": str} を返す。"""
+        raise NotImplementedError
+
+    def judge_merge(
+        self,
+        a_title: str,
+        a_summary: str,
+        a_excerpt: str,
+        b_title: str,
+        b_summary: str,
+        b_excerpt: str,
+    ) -> dict:
+        """2ノートが統合すべき関係にあるかを判定し {"merge": bool, "reason": str} を返す。"""
+        raise NotImplementedError
+
+    def generate_merged_meta(
+        self, title: str, merged_body_excerpt: str, candidate_tags: list[str]
+    ) -> dict:
+        """統合後本文から {"summary": str, "tags": [str]} を返す(tagsはcandidate_tagsから選択)。"""
         raise NotImplementedError
 
 
@@ -333,6 +387,59 @@ class GeminiClient(LLMClient):
                 errors.append(f"{model}: {e}")
         raise LLMError("judge_supersession失敗: " + "; ".join(errors))
 
+    def judge_merge(
+        self,
+        a_title: str,
+        a_summary: str,
+        a_excerpt: str,
+        b_title: str,
+        b_summary: str,
+        b_excerpt: str,
+    ) -> dict:
+        prompt = MERGE_JUDGE_TEMPLATE.format(
+            a_title=a_title,
+            a_summary=a_summary,
+            a_excerpt=(a_excerpt or "")[:MAX_BODY_CHARS],
+            b_title=b_title,
+            b_summary=b_summary,
+            b_excerpt=(b_excerpt or "")[:MAX_BODY_CHARS],
+        )
+        errors = []
+        for model in self.model_chain:
+            try:
+                text = self._call_model(model, [{"text": prompt}])
+                result = _parse_merge_json(text)
+                if result is not None:
+                    return result
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+        raise LLMError("judge_merge失敗: " + "; ".join(errors))
+
+    def generate_merged_meta(
+        self, title: str, merged_body_excerpt: str, candidate_tags: list[str]
+    ) -> dict:
+        prompt = MERGE_META_TEMPLATE.format(
+            title=title,
+            candidate_tags=", ".join(candidate_tags),
+            merged_body_excerpt=(merged_body_excerpt or "")[:MAX_BODY_CHARS],
+        )
+        errors = []
+        for model in self.model_chain:
+            try:
+                text = self._call_model(model, [{"text": prompt}])
+                meta = _parse_merged_meta_json(text, candidate_tags)
+                if meta:
+                    return meta
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+        raise LLMError("generate_merged_meta失敗: " + "; ".join(errors))
+
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
         return [m for m in self.model_chain if "gemma" not in m.lower()]
@@ -486,6 +593,25 @@ class MockClient(LLMClient):
         # 決定的な検証用: タイトルが同一なら上書きとみなす(実運用ではLLMが判定)
         return {"supersedes": new_title == old_title, "reason": "(mock判定)"}
 
+    def judge_merge(
+        self,
+        a_title: str,
+        a_summary: str,
+        a_excerpt: str,
+        b_title: str,
+        b_summary: str,
+        b_excerpt: str,
+    ) -> dict:
+        # 決定的な検証用: タイトルが同一なら統合対象とみなす(実運用ではLLMが判定)
+        return {"merge": a_title == b_title, "reason": "(mock判定)"}
+
+    def generate_merged_meta(
+        self, title: str, merged_body_excerpt: str, candidate_tags: list[str]
+    ) -> dict:
+        lines = [ln.strip() for ln in (merged_body_excerpt or "").splitlines() if ln.strip()]
+        summary = "\n".join(lines[:3])[:200] or "(統合後本文なし)"
+        return {"summary": summary, "tags": list(candidate_tags)[:5] or ["未分類"]}
+
     @staticmethod
     def _mock_shelf_life(seed: str) -> str:
         digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
@@ -552,6 +678,41 @@ def _parse_supersession_json(text: str) -> dict | None:
         if not isinstance(obj, dict) or not isinstance(obj.get("supersedes"), bool):
             continue
         return {"supersedes": obj["supersedes"], "reason": str(obj.get("reason", "")).strip()}
+    return None
+
+
+def _parse_merge_json(text: str) -> dict | None:
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict) or not isinstance(obj.get("merge"), bool):
+            continue
+        return {"merge": obj["merge"], "reason": str(obj.get("reason", "")).strip()}
+    return None
+
+
+def _parse_merged_meta_json(text: str, candidate_tags: list[str]) -> dict | None:
+    """generate_merged_meta()の出力を検証する。tagsは候補タグ一覧に含まれるものだけを
+    採用する(LLMが候補外の新規タグを生成した場合の防御)。"""
+    candidate_set = {re.sub(r"\s+", "-", str(t).strip()) for t in candidate_tags}
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict):
+            continue
+        summary = str(obj.get("summary", "")).strip()
+        tags_raw = obj.get("tags", [])
+        if not summary or not isinstance(tags_raw, list):
+            continue
+        tags = [re.sub(r"\s+", "-", str(t).strip()) for t in tags_raw if str(t).strip()]
+        tags = [t for t in tags if t in candidate_set] or list(dict.fromkeys(candidate_tags))[:5]
+        if not tags:
+            continue
+        return {"summary": summary, "tags": tags[:5]}
     return None
 
 
