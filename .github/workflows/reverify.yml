@@ -55,9 +55,11 @@ jobs:
       - name: reverify.py を実行
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          # TPM超過対策: 通常のLLM_MODEL_CHAIN(vars)ではなくflash単独に固定し、
-          # 枠の小さいflash-liteへは絶対にフォールバックしない
-          LLM_MODEL_CHAIN: "gemini-3.6-flash"
+          # TPM超過対策: 通常のLLM_MODEL_CHAIN(vars)ではなくflash系のみに固定し、
+          # 枠の小さいflash-liteへは絶対にフォールバックしない。ただしGoogle Search
+          # グラウンディングはモデルとは別枠のクォータのため、モデルを増やしても
+          # グラウンディング自体の429は解消しない場合がある(2026-08-16実地確認)
+          LLM_MODEL_CHAIN: "gemini-3.7-flash,gemini-3.6-flash"
           LLM_SLEEP_SECONDS: "30"
           # workflow_dispatch入力は書き込み権限者のみ設定できるが、シェルへの直接展開
           # (${{ }})は引用符を含む値でコマンドインジェクションになり得るため、

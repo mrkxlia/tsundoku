@@ -28,7 +28,7 @@ import time
 import urllib.error
 import urllib.request
 
-DEFAULT_MODEL_CHAIN = "gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it"
+DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it"
 DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
