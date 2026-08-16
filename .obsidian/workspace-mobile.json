@@ -11,10 +11,14 @@
             "id": "2cc7d11b70c13fc3",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Inbox/Secure all your internal vibe-coded applications — in one click.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "新規タブ"
+              "title": "Secure all your internal vibe-coded applications — in one click"
             }
           }
         ]
@@ -167,7 +171,7 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "0f21127b4e8e0824",
+  "active": "2cc7d11b70c13fc3",
   "lastOpenFiles": [
     "Inbox/Secure all your internal vibe-coded applications — in one click.md",
     "Inbox",
