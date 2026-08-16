@@ -9,11 +9,11 @@
 
 環境変数: organize.py / llm_client.py と共通(GEMINI_API_KEY, DRY_RUN等)
 
-注記(スライドアセットのprivate側移行、2026-08): このスクリプトが書き出す画像は
-organize.write_assets() 経由で assets/ に保存されるが、assets/ は現在 .gitignore
-対象(実体は tsundoku-site の vault-assets/ で管理)。このスクリプトを再実行する場合は
-organize.yml と同様に、事前に tsundoku-site の vault-assets/ を assets/ へ同期し、
-実行後に新規ファイルを vault-assets/ へ書き戻すステップが別途必要(未実装)。
+注記(スライドアセットのprivate側移行、2026-08、同期ステップ実装済み): このスクリプトが
+書き出す画像は organize.write_assets() 経由で assets/ に保存されるが、assets/ は
+.gitignore対象(実体は tsundoku-site の vault-assets/ で管理)。呼び出し元の
+backfill_images.yml が organize.yml と同じパターンで、実行前に vault-assets/ を
+assets/ へ同期し、実行後に新規ファイルを vault-assets/ へ書き戻す。
 """
 
 from __future__ import annotations
