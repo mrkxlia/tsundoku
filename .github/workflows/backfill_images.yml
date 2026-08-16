@@ -1,9 +1,9 @@
 name: Backfill images (one-off)
 
-# 注記(2026-08): assets/ は現在 .gitignore 対象で、実体は tsundoku-site の vault-assets/
-# で管理している(organize.yml参照)。このワークフローは vault-assets/ との同期・書き戻し
-# ステップを含んでいないため、実行しても assets/ への書き込みはpushされない。
-# 再実行する場合は先に scripts/backfill_images.py の注記を確認すること。
+# 注記(2026-08、同期ステップ実装済み): assets/ は .gitignore 対象で、実体は
+# tsundoku-site の vault-assets/ で管理している(organize.yml と同じパターン)。
+# このワークフローも organize.yml と同様に、実行前に vault-assets/ を assets/ へ
+# 同期し、実行後に新規ファイルを vault-assets/ へ書き戻す。
 on:
   workflow_dispatch:
 
@@ -33,6 +33,20 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: tsundoku-site の vault-assets/ をcheckout(スライド等バイナリアセットの集約先)
+        uses: actions/checkout@v4
+        with:
+          repository: mrkxlia/tsundoku-site
+          token: ${{ secrets.SITE_CONTENT_TOKEN }}
+          sparse-checkout: |
+            vault-assets
+          path: site-assets-checkout
+
+      - name: vault-assets/ を assets/ へ同期(既存アセットの解決・冪等判定に必要)
+        run: |
+          mkdir -p assets
+          rsync -a --exclude 'README.md' site-assets-checkout/vault-assets/ assets/
+
       - name: Run backfill
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -40,11 +54,40 @@ jobs:
           LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
         run: python scripts/backfill_images.py
 
+      - name: 新規アセットをtsundoku-siteへcommit・push
+        # vaultノートのcommitより先にこちらを成功させる(organize.ymlと同じ理由:
+        # 参照先の実体が存在しないままvaultにcommitされる状態を作らないため)。
+        id: push_site_assets
+        working-directory: site-assets-checkout
+        run: |
+          rsync -a --ignore-existing ../assets/ vault-assets/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- vault-assets/
+          if git diff --cached --quiet; then
+            echo "新規アセットなし"
+            exit 0
+          fi
+          git commit -m "assets: backfill_imagesによる新規画像アセットを追加 ($(date -u +%Y-%m-%d))"
+          for wait in 2 4 8 0; do
+            if git push origin main; then
+              exit 0
+            fi
+            [ "$wait" = "0" ] && break
+            sleep "$wait"
+            if ! git pull --rebase origin main; then
+              git rebase --abort
+              break
+            fi
+          done
+          echo "::error::tsundoku-site の vault-assets/ へのpushに失敗しました。今回のvault側commitは中断します(次回実行で再試行されます)"
+          exit 1
+
       - name: Commit and push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          git add -A -- . ':!site-assets-checkout' ':!assets'
           if git diff --cached --quiet; then
             echo "変更なし"
             exit 0
