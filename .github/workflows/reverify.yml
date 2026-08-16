@@ -1,0 +1,116 @@
+name: Reverify
+
+# 手動実行専用。docs/future-reverification.md の設計に基づき、古くなった可能性のある
+# ノートをGoogle Searchグラウンディングで再検証する(scripts/reverify.py)。
+# organize.yml / backfill.yml と同じconcurrencyグループに参加する。
+#
+# 運用メモ: Google Searchグラウンディングの無料枠は変動しやすく、通常の生成系より
+# トークン消費が大きい。初回実行は max_items を10〜15程度に絞って所要時間と429の
+# 出方を実測してから、40〜50件程度のバッチに広げること。無料枠のgemini-3.5-flash-lite
+# がTPM超過ぎみだったため、model_chainはgemini-3.6-flash固定・sleepは30秒に
+# 引き上げている(通常のorganize系ジョブより保守的な設定)。
+on:
+  workflow_dispatch:
+    inputs:
+      max_items:
+        description: "このジョブで処理する件数の上限"
+        required: false
+        type: string
+        default: "25"
+      all:
+        description: "shelf_life:longも含め全件を対象にする"
+        required: false
+        type: boolean
+        default: false
+      dispatch_site:
+        description: "完了後にtsundoku-siteの再ビルドを起動する(通常はfalseで十分。need-recheckはRAG除外に使わないため急ぎではない)"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: organize-inbox
+  cancel-in-progress: false
+
+jobs:
+  reverify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45 # 25件 × (グラウンディング呼び出し+30秒sleep) を余裕を持って収める
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: reverify.py を実行
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # TPM超過対策: 通常のLLM_MODEL_CHAIN(vars)ではなくflash単独に固定し、
+          # 枠の小さいflash-liteへは絶対にフォールバックしない
+          LLM_MODEL_CHAIN: "gemini-3.6-flash"
+          LLM_SLEEP_SECONDS: "30"
+          # workflow_dispatch入力は書き込み権限者のみ設定できるが、シェルへの直接展開
+          # (${{ }})は引用符を含む値でコマンドインジェクションになり得るため、
+          # env経由で安全に渡す(backfill.ymlと同じ対策)
+          INPUT_MAX_ITEMS: ${{ inputs.max_items }}
+          INPUT_ALL: ${{ inputs.all }}
+        run: |
+          args=(--max-items "$INPUT_MAX_ITEMS")
+          if [ "$INPUT_ALL" = "true" ]; then
+            args+=(--all)
+          fi
+          python scripts/reverify.py "${args[@]}"
+
+      - name: レポートをartifactとして保存
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reverify-report
+          path: index/reverify_report.json
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: frontmatterの変更をcommit・push
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- library/
+          if git diff --cached --quiet; then
+            echo "変更なし"
+            exit 0
+          fi
+          git commit -m "reverify: 再検証 ($(date -u +%Y-%m-%d))"
+          for wait in 2 4 8 16 0; do
+            if git push origin main; then
+              exit 0
+            fi
+            [ "$wait" = "0" ] && break
+            sleep "$wait"
+            if ! git -c merge.directoryRenames=false pull --rebase origin main; then
+              git rebase --abort
+              break
+            fi
+          done
+          branch="bot-conflict-${GITHUB_RUN_ID}"
+          echo "::error::main へのpushに失敗したため ${branch} へ退避しました。PRとして回収してください"
+          git push origin "HEAD:refs/heads/${branch}"
+          exit 1
+
+      - name: tsundoku-siteの再ビルドを起動(dispatch_site=true かつ 前回dispatch時から変更がある場合のみ)
+        if: inputs.dispatch_site
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SITE_DISPATCH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: bash scripts/dispatch_site.sh

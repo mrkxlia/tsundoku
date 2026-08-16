@@ -30,9 +30,11 @@ flowchart LR
 | `scripts/merge_notes.py` | 短小ノート・高類似ノートの統合候補を検出(`suggest`、実行はしない)し、人間が承認した組だけを統合実行(`apply`)する。Actionsには組み込まずローカル手動実行専用(下記「運用」参照) |
 | `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
 | `scripts/dispatch_site.sh` | tsundoku-siteへの再ビルド通知(`repository_dispatch`)を、前回送信時からVaultまたはembeddings.jsonに変更がある場合のみ送る(organize.yml / backfill.ymlの最終ステップから呼び出し) |
+| `scripts/reverify.py` | `shelf_life`が経過したノートをGoogle Searchグラウンディングで再検証し、古い疑いがあれば`needs-recheck`タグを付与する(`status`は変更しない、人間レビュー前提)。手動実行専用(下記「運用」参照) |
 | `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開 → 変更があればサイト再ビルドをdispatch) |
 | `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル |
-| `docs/future-reverification.md` | 将来拡張(定期再検証)の設計メモ。現時点では未実装(`organize.py`の`reverify_hook`はno-opスタブ) |
+| `.github/workflows/reverify.yml` | 手動実行専用。`scripts/reverify.py`によるノートの再検証 |
+| `docs/future-reverification.md` | 定期再検証の設計と実装状況(実装済み。`scripts/reverify.py`参照) |
 
 ### クリップの形式
 
@@ -66,6 +68,8 @@ flowchart LR
 | `shelf_life` | 情報が陳腐化するまでの目安。`short`(数日〜数週間)/ `medium`(数か月〜1年)/ `long`(長期間陳腐化しない)のいずれか |
 | `status` | `superseded`(他ノートに内容が上書きされた)が付くことがある。`detect_superseded.py` が付与 |
 | `superseded_by` | (`status: superseded`時のみ)上書きした新ノートの相対パス(`library/xxx.md`) |
+| `last_verified` | 最後に`reverify.py`で再検証した日時(ISO8601、UTC offset付き)。未設定 = 一度も再検証されていない |
+| `recheck_reason` | (`needs-recheck`タグ付与時のみ)`reverify.py`による判定理由(日本語1文) |
 
 #### URL種別と処理内容
 
@@ -82,6 +86,7 @@ flowchart LR
 
 - `needs-review`: コンテンツを自動取得できなかったノート。要約はタイトル・URLからの推測のみなので手動確認推奨。`type: slides`の場合を除き、**libraryに入った後に自動で再処理されることはありません**(`type: slides`は`fetch_slides.py`が日次で自動リトライします)
 - `has-media`: 画像・動画添付があるノート。画像はノートから `![](../assets/...)` で参照されますが、実体はこのリポジトリにはコミットされず、private側(tsundoku-siteの`vault-assets/`)で管理されます(下記参照)。動画・PDFの実体は従来どおり非コミット(要約に使った一時データはワークフロー内で破棄)
+- `needs-recheck`: `reverify.py`が「内容が古くなった/誤りの疑いがある」と判定したノート。`status`は変更されず、閲覧・検索からも除外されない。`recheck_reason`(判定理由)を確認し、人間が妥当と判断すれば`archive/`へ移動、誤判定なら`reverify.py --clear`でタグを解除する
 
 #### 画像の内容セクション
 
@@ -208,6 +213,19 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
      残しファイル名は変更しない、統合される側は`archive/`へ)、変更を確認してからcommit・PRする
   5. index/サイトへの反映は次回の `organize.yml` 実行(または手動 `Backfill` の `embeddings`
      タスク)に任せる(このスクリプト自体はindexを更新しない)
+- **古いノートの再検証**(`reverify.py`、`Actions → Reverify → Run workflow`):
+  1. Google Searchグラウンディングの無料枠は変動しやすいため、**初回は`max_items`を10〜15
+     程度に絞って**実行し、429の出方・所要時間を実測する
+  2. 以後、無料枠に収まりそうであれば`max_items`を40〜50程度に広げ、対象がなくなるまで
+     繰り返し実行する(`last_verified`から古い順に処理されるレジューム設計のため、同じ設定で
+     連続実行すれば自然に全件を舐められる)
+  3. 実行結果はcommitされ、`needs-recheck`タグ付きノートの一覧はジョブのartifact
+     (`reverify_report.json`)とcommit差分の両方で確認できる
+  4. `needs-recheck`が付いたノートをレビューし、妥当なら`archive/`へ手動移動(PR経由)、
+     誤判定なら `python scripts/reverify.py --clear library/xxx.md` でタグを解除してcommit
+  5. Gemini無料枠のTPM(トークン/分)超過を避けるため、`reverify.yml`は生成系より保守的な
+     設定(`gemini-3.6-flash`固定、sleep 30秒)にしている。組織のアカウントで別の制限に
+     当たった場合はワークフロー内の値を調整すること
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)

@@ -33,6 +33,11 @@ DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
 
+VERIFY_EXCERPT_CHARS = 2000  # グラウンディング呼び出しは検索結果の注入でトークン消費が
+# 大きいため、通常のMAX_BODY_CHARSより控えめに本文を渡す
+VERIFY_MAX_RETRIES = 2  # 429(TPM超過)は次モデルへ即切替えず、同一モデルで待って粘る
+VERIFY_RETRY_SLEEP_SECONDS = 60.0
+
 DEFAULT_EMBEDDING_MODEL = "gemini-embedding-2"
 DEFAULT_EMBED_DIM = 768
 DEFAULT_EMBED_SLEEP_SECONDS = 6.0
@@ -161,6 +166,26 @@ MERGE_META_TEMPLATE = """あなたはWebクリップ記事を整理する司書�
 {merged_body_excerpt}
 """
 
+VERIFY_CURRENCY_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事の内容が、\
+Web検索の結果と照らし合わせて現在(今日時点)も正しいかを判定してください。検索結果を根拠に\
+判定し、次のJSONだけを出力してください。前後に説明文やMarkdownのコードフェンスを付けないこと。
+
+{{"verdict": "current(内容は現在も正しい)/outdated(古くなった・誤りがある可能性が高い)/uncertain(検索しても判断できない)", "reason": "判定理由(日本語1文。検索で確認した具体的な事実を含めること)"}}
+
+判定基準:
+- 価格・料金・提供状況(終了/復活等)・バージョン・組織名など、記事中の具体的事実が現在の検索結果と\
+食い違う場合はoutdated
+- 記事の主張を裏付ける/否定する検索結果が見つからない場合(SNS投稿など話題性のみの記事、\
+検索でヒットしない固有の話題等)はuncertain
+- 検索結果と矛盾がなければcurrent
+
+タイトル: {title}
+URL: {url}
+要約: {summary}
+本文抜粋:
+{excerpt}
+"""
+
 
 class LLMError(Exception):
     """全モデルで生成に失敗した場合に送出される。"""
@@ -221,6 +246,11 @@ class LLMClient:
         self, title: str, merged_body_excerpt: str, candidate_tags: list[str]
     ) -> dict:
         """統合後本文から {"summary": str, "tags": [str]} を返す(tagsはcandidate_tagsから選択)。"""
+        raise NotImplementedError
+
+    def verify_currency(self, title: str, url: str, summary: str, excerpt: str) -> dict:
+        """Google Searchグラウンディングでノート内容が現在も正しいかを判定し
+        {"verdict": "current"/"outdated"/"uncertain", "reason": str, "sources": [str]} を返す。"""
         raise NotImplementedError
 
 
@@ -440,8 +470,56 @@ class GeminiClient(LLMClient):
                 errors.append(f"{model}: {e}")
         raise LLMError("generate_merged_meta失敗: " + "; ".join(errors))
 
+    def verify_currency(self, title: str, url: str, summary: str, excerpt: str) -> dict:
+        prompt = VERIFY_CURRENCY_TEMPLATE.format(
+            title=title,
+            url=url,
+            summary=summary or "(要約なし)",
+            excerpt=(excerpt or "")[:VERIFY_EXCERPT_CHARS],
+        )
+        chain = self._grounding_chain()
+        if not chain:
+            raise LLMError("グラウンディングに対応するモデルがチェーンにありません")
+        errors = []
+        for model in chain:
+            try:
+                # TPM(トークン/分)超過はモデル切替よりも同一モデルでの待機再試行の方が
+                # 回復しやすいため、429を通常より多く・長く同一モデルでリトライしてから
+                # 次のモデルへフォールバックする(_call_model_rawの既定より粘る)。
+                candidate = self._call_model_raw(
+                    model,
+                    [{"text": prompt}],
+                    tools=[{"google_search": {}}],
+                    json_mode=False,
+                    max_retries=VERIFY_MAX_RETRIES,
+                    retry_sleep_seconds=VERIFY_RETRY_SLEEP_SECONDS,
+                )
+                text = "".join(p.get("text", "") for p in candidate.get("content", {}).get("parts", []))
+                result = _parse_verdict_json(text)
+                if result is not None:
+                    result["sources"] = _extract_grounding_sources(candidate)
+                    return result
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+                print(
+                    f"    [llm] {model} が HTTP {e.code}(グラウンディング) — 次のモデルへフォールバック",
+                    file=sys.stderr,
+                )
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+                print(
+                    f"    [llm] {model} で通信エラー(グラウンディング) — 次のモデルへフォールバック: {e}",
+                    file=sys.stderr,
+                )
+        raise LLMError("verify_currency失敗: " + "; ".join(errors))
+
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
+        return [m for m in self.model_chain if "gemma" not in m.lower()]
+
+    def _grounding_chain(self) -> list[str]:
+        # Gemma系はツール呼び出し(google_search等)に非対応
         return [m for m in self.model_chain if "gemma" not in m.lower()]
 
     def _generate_with_parts(
@@ -495,15 +573,41 @@ class GeminiClient(LLMClient):
         media_resolution: str | None = None,
         json_mode: bool = True,
     ) -> str:
+        candidate = self._call_model_raw(model, parts, media_resolution=media_resolution, json_mode=json_mode)
+        try:
+            return "".join(p.get("text", "") for p in candidate["content"]["parts"])
+        except (KeyError, IndexError) as e:
+            # candidatesが空(セーフティブロック等)
+            raise json.JSONDecodeError(f"unexpected response shape: {e}", "", 0)
+
+    def _call_model_raw(
+        self,
+        model: str,
+        parts: list[dict],
+        media_resolution: str | None = None,
+        json_mode: bool = True,
+        tools: list[dict] | None = None,
+        max_retries: int = 1,
+        retry_sleep_seconds: float | None = None,
+    ) -> dict:
+        """1回のAPI呼び出しを行い candidates[0] をそのまま返す(groundingMetadata等を
+        含む生の応答が必要な呼び出し元向け。テキストだけでよい場合は _call_model を使う)。
+
+        tools指定時(グラウンディング等)はresponseMimeType(JSONモード)と併用不可のため
+        呼び出し側で json_mode=False にすること(API側が400を返す)。
+        """
         payload = {
             "contents": [{"parts": parts}],
             "generationConfig": {"temperature": 0.3},
         }
-        # Gemma系はresponseMimeType(JSONモード)非対応
-        if json_mode and "gemma" not in model.lower():
+        # Gemma系はresponseMimeType(JSONモード)非対応。tools指定時もJSONモードとは
+        # 併用できないため付けない。
+        if json_mode and tools is None and "gemma" not in model.lower():
             payload["generationConfig"]["responseMimeType"] = "application/json"
         if media_resolution:
             payload["generationConfig"]["mediaResolution"] = media_resolution
+        if tools:
+            payload["tools"] = tools
 
         req = urllib.request.Request(
             GEMINI_ENDPOINT.format(model=model),
@@ -514,24 +618,25 @@ class GeminiClient(LLMClient):
             },
             method="POST",
         )
+        sleep_on_retry = retry_sleep_seconds if retry_sleep_seconds is not None else max(self.sleep_seconds, 10)
         last_err: Exception | None = None
-        for attempt in range(2):  # 一時的な429/503は1回だけ待って再試行
+        for attempt in range(max_retries + 1):  # 一時的な429/503は既定1回だけ待って再試行
             try:
                 with urllib.request.urlopen(req, timeout=90) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                 self._sleep()
-                parts = data["candidates"][0]["content"]["parts"]
-                return "".join(p.get("text", "") for p in parts)
+                try:
+                    return data["candidates"][0]
+                except (KeyError, IndexError) as e:
+                    # candidatesが空(セーフティブロック等)
+                    raise json.JSONDecodeError(f"unexpected response shape: {e}", "", 0)
             except urllib.error.HTTPError as e:
                 last_err = e
                 self._sleep()
-                if e.code in (429, 500, 503) and attempt == 0:
-                    time.sleep(max(self.sleep_seconds, 10))
+                if e.code in (429, 500, 503) and attempt < max_retries:
+                    time.sleep(sleep_on_retry)
                     continue
                 raise
-            except (KeyError, IndexError) as e:
-                # candidatesが空(セーフティブロック等)
-                raise json.JSONDecodeError(f"unexpected response shape: {e}", "", 0)
         raise last_err  # 到達しないが型のため
 
     def _sleep(self):
@@ -612,13 +717,23 @@ class MockClient(LLMClient):
         summary = "\n".join(lines[:3])[:200] or "(統合後本文なし)"
         return {"summary": summary, "tags": list(candidate_tags)[:5] or ["未分類"]}
 
+    def verify_currency(self, title: str, url: str, summary: str, excerpt: str) -> dict:
+        verdict = self._mock_verdict(title)
+        return {"verdict": verdict, "reason": "(mock判定)", "sources": []}
+
     @staticmethod
     def _mock_shelf_life(seed: str) -> str:
         digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
         return VALID_SHELF_LIVES[digest[0] % len(VALID_SHELF_LIVES)]
 
+    @staticmethod
+    def _mock_verdict(seed: str) -> str:
+        digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
+        return VALID_VERDICTS[digest[0] % len(VALID_VERDICTS)]
+
 
 VALID_SHELF_LIVES = ("short", "medium", "long")
+VALID_VERDICTS = ("current", "outdated", "uncertain")
 
 
 def _extract_json_candidates(text: str) -> list[str]:
@@ -714,6 +829,34 @@ def _parse_merged_meta_json(text: str, candidate_tags: list[str]) -> dict | None
             continue
         return {"summary": summary, "tags": tags[:5]}
     return None
+
+
+def _parse_verdict_json(text: str) -> dict | None:
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict):
+            continue
+        verdict = str(obj.get("verdict", "")).strip()
+        if verdict not in VALID_VERDICTS:
+            continue
+        return {"verdict": verdict, "reason": str(obj.get("reason", "")).strip()}
+    return None
+
+
+def _extract_grounding_sources(candidate: dict) -> list[str]:
+    """groundingMetadata.groundingChunks[].web.uri のURL一覧を重複なく返す
+    (グラウンディングが発火しなかった場合は空リスト)。"""
+    meta = candidate.get("groundingMetadata") or {}
+    chunks = meta.get("groundingChunks") or []
+    uris: list[str] = []
+    for chunk in chunks:
+        uri = (chunk.get("web") or {}).get("uri")
+        if uri and uri not in uris:
+            uris.append(uri)
+    return uris
 
 
 def create_client() -> LLMClient:
