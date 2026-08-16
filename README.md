@@ -27,6 +27,7 @@ flowchart LR
 | `scripts/build_embeddings.py` | `library/` 全ノートをチャンク化しGemini埋め込みを生成、`index/embeddings.json` へ出力(tsundoku-siteの `/api/ask` 用) |
 | `scripts/detect_superseded.py` | 新規/更新ノートと類似度の高い既存ノートをLLMで突き合わせ、上書き/矛盾と判定されたノートに `status: superseded` を付与 |
 | `scripts/backfill_shelf_life.py` | 既存ノートに情報の陳腐化目安(`shelf_life`)を一括分類してバックフィル |
+| `scripts/merge_notes.py` | 短小ノート・高類似ノートの統合候補を検出(`suggest`、実行はしない)し、人間が承認した組だけを統合実行(`apply`)する。Actionsには組み込まずローカル手動実行専用(下記「運用」参照) |
 | `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
 | `scripts/dispatch_site.sh` | tsundoku-siteへの再ビルド通知(`repository_dispatch`)を、前回送信時からVaultまたはembeddings.jsonに変更がある場合のみ送る(organize.yml / backfill.ymlの最終ステップから呼び出し) |
 | `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開 → 変更があればサイト再ビルドをdispatch) |
@@ -195,6 +196,18 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
   `true`(既定)にすると、バッチごとにtsundoku-siteの再デプロイが走るのを防げます
   (途中バッチの変更は次に `dispatch_site=true` で実行した時にまとめて検知・通知されます)
 - **並行実行防止**: `concurrency` 設定済み。実行が重なることはありません
+- **関連ノートの統合**(`merge_notes.py`、ローカル手動実行専用):
+  1. `gh release download embeddings-index --repo mrkxlia/tsundoku --pattern embeddings.json --dir index --clobber` で最新の埋め込みindexを取得
+  2. `python scripts/merge_notes.py suggest` を実行。本文が薄い短小ノート(既定300字未満)の
+     最近傍と、全ノート対の高類似ペア(既定0.85以上)を検出し、`index/embeddings.json`と同じ
+     `index/`配下に `merge_plan.json`(git管理外)と人間可読レポートを出力する。**この時点では
+     何も統合しない**
+  3. レポートを確認し、統合してよい組だけ `merge_plan.json` の該当エントリを
+     `"approved": true` に書き換える
+  4. `python scripts/merge_notes.py apply` を実行。承認済みの組だけを統合し(情報量の多い側を
+     残しファイル名は変更しない、統合される側は`archive/`へ)、変更を確認してからcommit・PRする
+  5. index/サイトへの反映は次回の `organize.yml` 実行(または手動 `Backfill` の `embeddings`
+     タスク)に任せる(このスクリプト自体はindexを更新しない)
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)
@@ -215,6 +228,10 @@ DRY_RUN=1 python scripts/organize.py
 ```
 
 ※ `DRY_RUN=1` でもファイルの移動・書き換えは実行されます(要約・タグはダミー)。
+`inbox/`・`library/`を直接書き換えるため、動作確認は本リポジトリを`/tmp`等へコピーした
+隔離環境で行い、実際の未処理クリップ・既存ノートには触れないでください。
+`merge_notes.py apply`も同様にfrontmatter/本文を書き換えるため、隔離環境での検証を推奨します
+(このリポジトリ自身に対しては`DRY_RUN=1`のまま`apply`しようとするとガードにより拒否されます)。
 
 ### トラブルシューティング
 
