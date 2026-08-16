@@ -461,3 +461,53 @@ Evolving SEO for Evolving Search Engines
 22. ### まとめ 01 Claude Codeのキャッチアップ方法 02 収集したデータの管理と活用 03 おそらくClaude Code以外のキャッチアップでも使える
 23. ### 宣伝！！（ 表紙初公開） 生成AI深掘りガイド Claude Code 実践入門 Oikon・前川蒼 / SBクリエイティブ 2026年8月5日発売予定
 	購入していただけると嬉しいです！ amzn.asia/d/0cyqfxpS
+
+## スライド
+
+[スライドPDF](../assets/2026-08-11-Claude-Codeのキャッチアップ方法.pdf)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-01.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-02.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-03.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-04.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-05.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-06.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-07.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-08.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-09.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-10.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-11.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-12.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-13.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-14.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-15.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-16.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-17.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-18.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-19.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-20.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-21.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-22.jpg)
+
+![](../assets/2026-08-11-Claude-Codeのキャッチアップ方法-slide-23.jpg)
