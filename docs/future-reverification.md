@@ -1,8 +1,9 @@
-# 将来拡張: 定期再検証(reverification)の設計
+# 定期再検証(reverification)の設計と実装状況
 
-このドキュメントは**設計メモのみ**であり、実装は含まない(Stage⑤)。ここに書かれた仕様は
-`scripts/organize.py` の `reverify_hook(note)` (no-opスタブ)と、frontmatterの予約フィールド
-`last_verified` / タグ `needs-recheck` の運用方針を、実装に着手する際の起点として残す。
+**Stage⑤ 実装済み**(`scripts/reverify.py` + `.github/workflows/reverify.yml`)。
+以下は元の設計メモをベースに、実装内容を反映して更新したもの。`scripts/organize.py` の
+`reverify_hook(note)` は設計どおりno-opのまま維持している(下記「`reverify_hook(note)`」参照)。
+未着手なのは「実装時の変更点」チェックリストのうち tsundoku-site側の表示のみ。
 
 ## 課題
 
@@ -12,7 +13,7 @@
 記録するのに対し、reverification は「実際に内容がまだ正しいか」を**事後に確認**する仕組みで、
 両者は補完関係にある。
 
-## 想定する仕組み(未実装)
+## 仕組み(実装済み)
 
 1. **対象選定**: `shelf_life` が `short`/`medium` かつ `last_verified`(または無ければ`created`)
    から一定期間(例: shortは30日、mediumは180日)経過したノートを対象に、既存ノートの母数が
@@ -34,15 +35,16 @@
    書き込む、あるいは何もしない(初期値は再検証ワークフロー側で「未設定=要検証」として
    扱う)のいずれかを選択できる。この関数自体を拡張する形にすることで、呼び出し漏れを防ぐ。
 
-## frontmatter予約フィールド
+## frontmatter予約フィールド(実装済み)
 
-| フィールド | 状態 | 内容 |
-|---|---|---|
-| `last_verified` | 未実装・予約のみ | 最後に再検証した日時(ISO形式)。未設定 = 一度も再検証されていない |
-| `needs-recheck` | 未実装・予約のみ(`tags`内の1タグとして運用想定) | 再検証で疑義が見つかったノート。`status`は変えない |
+| フィールド | 内容 |
+|---|---|
+| `last_verified` | 最後に再検証した日時(ISO8601、UTC offset付き)。未設定 = 一度も再検証されていない |
+| `needs-recheck` | `tags`内の1タグとして付与。再検証で疑義が見つかったノート。`status`は変えない |
+| `recheck_reason` | `needs-recheck`付与時の判定理由(日本語1文、200字まで、改行なしの単一行) |
 
-既存の`fm_edit.py`(単一フィールドの行レベル編集)がそのまま流用できる設計(`last_verified`は
-単純な文字列スカラー値のため)。
+`last_verified`/`recheck_reason`は既存の`fm_edit.py`(単一フィールドの行レベル編集)、
+`needs-recheck`は新設の`fm_edit.append_tag`/`remove_tag`で書き込む。
 
 ## 注意点
 
@@ -53,18 +55,29 @@
 - 再検証の判定はハルシネーションのリスクを伴うため、`status`を自動変更する設計にはしない
   (上記の通り`needs-recheck`タグ止まり)。
 
-## 実装時の変更点(着手時のチェックリスト、現時点では未着手)
+## 実装時の変更点(チェックリスト)
 
-- [ ] `scripts/reverify.py` 新規作成(対象選定・Google Search グラウンディング呼び出し・
+- [x] `scripts/reverify.py` 新規作成(対象選定・Google Search グラウンディング呼び出し・
       `last_verified`/`needs-recheck`の`fm_edit`書き込み)
-- [ ] `llm_client.py` に Google Search グラウンディング対応メソッドを追加
-- [ ] `.github/workflows/reverify.yml` 新規作成(手動実行 or 低頻度cron、`organize-inbox`
+- [x] `llm_client.py` に Google Search グラウンディング対応メソッド(`verify_currency`)を追加
+- [x] `.github/workflows/reverify.yml` 新規作成(手動実行、`organize-inbox`
       concurrencyグループに参加)
-- [ ] `scripts/organize.py` の `reverify_hook(note)` を実装(no-opから置き換え)
+- [x] `scripts/organize.py` の `reverify_hook(note)` はno-opのまま据え置き(対象選定を
+      `last_verified`/`created`の経過日数で行うため、クリップ時点での初期値書き込みは不要と判断)
 - [ ] tsundoku-site側: `needs-recheck`タグの表示(任意。RAGの`isSupersededOrExpired`判定には
-      含めない方針 — 人間のレビュー前に検索結果から機械的に除外しないため)
+      含めない方針 — 人間のレビュー前に検索結果から機械的に除外しないため)。未着手
 
-## 検証観点(実装時)
+## 実装内容の要点
+
+- 対象選定: `shelf_life` short(30日)/medium(180日)経過、`--all`でlong(経過日数を問わず)も対象
+- TPM超過対策: `reverify.yml`は`LLM_MODEL_CHAIN`を`gemini-3.6-flash`単独に固定(枠の小さい
+  flash-liteへフォールバックしない)、`LLM_SLEEP_SECONDS`を30秒に引き上げ、429は同一モデルで
+  60秒×2回リトライしてから次モデルへ(`llm_client.VERIFY_MAX_RETRIES`/`VERIFY_RETRY_SLEEP_SECONDS`)
+- 初回運用ノート: 無料枠は変動するため、初回実行は`max_items`を10〜15程度に絞って実測してから
+  40〜50件のバッチへ広げる(README「運用」参照)
+
+## 検証観点(実装時に確認済み)
 
 - `reverify_hook`が呼ばれても`organize.py`の既存の挙動(整理結果・frontmatter)が変化しないこと
 - 再検証で誤って`status`が書き換わらないこと(`needs-recheck`タグのみ付与されること)
+- 同じ入力で2回連続実行した場合、2回目は完全にスキップされること(レジューム)
