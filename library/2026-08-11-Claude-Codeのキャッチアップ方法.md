@@ -7,7 +7,6 @@ tags:
 - 生成ai
 - キャッチアップ
 - スライド
-- needs-review
 summary: 'Oikon氏によるZennfes Spring 2026での登壇スライド資料です。
 
   変化の早いAIツール「Claude Code」の情報収集や学習手法について紹介されています。
