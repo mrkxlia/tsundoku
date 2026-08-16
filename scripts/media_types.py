@@ -15,6 +15,11 @@ oEmbed等でタイトル・本文・要約用コンテンツを取得する。
   第三者コンテンツだがpublicなvaultリポジトリには書き込まないため、上記の
   「ディスクに書かない」原則には抵触しない(実体はprivateなtsundoku-site側で
   管理される。詳細はtsundoku-site側 vault-assets/README.md 参照)
+- スライドPDF原本はダウンロード可否をMAX_PDF_BYTESで、vault-assets/への保存可否を
+  別枠のMAX_STORED_PDF_BYTES(Cloudflare Pagesの1ファイル25MiB上限)で判定する。
+  超過分は_prepare_slide_pdf_for_storage()でPyMuPDFのrewrite_images()により
+  画像を再圧縮し、それでも収まらなければPDF原本は保存せずページ画像のみ保存する
+  (ページ画像は圧縮前の原本からレンダリング済みのため表示品質は落ちない)
 - 外部アクセスは全てソフトフェイル: 失敗しても needs-review タグを付けて続行し、
   ワークフロー全体は落とさない
 """
@@ -33,7 +38,11 @@ from dataclasses import dataclass, field
 
 FETCH_TIMEOUT = 15
 PDF_TIMEOUT = 60
-MAX_PDF_BYTES = 15 * 1024 * 1024  # これ以上のPDFは要約せず needs-review に落とす
+MAX_PDF_BYTES = 60 * 1024 * 1024  # ダウンロード自体を諦める上限(要約不能・needs-reviewに落とす)。
+# vault-assets/への保存可否は別枠のMAX_STORED_PDF_BYTESで判定する(この定数はダウンロード時の安全弁)。
+MAX_STORED_PDF_BYTES = 25 * 1024 * 1024  # Cloudflare Pages(tsundoku-site)の1ファイルサイズ上限(25MiB)。
+# vault-assets/にこれを超えるファイルが1つでも混じるとサイト全体のデプロイが失敗するため、
+# スライドPDFを保存する前に必ず _prepare_slide_pdf_for_storage() を通す。
 MAX_TRANSCRIPT_CHARS = 24000  # 字幕は本文より長くなりがちなので専用の上限を設ける
 MAX_PAGE_BYTES = 2 * 1024 * 1024
 MAX_IMAGE_BYTES = 5 * 1024 * 1024  # これ以上の画像は保存しない
@@ -285,6 +294,68 @@ def _render_pdf_pages(pdf_bytes: bytes, source_url: str) -> list[ImageAsset]:
     return images
 
 
+# PDF圧縮を試す (dpi_target, JPEG品質) の段階。前段で収まらなければ次段でより強く圧縮する。
+PDF_COMPRESSION_LADDER = ((150, 75), (120, 60), (100, 50))
+
+
+def _compress_pdf(pdf_bytes: bytes, dpi_target: int, quality: int) -> bytes | None:
+    """PDF内の画像を再サンプリング・再圧縮したバイト列を返す(ページ数・レイアウトは不変)。失敗時はNone。
+
+    重い依存(pymupdf)はこの関数の中でのみ遅延importする(_render_pdf_pagesと同じ方針)。
+    """
+    try:
+        import pymupdf
+    except ImportError as e:
+        print(f"    [media] pymupdf未インストールのためPDF圧縮をスキップ: {e}", file=sys.stderr)
+        return None
+
+    try:
+        doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    except Exception as e:
+        print(f"    [media] PDF圧縮のための解析に失敗: {e}", file=sys.stderr)
+        return None
+    try:
+        doc.rewrite_images(
+            dpi_threshold=dpi_target + 1,
+            dpi_target=dpi_target,
+            quality=quality,
+            lossy=True,
+        )
+        return doc.tobytes(garbage=4, deflate=True)
+    except Exception as e:
+        print(f"    [media] PDF圧縮に失敗: {e}", file=sys.stderr)
+        return None
+    finally:
+        doc.close()
+
+
+def _prepare_slide_pdf_for_storage(pdf_bytes: bytes | None) -> bytes | None:
+    """スライドPDF原本をvault-assets/へ保存してよいかを判定し、必要なら圧縮する。
+
+    Cloudflare Pages(tsundoku-site)は1ファイル25MiBが上限で、超過ファイルが1つでも
+    混じるとサイト全体のデプロイが失敗する。ページ画像はこの関数の呼び出し前に
+    (圧縮前の)原本からレンダリング済みのため、ここでのPDF圧縮・破棄はサイト上の
+    ページ画像の表示品質には影響しない(スライドPDFダウンロードリンクの有無・品質にのみ影響する)。
+    """
+    if pdf_bytes is None or len(pdf_bytes) <= MAX_STORED_PDF_BYTES:
+        return pdf_bytes
+    for dpi_target, quality in PDF_COMPRESSION_LADDER:
+        compressed = _compress_pdf(pdf_bytes, dpi_target, quality)
+        if compressed is not None and len(compressed) <= MAX_STORED_PDF_BYTES:
+            print(
+                f"    [media] PDFを圧縮して保存({len(pdf_bytes)}→{len(compressed)}バイト、"
+                f"dpi_target={dpi_target} quality={quality})",
+                file=sys.stderr,
+            )
+            return compressed
+    print(
+        f"    [media] PDF圧縮を試みても{MAX_STORED_PDF_BYTES}バイト上限を超過するため、"
+        "PDF原本は保存せずページ画像のみ保存する",
+        file=sys.stderr,
+    )
+    return None
+
+
 def _find_docswell_download_url(page_html: str) -> str | None:
     m = DOCSWELL_DOWNLOAD_FORM_RE.search(page_html)
     return html.unescape(m.group(1)) if m else None
@@ -450,8 +521,11 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
         if info.pdf is None:
             _add_tag(info, "needs-review")
         else:
-            info.slide_pdf = info.pdf
+            # ページ画像は圧縮前の原本からレンダリングする(表示品質を落とさない)。
+            # 保存用PDFの圧縮・破棄はこのあとinfo.slide_pdfにのみ適用し、info.pdf
+            # (Gemini入力用の原本)には触れない。
             info.slide_images = _render_pdf_pages(info.pdf, url)
+            info.slide_pdf = _prepare_slide_pdf_for_storage(info.pdf)
     elif _is_slideshare(host):
         # ライブ取得はbot対策でほぼ常にブロックされる(実測確認済み)ため、まず試したうえで
         # 取れなければクリップ済み本文(取得元ブラウザが保存した画像URL)から拾う。
@@ -468,7 +542,9 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
         if download_url:
             info.slide_pdf = _download_pdf(download_url, method="POST", post_data=b"_token=")
         if info.slide_pdf:
+            # ページ画像は圧縮前の原本からレンダリングしてから、保存用PDFにのみ圧縮を適用する。
             info.slide_images = _render_pdf_pages(info.slide_pdf, url)
+            info.slide_pdf = _prepare_slide_pdf_for_storage(info.slide_pdf)
         elif page_html:
             # PDFダウンロードに失敗した場合のフォールバック(プレビュー画像のみ、部分的)
             image_urls = _find_docswell_page_image_urls(page_html)
