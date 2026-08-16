@@ -9,6 +9,12 @@ oEmbed等でタイトル・本文・要約用コンテンツを取得する。
 - PDF・動画はメモリ上のbytesのみで扱い、ディスクには書かない。
   画像(X添付・直リンク)のみ例外で、bytesをMediaInfo.imagesに載せて
   organize.py側が assets/ に保存する
+- 例外: type: slides(Speaker Deck/SlideShare/Docswell)のスライド実体(PDF原本+
+  ページ画像)は MediaInfo.slide_pdf / slide_images に載せ、organize.py側が
+  vault-assets/(tsundoku-site、private)相当の保存先へ書き出す対象とする。
+  第三者コンテンツだがpublicなvaultリポジトリには書き込まないため、上記の
+  「ディスクに書かない」原則には抵触しない(実体はprivateなtsundoku-site側で
+  管理される。詳細はtsundoku-site側 vault-assets/README.md 参照)
 - 外部アクセスは全てソフトフェイル: 失敗しても needs-review タグを付けて続行し、
   ワークフロー全体は落とさない
 """
@@ -34,6 +40,12 @@ MAX_IMAGE_BYTES = 5 * 1024 * 1024  # これ以上の画像は保存しない
 MAX_IMAGES_PER_NOTE = 4
 USER_AGENT = "Mozilla/5.0 (compatible; tsundoku-organizer)"
 
+# スライドのページ画像化(PDFレンダリング・CDN直取得の両方に適用する共通上限)
+SLIDE_MAX_PAGES = 120  # これ以上のページを持つデッキは先頭のみ画像化する
+SLIDE_IMAGE_WIDTH = 1280  # ページ画像の目標幅(px)。Docswellのプレビュー実測でも1280が
+# 実寸(1920x1080)まで綺麗に得られる解像度だったため、Speaker Deck/Docswell 共通で採用
+SLIDE_IMAGE_QUALITY = 80  # JPEG品質
+
 IMAGE_SUFFIXES = (".jpg", ".jpeg", ".png", ".gif", ".webp", ".avif", ".svg", ".heic")
 
 YOUTUBE_ID_RE = re.compile(r"^[0-9A-Za-z_-]{11}$")
@@ -42,6 +54,17 @@ SPEAKERDECK_PDF_RES = (
     re.compile(r'href="(https://files\.speakerdeck\.com/[^"]+\.pdf[^"]*)"'),
     re.compile(r'"(https://speakerd\.s3\.amazonaws\.com/[^"]+\.pdf[^"]*)"'),
 )
+# Docswellはページ内の<form method="POST" action="…/download">経由でPDF実体を取得できる
+# (認証・CSRFトークン無しの空POSTで200が返ることを実データで確認済み)。
+DOCSWELL_DOWNLOAD_FORM_RE = re.compile(
+    r'<form[^>]+method="POST"[^>]+action="(https://www\.docswell\.com/slide/[^"]+/download)"'
+)
+# PDFダウンロードに失敗した場合のフォールバック用、ページプレビュー画像(サーバレンダリング
+# された分のみで全ページ分とは限らない)。?width=クエリで実寸まで拡大できることを確認済み。
+DOCSWELL_PAGE_IMAGE_RE = re.compile(r"https://bcdn\.docswell\.com/page/([A-Za-z0-9]+)\.jpg")
+# SlideShareはbot対策でサーバ側からのページ取得がほぼ常にブロックされる(実測確認済み)ため、
+# クリップ時にブラウザ側で保存済みの本文中URL(image.slidesharecdn.com)を主な取得源とする。
+SLIDESHARE_IMAGE_RE = re.compile(r"https://image\.slidesharecdn\.com/[^\s)\]\"'<>]+")
 PBS_MEDIA_RE = re.compile(r"https://pbs\.twimg\.com/media/[^\s)\]\"'<>]+")
 
 
@@ -63,6 +86,8 @@ class MediaInfo:
     video_uri: str | None = None  # Gemini動画入力用のYouTube正規URL(字幕が取れない場合)
     title_hint: str = ""  # oEmbed等から得たタイトル(クリップ側にヒントが無い場合に使う)
     images: list[ImageAsset] = field(default_factory=list)  # assets/保存用(organize.py側で書き出す)
+    slide_pdf: bytes | None = None  # スライドPDF原本(vault-assets/への保存用。pdfとは別枠)
+    slide_images: list[ImageAsset] = field(default_factory=list)  # スライドのページ画像(同上)
 
 
 # ---------------------------------------------------------------- 種別判定
@@ -150,8 +175,10 @@ def _fetch_text(url: str, label: str) -> str:
         return ""
 
 
-def _download_pdf(pdf_url: str) -> bytes | None:
-    req = urllib.request.Request(pdf_url, headers={"User-Agent": USER_AGENT})
+def _download_pdf(pdf_url: str, method: str = "GET", post_data: bytes | None = None) -> bytes | None:
+    req = urllib.request.Request(
+        pdf_url, method=method, data=post_data, headers={"User-Agent": USER_AGENT}
+    )
     try:
         with urllib.request.urlopen(req, timeout=PDF_TIMEOUT) as resp:
             length = resp.headers.get("Content-Length")
@@ -205,6 +232,90 @@ def _download_image(image_url: str) -> ImageAsset | None:
         return None
     mime, ext = sniffed
     return ImageAsset(data=data, mime=mime, ext=ext, source_url=image_url)
+
+
+def _download_slide_images(urls: list[str], limit: int) -> list[ImageAsset]:
+    """スライドのページ画像URL列を先頭limit件までダウンロードする。1件失敗しても続行する。"""
+    images: list[ImageAsset] = []
+    for image_url in urls[:limit]:
+        asset = _download_image(image_url)
+        if asset:
+            images.append(asset)
+    return images
+
+
+def _render_pdf_pages(pdf_bytes: bytes, source_url: str) -> list[ImageAsset]:
+    """PDFを1ページ1枚のJPEG画像へレンダリングする(スライドをRAG検索・サイト表示に載せるため)。
+
+    重い依存(pymupdf)はこの関数の中でのみ遅延importする。未インストール環境でも
+    他の処理は普段どおり動かせるようにするため(既存のyoutube_transcript_apiと同じ方針)。
+    """
+    try:
+        import pymupdf
+    except ImportError as e:
+        print(f"    [media] pymupdf未インストールのためページ画像化をスキップ: {e}", file=sys.stderr)
+        return []
+
+    try:
+        doc = pymupdf.open(stream=pdf_bytes, filetype="pdf")
+    except Exception as e:
+        print(f"    [media] PDF解析に失敗: {e}", file=sys.stderr)
+        return []
+
+    images: list[ImageAsset] = []
+    try:
+        page_count = min(doc.page_count, SLIDE_MAX_PAGES)
+        if doc.page_count > SLIDE_MAX_PAGES:
+            print(
+                f"    [media] PDFが{doc.page_count}ページ(上限{SLIDE_MAX_PAGES})を超過、"
+                f"先頭{SLIDE_MAX_PAGES}ページのみ画像化",
+                file=sys.stderr,
+            )
+        for i in range(page_count):
+            page = doc[i]
+            width = page.rect.width or 1.0
+            zoom = SLIDE_IMAGE_WIDTH / width
+            pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom))
+            data = pix.tobytes(output="jpg", jpg_quality=SLIDE_IMAGE_QUALITY)
+            images.append(ImageAsset(data=data, mime="image/jpeg", ext="jpg", source_url=source_url))
+    except Exception as e:
+        print(f"    [media] PDFページ画像化に失敗: {e}", file=sys.stderr)
+    finally:
+        doc.close()
+    return images
+
+
+def _find_docswell_download_url(page_html: str) -> str | None:
+    m = DOCSWELL_DOWNLOAD_FORM_RE.search(page_html)
+    return html.unescape(m.group(1)) if m else None
+
+
+def _find_docswell_page_image_urls(page_html: str) -> list[str]:
+    """サーバレンダリングされたページプレビュー画像URLを出現順・重複除去で列挙する
+    (全ページ分とは限らない、PDFダウンロード失敗時のフォールバック用)。"""
+    ids: list[str] = []
+    seen: set[str] = set()
+    for image_id in DOCSWELL_PAGE_IMAGE_RE.findall(page_html):
+        if image_id in seen:
+            continue
+        seen.add(image_id)
+        ids.append(image_id)
+    return [f"https://bcdn.docswell.com/page/{i}.jpg?width={SLIDE_IMAGE_WIDTH}" for i in ids]
+
+
+def _find_slideshare_image_urls(text: str) -> list[str]:
+    """テキスト中の image.slidesharecdn.com 画像URLを出現順・重複除去で列挙する。
+    ライブページ取得(bot対策でブロックされがち)とクリップ済み本文(取得元ブラウザが
+    保存した画像URLがそのまま残っている)の両方に対して使う共通ヘルパ。"""
+    urls: list[str] = []
+    seen: set[str] = set()
+    for raw in SLIDESHARE_IMAGE_RE.findall(text or ""):
+        url = html.unescape(raw)
+        if url in seen:
+            continue
+        seen.add(url)
+        urls.append(url)
+    return urls
 
 
 def _compose(context: list[str], *sections: str) -> str:
@@ -338,9 +449,50 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
         info.pdf = _download_pdf(pdf_url) if pdf_url else None
         if info.pdf is None:
             _add_tag(info, "needs-review")
-    else:
-        # SlideShare/Docswellは自動取得しない(oEmbed情報のみ)
+        else:
+            info.slide_pdf = info.pdf
+            info.slide_images = _render_pdf_pages(info.pdf, url)
+    elif _is_slideshare(host):
+        # ライブ取得はbot対策でほぼ常にブロックされる(実測確認済み)ため、まず試したうえで
+        # 取れなければクリップ済み本文(取得元ブラウザが保存した画像URL)から拾う。
+        page_html = _fetch_text(url, "SlideShareページ")
+        image_urls = _find_slideshare_image_urls(page_html)
+        if not image_urls:
+            image_urls = _find_slideshare_image_urls(info.note_body)
+        info.slide_images = _download_slide_images(image_urls, SLIDE_MAX_PAGES)
+        if not info.slide_images:
+            _add_tag(info, "needs-review")
+    else:  # docswell.com
+        page_html = _fetch_text(url, "Docswellページ")
+        download_url = _find_docswell_download_url(page_html) if page_html else None
+        if download_url:
+            info.slide_pdf = _download_pdf(download_url, method="POST", post_data=b"_token=")
+        if info.slide_pdf:
+            info.slide_images = _render_pdf_pages(info.slide_pdf, url)
+        elif page_html:
+            # PDFダウンロードに失敗した場合のフォールバック(プレビュー画像のみ、部分的)
+            image_urls = _find_docswell_page_image_urls(page_html)
+            info.slide_images = _download_slide_images(image_urls, SLIDE_MAX_PAGES)
+        if not info.slide_images:
+            _add_tag(info, "needs-review")
+
+
+def fetch_slide_assets(url: str, note_body: str) -> MediaInfo:
+    """type: slidesノート1件分のスライド実体(PDF・ページ画像)を取得する公開エントリポイント。
+
+    organize.py の enrich() 経由(新規クリップ処理時)とは別に、fetch_slides.py
+    (バックフィル・取得失敗リカバリ)がlibrary/の既存ノートに対して直接呼ぶために用意する。
+    enrich()の例外処理と同じ方針(想定外エラーでも needs-review を付けて続行)を踏襲する。
+    """
+    info = MediaInfo(type="slides", note_body=note_body, llm_body=note_body)
+    try:
+        _enrich_slides(url, info)
+    except Exception as e:
+        print(f"    [media] スライド取得でエラー(needs-reviewで続行): {e}", file=sys.stderr)
+        info.slide_pdf = None
+        info.slide_images = []
         _add_tag(info, "needs-review")
+    return info
 
 
 # ---------------------------------------------------------------- X(Twitter)
@@ -525,5 +677,7 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
         info.pdf = None
         info.video_uri = None
         info.images = []
+        info.slide_pdf = None
+        info.slide_images = []
         _add_tag(info, "needs-review")
     return info
