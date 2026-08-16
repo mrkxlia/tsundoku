@@ -1,14 +1,14 @@
 {
   "main": {
-    "id": "b409a6bcb166ffe1",
+    "id": "8a103345e00bef82",
     "type": "split",
     "children": [
       {
-        "id": "6f093007c86fc81a",
+        "id": "430faf5306acb6e2",
         "type": "tabs",
         "children": [
           {
-            "id": "7e88a68ec62b8db5",
+            "id": "2cc7d11b70c13fc3",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -23,17 +23,17 @@
     "direction": "vertical"
   },
   "left": {
-    "id": "9185f728b69c4b55",
+    "id": "fd62c0146a51bb30",
     "type": "mobile-drawer",
     "children": [
       {
-        "id": "9073b3f6df866196",
+        "id": "0f21127b4e8e0824",
         "type": "leaf",
         "state": {
           "type": "file-explorer",
           "state": {
             "sortOrder": "alphabetical",
-            "autoReveal": true,
+            "autoReveal": false,
             "showSearch": false,
             "searchQuery": ""
           },
@@ -42,7 +42,7 @@
         }
       },
       {
-        "id": "4803bb49e96bee8b",
+        "id": "e902d2623f38eef4",
         "type": "leaf",
         "state": {
           "type": "search",
@@ -59,7 +59,7 @@
         }
       },
       {
-        "id": "e95b7e84cdcfc82c",
+        "id": "5e294f8ebab233ce",
         "type": "leaf",
         "state": {
           "type": "tag",
@@ -74,7 +74,7 @@
         }
       },
       {
-        "id": "b8c76b33b6b5f0de",
+        "id": "50df4bb8d0704056",
         "type": "leaf",
         "state": {
           "type": "all-properties",
@@ -88,7 +88,7 @@
         }
       },
       {
-        "id": "9df198e2f80e9c6f",
+        "id": "56d92468d06d9373",
         "type": "leaf",
         "state": {
           "type": "bookmarks",
@@ -104,11 +104,11 @@
     "currentTab": 0
   },
   "right": {
-    "id": "bee29eb6e488eccf",
+    "id": "bdac02c82c152c4e",
     "type": "mobile-drawer",
     "children": [
       {
-        "id": "9f4f2cd6e2fa2ab3",
+        "id": "09e78174140ff350",
         "type": "leaf",
         "state": {
           "type": "backlink",
@@ -126,7 +126,7 @@
         }
       },
       {
-        "id": "4e56a1673cba6d20",
+        "id": "ad1ed97ea9598914",
         "type": "leaf",
         "state": {
           "type": "outgoing-link",
@@ -139,12 +139,11 @@
         }
       },
       {
-        "id": "cc649ea90017e6b4",
+        "id": "3ea88a67b16b682f",
         "type": "leaf",
         "state": {
           "type": "outline",
           "state": {
-            "file": "assets/2026-08-11-定例資料の冒頭に入れるべき1枚のスライド-1.jpg",
             "followCursor": false,
             "showSearch": false,
             "searchQuery": ""
@@ -152,19 +151,9 @@
           "icon": "lucide-list",
           "title": "アウトライン"
         }
-      },
-      {
-        "id": "001a111e482fba7f",
-        "type": "leaf",
-        "state": {
-          "type": "git-view",
-          "state": {},
-          "icon": "git-pull-request",
-          "title": "Source Control"
-        }
       }
     ],
-    "currentTab": 2
+    "currentTab": 0
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -178,53 +167,43 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7e88a68ec62b8db5",
+  "active": "0f21127b4e8e0824",
   "lastOpenFiles": [
-    "assets/2026-08-11-定例資料の冒頭に入れるべき1枚のスライド-1.jpg",
-    "library/2026-08-15-AIにWebデザインを伝えるコツとプロンプト例.md",
-    "library/2026-08-15-Kaggleで学んだBERTのFine-tuning効率化Tips.md",
-    "scripts/fetch_slides.py",
-    "library/2026-08-13-つくって納得、つかって実感！大規模言語モデルことはじめ.md",
-    "library/2026-08-15-DynamoDBのベクトル検索で作るRAGアプリ.md",
-    "library/2026-08-15-60分で学ぶ数理最適化の基礎と解法.md",
-    "library/2026-08-15-CI-CDの基本概念と実践での課題・解決策.md",
-    "library/2026-08-15-Claude-CodeによるAI自己修正ループ構築完全ガイド.md",
-    "library/2026-08-15-voluntas氏によるXの投稿.md",
+    "Inbox/Secure all your internal vibe-coded applications — in one click.md",
+    "Inbox",
+    "library/2026-08-11-Claude-Codeを活用した開発実践と設計スキルの重要性.md",
     "library/2026-08-15-LambdaからAgentCoreを実行するIAMとCDK設定.md",
-    "library/2026-08-13-ABEMAのLLMを用いたコンテンツベース推薦の導入と効果検証.md",
-    "library/2026-08-15-Claudeの自動メモリ整理プロンプト.md",
-    "library/2026-08-15-過小評価されている日本の優れたOSS.md",
-    "scripts/dispatch_site.sh",
-    "library/2026-08-15-暗黙知が文書化で継承できない理由とLLM活用.md",
-    "library/2026-08-15-gpuiでWebViewを簡単に利用する方法.md",
-    "archive/2026-08-13-ABEMAにおけるLLMを用いたコンテンツベース推薦システム導入と効果検証.md",
-    "archive/2026-08-13-つくって納得つかって実感-大規模言語モデルことはじめ.md",
-    "library/2026-08-15-Claude-Codeに同じ指摘をさせないhookの仕組み.md",
-    "library/2026-08-15-AGENTS.mdにYAGNI原則を記述することによる改善効果.md",
-    "library/2026-08-15-Claude-Codeで業務効率化！AI社員の作り方と設定方法.md",
-    "/archive/2026-08-13-つくって納得つかって実感-大規模言語モデルことはじめ.md",
-    "/archive/2026-08-13-ABEMAにおけるLLMを用いたコンテンツベース推薦システム導入と効果検証.md",
-    "/scripts/organize.py",
-    "/scripts/media_types.py",
-    "/scripts/fetch_slides.py",
-    "/scripts/dispatch_site.sh",
-    "/scripts/build_embeddings.py",
-    "/scripts/backfill_images.py",
-    "/scripts",
-    "/requirements.txt",
-    "/library/2026-08-15-過小評価されている日本の優れたOSS.md",
-    "/library/2026-08-15-暗黙知が文書化で継承できない理由とLLM活用.md",
-    "/library/2026-08-15-voluntas氏によるXの投稿.md",
-    "/library/2026-08-15-gpuiでWebViewを簡単に利用する方法.md",
-    "assets/2026-08-12-教え方が上手い人と下手な人の違い8選-1.jpg",
-    "assets/2026-08-12-自己修正型AIシステムの構築と実践ガイド-4.jpg",
-    "assets/2026-08-12-全10種36枚のパワポ用グラフテンプレート解説と配布-1.jpg",
-    "assets/2026-08-12-自己修正型AIシステムの構築と実践ガイド-1.jpg",
-    "assets/2026-08-11-Claude-Codeセキュリティ対策の正しい順番と設定-1.jpg",
-    "assets/2026-08-12-Claude-Codeで業務が勝手に回る仕組みを作る全手順-2.jpg",
-    "assets/2026-08-11-Claude-Codeセキュリティ対策の正しい順番と設定-2.jpg",
-    "assets/2026-08-11-Claude-Codeセキュリティ対策の正しい順番と設定-3.jpg",
-    "assets/2026-08-12-自己修正型AIシステムの構築と実践ガイド-2.jpg",
-    "assets/2026-08-12-Claude-Codeで業務が勝手に回る仕組みを作る全手順-3.jpg"
+    "library/2026-08-11-ミスを繰り返さないために気をつけたい事TOP10.md",
+    "archive/2026-08-11-ミスを繰り返さないために気をつけたい事TOP10.md",
+    "library/2026-08-11-人工知能学会に向けリサーチ自動化テンプレートを公開.md",
+    "library/2026-08-11-NW機器のIF用Descriptionチートシート.md",
+    "library/2026-08-11-Active-Directoryの保護とセキュリティ対策.md",
+    "library/2026-08-11-Claude-Codeでdraw.io公式Skillを試す.md",
+    "library/2026-08-11-WatchYourLAN-軽量IPスキャナー.md",
+    "library/2026-08-13-つくって納得、つかって実感！大規模言語モデルことはじめ.md",
+    "library/2026-08-11-日本語技術文書の文章規範と推敲ルール.md",
+    "2026-08-11-211409.txt",
+    "archive/2026-08-15-AI-Shiftのテックブログ記事.md",
+    "library/2026-08-11-CodexユーザーのためのHarness-Engineeringベストプラクティス.md",
+    "library/2026-08-11-コンサート前に最適？シャトレーゼの磯辺餅.md",
+    "library/2026-08-11-名古屋の治安別コスパ良いホテル18選.md",
+    "library/2026-08-11-Claude-Codeセキュリティ設定チートシート.md",
+    "scripts/seed_read_flags.py",
+    "scripts/fm_edit.py",
+    "library/2026-08-11-元アイドル宮本佳林がバイブコーディングを習得するまで.md",
+    "library/2026-08-11-コンサル時代に報連相が下手すぎて怒られたときのメモ.md",
+    "scripts/organize.py",
+    "library/2026-08-11-ゼロから作るプログラミング技術のチュートリアル集.md",
+    "library/2026-08-11-Morphのオープンソース版を試してみた.md",
+    "library/2026-08-11-Data-Formulator-AIデータ分析・可視化システム.md",
+    "library/2026-08-11-AI開発環境-orca-ADEの紹介.md",
+    "archive/2026-08-11-Claude-Codeのセキュリティ対策と推奨設定手順.md",
+    "library/2026-08-11-83億のエージェントで世界をシミュレーションするMatrAIx.md",
+    "library/2026-08-11-パワポのデザインパターン大全-39のアイデア.md",
+    "scripts/llm_client.py",
+    "requirements.txt",
+    "scripts/build_embeddings.py",
+    "scripts/media_types.py",
+    "scripts/backfill_shelf_life.py"
   ]
 }
