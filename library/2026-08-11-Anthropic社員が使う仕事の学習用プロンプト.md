@@ -15,6 +15,7 @@ summary: 'Anthropicのメンバーが実践している、深い理解を促す�
 title: Anthropic社員が使う仕事の学習用プロンプト
 read: false
 shelf_life: long
+last_verified: '2026-08-18T14:20:26+00:00'
 ---
 
 # Post by @oikon48 on X
