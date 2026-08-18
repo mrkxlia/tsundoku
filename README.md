@@ -168,7 +168,8 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 
 | Variable | 既定値 | 説明 |
 |---|---|---|
-| `LLM_MODEL_CHAIN` | `gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
+| `LLM_MODEL_CHAIN` | `gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
+| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash,gemini-2.5-flash-lite` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照) |
 | `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 | `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
@@ -214,18 +215,23 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
   5. index/サイトへの反映は次回の `organize.yml` 実行(または手動 `Backfill` の `embeddings`
      タスク)に任せる(このスクリプト自体はindexを更新しない)
 - **古いノートの再検証**(`reverify.py`、`Actions → Reverify → Run workflow`):
-  1. Google Searchグラウンディングの無料枠は変動しやすいため、**初回は`max_items`を10〜15
+  1. **グラウンディングの無料枠はモデル世代ごとに別枠**であり、通常の生成呼び出しが使えている
+     モデルでも枠0のことがある。実行前に一度 [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)
+     で対象モデルの「検索によるグラウンディング」欄を確認すること(2026-08-18時点でこの
+     アカウントはGemini 3系が枠0、Gemini 2.5系が有効だったため、`GROUNDING_MODEL_CHAIN`の
+     既定値はGemini 2.5系にしてある)
+  2. Google Searchグラウンディングの無料枠は変動しやすいため、**初回は`max_items`を10〜15
      程度に絞って**実行し、429の出方・所要時間を実測する
-  2. 以後、無料枠に収まりそうであれば`max_items`を40〜50程度に広げ、対象がなくなるまで
+  3. 以後、無料枠に収まりそうであれば`max_items`を40〜50程度に広げ、対象がなくなるまで
      繰り返し実行する(`last_verified`から古い順に処理されるレジューム設計のため、同じ設定で
      連続実行すれば自然に全件を舐められる)
-  3. 実行結果はcommitされ、`needs-recheck`タグ付きノートの一覧はジョブのartifact
+  4. 実行結果はcommitされ、`needs-recheck`タグ付きノートの一覧はジョブのartifact
      (`reverify_report.json`)とcommit差分の両方で確認できる
-  4. `needs-recheck`が付いたノートをレビューし、妥当なら`archive/`へ手動移動(PR経由)、
+  5. `needs-recheck`が付いたノートをレビューし、妥当なら`archive/`へ手動移動(PR経由)、
      誤判定なら `python scripts/reverify.py --clear library/xxx.md` でタグを解除してcommit
-  5. Gemini無料枠のTPM(トークン/分)超過を避けるため、`reverify.yml`は生成系より保守的な
-     設定(`gemini-3.6-flash`固定、sleep 30秒)にしている。組織のアカウントで別の制限に
-     当たった場合はワークフロー内の値を調整すること
+  6. Gemini無料枠のTPM(トークン/分)超過を避けるため、`reverify.yml`は生成系より保守的な
+     sleep(30秒)にしている。組織のアカウントで別の制限に当たった場合はワークフロー内の
+     `LLM_SLEEP_SECONDS`/`GROUNDING_MODEL_CHAIN`の値を調整すること
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)

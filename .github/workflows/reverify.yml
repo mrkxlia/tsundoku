@@ -7,8 +7,15 @@ name: Reverify
 # 運用メモ: Google Searchグラウンディングの無料枠は変動しやすく、通常の生成系より
 # トークン消費が大きい。初回実行は max_items を10〜15程度に絞って所要時間と429の
 # 出方を実測してから、40〜50件程度のバッチに広げること。無料枠のgemini-3.5-flash-lite
-# がTPM超過ぎみだったため、model_chainはgemini-3.6-flash固定・sleepは30秒に
-# 引き上げている(通常のorganize系ジョブより保守的な設定)。
+# がTPM超過ぎみだったため、sleepは30秒に引き上げている(通常のorganize系ジョブより
+# 保守的な設定)。
+#
+# 重要: グラウンディングはモデル世代ごとに別枠のクォータを持ち、このアカウントでは
+# Gemini 3系のグラウンディング枠が0だった(2026-08-18、AI Studioのレート制限ページで
+# 確認。通常の生成呼び出しの枠とは無関係)。一方Gemini 2.5系はグラウンディング専用の
+# 無料枠(日1,500件、当時0/1.5K=未使用)が生きていたため、verify_currency専用の
+# GROUNDING_MODEL_CHAINはGemini 2.5系に固定している。今後Gemini 3系の枠が有効化
+# された場合や、逆に2.5系の枠が枯渇した場合はAI Studioで確認の上ここを調整すること。
 on:
   workflow_dispatch:
     inputs:
@@ -56,10 +63,13 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # TPM超過対策: 通常のLLM_MODEL_CHAIN(vars)ではなくflash系のみに固定し、
-          # 枠の小さいflash-liteへは絶対にフォールバックしない。ただしGoogle Search
-          # グラウンディングはモデルとは別枠のクォータのため、モデルを増やしても
-          # グラウンディング自体の429は解消しない場合がある(2026-08-16実地確認)
+          # 枠の小さいflash-liteへは絶対にフォールバックしない(reverify.py自体は
+          # 現状verify_currencyしか呼ばないためLLM_MODEL_CHAINは実質未使用だが、
+          # 将来の拡張時の安全側デフォルトとして残す)
           LLM_MODEL_CHAIN: "gemini-3.7-flash,gemini-3.6-flash"
+          # グラウンディング専用チェーン(ワークフロー冒頭のコメント参照)。
+          # このアカウントではGemini 3系のグラウンディング枠が0のため2.5系に固定
+          GROUNDING_MODEL_CHAIN: "gemini-2.5-flash,gemini-2.5-flash-lite"
           LLM_SLEEP_SECONDS: "30"
           # workflow_dispatch入力は書き込み権限者のみ設定できるが、シェルへの直接展開
           # (${{ }})は引用符を含む値でコマンドインジェクションになり得るため、

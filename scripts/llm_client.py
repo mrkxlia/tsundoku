@@ -5,14 +5,18 @@
 create_client() の分岐を変えるだけでよい。
 
 環境変数:
-    GEMINI_API_KEY     : Google AI Studio のAPIキー(必須。DRY_RUN時は不要)
-    LLM_MODEL_CHAIN    : カンマ区切りのモデル名。先頭から順に試し、
-                         枠超過(429)等で次のモデルへフォールバックする
-    LLM_SLEEP_SECONDS  : API呼び出し後のスリープ秒数(無料枠のRPM対策)
-    EMBEDDING_MODEL    : 埋め込みモデル名(既定 gemini-embedding-2)
-    EMBED_DIM          : 埋め込み次元数(既定 768)
-    EMBED_SLEEP_SECONDS: 埋め込みAPI呼び出し後のスリープ秒数(生成系とは別枠のため独立変数)
-    DRY_RUN            : "1" で外部APIを呼ばないモッククライアントを使う
+    GEMINI_API_KEY       : Google AI Studio のAPIキー(必須。DRY_RUN時は不要)
+    LLM_MODEL_CHAIN      : カンマ区切りのモデル名。先頭から順に試し、
+                           枠超過(429)等で次のモデルへフォールバックする
+    GROUNDING_MODEL_CHAIN: グラウンディング(Google Search)呼び出し専用のモデルチェーン。
+                           グラウンディングはモデル世代ごとに別枠のクォータを持ち、
+                           アカウントによってはLLM_MODEL_CHAINの世代がグラウンディング
+                           枠0のことがあるため、既定で別世代(Gemini 2.5系)を使う
+    LLM_SLEEP_SECONDS    : API呼び出し後のスリープ秒数(無料枠のRPM対策)
+    EMBEDDING_MODEL      : 埋め込みモデル名(既定 gemini-embedding-2)
+    EMBED_DIM            : 埋め込み次元数(既定 768)
+    EMBED_SLEEP_SECONDS  : 埋め込みAPI呼び出し後のスリープ秒数(生成系とは別枠のため独立変数)
+    DRY_RUN              : "1" で外部APIを呼ばないモッククライアントを使う
 """
 
 from __future__ import annotations
@@ -29,6 +33,11 @@ import urllib.error
 import urllib.request
 
 DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it"
+# グラウンディング(Google Search)はモデル世代ごとに別枠のクォータを持つ。アカウントに
+# よってはGemini 3系のグラウンディング枠が0のことがある(2026-08-18実地確認、AI Studioの
+# レート制限ページで要確認)。Gemini 2.5系は通常の生成枠とは別に、グラウンディング専用の
+# 無料枠(日1,500件程度)を持つため、grounding系呼び出しはこちらを既定にする。
+DEFAULT_GROUNDING_MODEL_CHAIN = "gemini-2.5-flash,gemini-2.5-flash-lite"
 DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
@@ -277,6 +286,7 @@ class GeminiClient(LLMClient):
         embedding_model: str = DEFAULT_EMBEDDING_MODEL,
         embed_dim: int = DEFAULT_EMBED_DIM,
         embed_sleep_seconds: float = DEFAULT_EMBED_SLEEP_SECONDS,
+        grounding_model_chain: list[str] | None = None,
     ):
         if not api_key:
             raise LLMError("GEMINI_API_KEY が設定されていません")
@@ -286,6 +296,12 @@ class GeminiClient(LLMClient):
         self.embedding_model = embedding_model
         self.embed_dim = embed_dim
         self.embed_sleep_seconds = embed_sleep_seconds
+        # グラウンディング(Google Search)はモデル世代ごとに別枠のクォータを持ち、
+        # アカウントによってはGemini 3系がグラウンディング枠0(通常の生成枠とは無関係)
+        # ということがある(2026-08-18実地確認)。そのためmodel_chainとは独立した
+        # 専用チェーンを持つ(既定は通常チェーンと同じにしておき、create_client()側の
+        # 環境変数GROUNDING_MODEL_CHAINで上書きできるようにする)。
+        self.grounding_model_chain = grounding_model_chain if grounding_model_chain is not None else model_chain
 
     def generate_note_meta(self, url: str, title_hint: str, body: str) -> dict:
         prompt = PROMPT_TEMPLATE.format(
@@ -519,8 +535,9 @@ class GeminiClient(LLMClient):
         return [m for m in self.model_chain if "gemma" not in m.lower()]
 
     def _grounding_chain(self) -> list[str]:
-        # Gemma系はツール呼び出し(google_search等)に非対応
-        return [m for m in self.model_chain if "gemma" not in m.lower()]
+        # Gemma系はツール呼び出し(google_search等)に非対応。grounding_model_chainは
+        # model_chainとは別物(上記__init__のコメント参照)
+        return [m for m in self.grounding_model_chain if "gemma" not in m.lower()]
 
     def _generate_with_parts(
         self, parts: list[dict], chain: list[str], media_resolution: str | None = None
@@ -868,6 +885,11 @@ def create_client() -> LLMClient:
         for m in (os.environ.get("LLM_MODEL_CHAIN") or DEFAULT_MODEL_CHAIN).split(",")
         if m.strip()
     ]
+    grounding_chain = [
+        m.strip()
+        for m in (os.environ.get("GROUNDING_MODEL_CHAIN") or DEFAULT_GROUNDING_MODEL_CHAIN).split(",")
+        if m.strip()
+    ]
     sleep_seconds = float(os.environ.get("LLM_SLEEP_SECONDS") or DEFAULT_SLEEP_SECONDS)
     embedding_model = os.environ.get("EMBEDDING_MODEL") or DEFAULT_EMBEDDING_MODEL
     embed_dim = int(os.environ.get("EMBED_DIM") or DEFAULT_EMBED_DIM)
@@ -879,4 +901,5 @@ def create_client() -> LLMClient:
         embedding_model,
         embed_dim,
         embed_sleep_seconds,
+        grounding_chain,
     )

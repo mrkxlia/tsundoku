@@ -49,7 +49,15 @@
 ## 注意点
 
 - **Google Search グラウンディングの無料枠**は他のGemini機能とは別枠で、変動しやすい
-  (実装時に [AI Studio](https://aistudio.google.com/) で最新のレート制限を確認すること)。
+  (実装時に [AI Studio](https://aistudio.google.com/rate-limit) で最新のレート制限を確認すること)。
+- **グラウンディングの無料枠はモデル世代ごとに別枠**であり、通常の生成呼び出し(`LLM_MODEL_CHAIN`)
+  が使えているモデルでもグラウンディングは枠0のことがある。実際、このアカウントでは2026-08-18時点で
+  Gemini 3系のグラウンディング枠が0/0(利用不可)、Gemini 2.5系は0/1.5K(日1,500件が未使用)だった。
+  これは通常の生成クォータとは無関係のため、モデルが生成呼び出しで動いていることは
+  グラウンディングが動く根拠にならない。**必ずAI Studioのレート制限ページで対象モデルの
+  「検索によるグラウンディング」欄を個別に確認すること**。この理由から`verify_currency`は
+  `LLM_MODEL_CHAIN`とは別に`GROUNDING_MODEL_CHAIN`(既定Gemini 2.5系)を持つ設計にしている
+  (`llm_client.GeminiClient.grounding_model_chain`)。
 - 無料枠を消費するため、`organize.yml`の日次実行に直接組み込むのではなく、
   `backfill.yml`同様の手動/低頻度スケジュール実行(例: 週1)を想定する。
 - 再検証の判定はハルシネーションのリスクを伴うため、`status`を自動変更する設計にはしない
@@ -70,9 +78,11 @@
 ## 実装内容の要点
 
 - 対象選定: `shelf_life` short(30日)/medium(180日)経過、`--all`でlong(経過日数を問わず)も対象
-- TPM超過対策: `reverify.yml`は`LLM_MODEL_CHAIN`を`gemini-3.6-flash`単独に固定(枠の小さい
-  flash-liteへフォールバックしない)、`LLM_SLEEP_SECONDS`を30秒に引き上げ、429は同一モデルで
-  60秒×2回リトライしてから次モデルへ(`llm_client.VERIFY_MAX_RETRIES`/`VERIFY_RETRY_SLEEP_SECONDS`)
+- TPM超過対策: `LLM_SLEEP_SECONDS`を30秒に引き上げ、429は同一モデルで60秒×2回リトライしてから
+  次モデルへ(`llm_client.VERIFY_MAX_RETRIES`/`VERIFY_RETRY_SLEEP_SECONDS`)
+- グラウンディング専用モデルチェーン: `verify_currency`は`GROUNDING_MODEL_CHAIN`
+  (既定`gemini-2.5-flash,gemini-2.5-flash-lite`)を使う。通常の`LLM_MODEL_CHAIN`(Gemini 3系)
+  とは無関係(上記「注意点」参照)
 - 初回運用ノート: 無料枠は変動するため、初回実行は`max_items`を10〜15程度に絞って実測してから
   40〜50件のバッチへ広げる(README「運用」参照)
 
