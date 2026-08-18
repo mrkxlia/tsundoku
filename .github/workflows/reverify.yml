@@ -16,6 +16,7 @@ name: Reverify
 # 無料枠(日1,500件、当時0/1.5K=未使用)が生きていたため、verify_currency専用の
 # GROUNDING_MODEL_CHAINはGemini 2.5系に固定している。今後Gemini 3系の枠が有効化
 # された場合や、逆に2.5系の枠が枯渇した場合はAI Studioで確認の上ここを調整すること。
+# なおgemini-2.5-flash-liteは新規アカウントでは404(廃止済み)のため含めない。
 on:
   workflow_dispatch:
     inputs:
@@ -69,7 +70,7 @@ jobs:
           LLM_MODEL_CHAIN: "gemini-3.7-flash,gemini-3.6-flash"
           # グラウンディング専用チェーン(ワークフロー冒頭のコメント参照)。
           # このアカウントではGemini 3系のグラウンディング枠が0のため2.5系に固定
-          GROUNDING_MODEL_CHAIN: "gemini-2.5-flash,gemini-2.5-flash-lite"
+          GROUNDING_MODEL_CHAIN: "gemini-2.5-flash"
           LLM_SLEEP_SECONDS: "30"
           # workflow_dispatch入力は書き込み権限者のみ設定できるが、シェルへの直接展開
           # (${{ }})は引用符を含む値でコマンドインジェクションになり得るため、

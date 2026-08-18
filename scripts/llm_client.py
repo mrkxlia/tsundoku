@@ -37,7 +37,9 @@ DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,g
 # よってはGemini 3系のグラウンディング枠が0のことがある(2026-08-18実地確認、AI Studioの
 # レート制限ページで要確認)。Gemini 2.5系は通常の生成枠とは別に、グラウンディング専用の
 # 無料枠(日1,500件程度)を持つため、grounding系呼び出しはこちらを既定にする。
-DEFAULT_GROUNDING_MODEL_CHAIN = "gemini-2.5-flash,gemini-2.5-flash-lite"
+# gemini-2.5-flash-liteは新規アカウントでは404(廃止済み、gemini-3.5-flash-liteへの移行を
+# 促すエラー)になるため含めない(2026-08-18実地確認)。
+DEFAULT_GROUNDING_MODEL_CHAIN = "gemini-2.5-flash"
 DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
@@ -46,6 +48,10 @@ VERIFY_EXCERPT_CHARS = 2000  # グラウンディング呼び出しは検索結�
 # 大きいため、通常のMAX_BODY_CHARSより控えめに本文を渡す
 VERIFY_MAX_RETRIES = 2  # 429(TPM超過)は次モデルへ即切替えず、同一モデルで待って粘る
 VERIFY_RETRY_SLEEP_SECONDS = 60.0
+VERIFY_TIMEOUT_SECONDS = 150  # グラウンディングは検索を伴い通常の生成より時間がかかる
+# (実地確認で通常の90秒タイムアウトに達する例があった)
+VERIFY_PARSE_RETRIES = 1  # 応答が指示どおりのJSON形式でない場合、同一モデルでもう一度試す
+# (グラウンディング呼び出しは生成に時間がかかり出力形式が不安定になることがあるため)
 
 DEFAULT_EMBEDDING_MODEL = "gemini-embedding-2"
 DEFAULT_EMBED_DIM = 768
@@ -498,36 +504,46 @@ class GeminiClient(LLMClient):
             raise LLMError("グラウンディングに対応するモデルがチェーンにありません")
         errors = []
         for model in chain:
-            try:
-                # TPM(トークン/分)超過はモデル切替よりも同一モデルでの待機再試行の方が
-                # 回復しやすいため、429を通常より多く・長く同一モデルでリトライしてから
-                # 次のモデルへフォールバックする(_call_model_rawの既定より粘る)。
-                candidate = self._call_model_raw(
-                    model,
-                    [{"text": prompt}],
-                    tools=[{"google_search": {}}],
-                    json_mode=False,
-                    max_retries=VERIFY_MAX_RETRIES,
-                    retry_sleep_seconds=VERIFY_RETRY_SLEEP_SECONDS,
-                )
+            # グラウンディング呼び出しは応答形式が指示どおりにならないことがあるため、
+            # 同一モデルでVERIFY_PARSE_RETRIES回まで再試行してから次のモデルへ進む。
+            for parse_attempt in range(VERIFY_PARSE_RETRIES + 1):
+                try:
+                    # TPM(トークン/分)超過はモデル切替よりも同一モデルでの待機再試行の方が
+                    # 回復しやすいため、429を通常より多く・長く同一モデルでリトライしてから
+                    # 次のモデルへフォールバックする(_call_model_rawの既定より粘る)。
+                    # グラウンディングは検索を伴い通常より時間がかかるためtimeoutも延長する。
+                    candidate = self._call_model_raw(
+                        model,
+                        [{"text": prompt}],
+                        tools=[{"google_search": {}}],
+                        json_mode=False,
+                        max_retries=VERIFY_MAX_RETRIES,
+                        retry_sleep_seconds=VERIFY_RETRY_SLEEP_SECONDS,
+                        timeout=VERIFY_TIMEOUT_SECONDS,
+                    )
+                except urllib.error.HTTPError as e:
+                    errors.append(f"{model}: HTTP {e.code}")
+                    print(
+                        f"    [llm] {model} が HTTP {e.code}(グラウンディング) — 次のモデルへフォールバック",
+                        file=sys.stderr,
+                    )
+                    break
+                except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                    errors.append(f"{model}: {e}")
+                    print(
+                        f"    [llm] {model} で通信エラー(グラウンディング) — 次のモデルへフォールバック: {e}",
+                        file=sys.stderr,
+                    )
+                    break
+
                 text = "".join(p.get("text", "") for p in candidate.get("content", {}).get("parts", []))
                 result = _parse_verdict_json(text)
                 if result is not None:
                     result["sources"] = _extract_grounding_sources(candidate)
                     return result
-                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
-            except urllib.error.HTTPError as e:
-                errors.append(f"{model}: HTTP {e.code}")
-                print(
-                    f"    [llm] {model} が HTTP {e.code}(グラウンディング) — 次のモデルへフォールバック",
-                    file=sys.stderr,
-                )
-            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
-                errors.append(f"{model}: {e}")
-                print(
-                    f"    [llm] {model} で通信エラー(グラウンディング) — 次のモデルへフォールバック: {e}",
-                    file=sys.stderr,
-                )
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗(試行{parse_attempt + 1}/{VERIFY_PARSE_RETRIES + 1})")
+                if parse_attempt < VERIFY_PARSE_RETRIES:
+                    print(f"    [llm] {model} の応答形式が不正 — 同一モデルで再試行", file=sys.stderr)
         raise LLMError("verify_currency失敗: " + "; ".join(errors))
 
     def _multimodal_chain(self) -> list[str]:
@@ -606,6 +622,7 @@ class GeminiClient(LLMClient):
         tools: list[dict] | None = None,
         max_retries: int = 1,
         retry_sleep_seconds: float | None = None,
+        timeout: int = 90,
     ) -> dict:
         """1回のAPI呼び出しを行い candidates[0] をそのまま返す(groundingMetadata等を
         含む生の応答が必要な呼び出し元向け。テキストだけでよい場合は _call_model を使う)。
@@ -639,7 +656,7 @@ class GeminiClient(LLMClient):
         last_err: Exception | None = None
         for attempt in range(max_retries + 1):  # 一時的な429/503は既定1回だけ待って再試行
             try:
-                with urllib.request.urlopen(req, timeout=90) as resp:
+                with urllib.request.urlopen(req, timeout=timeout) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
                 self._sleep()
                 try:
@@ -651,6 +668,14 @@ class GeminiClient(LLMClient):
                 last_err = e
                 self._sleep()
                 if e.code in (429, 500, 503) and attempt < max_retries:
+                    time.sleep(sleep_on_retry)
+                    continue
+                raise
+            except (urllib.error.URLError, TimeoutError) as e:
+                # ネットワーク層のタイムアウト・接続エラー(グラウンディング等、応答に
+                # 時間がかかる呼び出しで発生しうる)。429と同様に同一モデルで再試行する。
+                last_err = e
+                if attempt < max_retries:
                     time.sleep(sleep_on_retry)
                     continue
                 raise
