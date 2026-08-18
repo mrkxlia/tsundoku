@@ -81,8 +81,16 @@
 - TPM超過対策: `LLM_SLEEP_SECONDS`を30秒に引き上げ、429は同一モデルで60秒×2回リトライしてから
   次モデルへ(`llm_client.VERIFY_MAX_RETRIES`/`VERIFY_RETRY_SLEEP_SECONDS`)
 - グラウンディング専用モデルチェーン: `verify_currency`は`GROUNDING_MODEL_CHAIN`
-  (既定`gemini-2.5-flash,gemini-2.5-flash-lite`)を使う。通常の`LLM_MODEL_CHAIN`(Gemini 3系)
-  とは無関係(上記「注意点」参照)
+  (既定`gemini-2.5-flash`)を使う。通常の`LLM_MODEL_CHAIN`(Gemini 3系)とは無関係
+  (上記「注意点」参照)。`gemini-2.5-flash-lite`は新規アカウントでは廃止済み(404)のため
+  含めていない
+- 信頼性対策(2026-08-18、15件バッチの実地検証で33%失敗した経験から追加):
+  - グラウンディングは検索を伴い通常の生成より時間がかかるため、タイムアウトを90秒から
+    150秒(`VERIFY_TIMEOUT_SECONDS`)に延長
+  - ネットワーク層のタイムアウト・接続エラー(`URLError`/`TimeoutError`)も429と同様に
+    同一モデルで再試行するよう`_call_model_raw`を拡張(全呼び出し元に効く一般的な改善)
+  - 応答がJSON形式の指示に従わない場合、同一モデルで最大1回まで再試行
+    (`VERIFY_PARSE_RETRIES`)。グラウンディングは出力形式が不安定になることがあるため
 - 初回運用ノート: 無料枠は変動するため、初回実行は`max_items`を10〜15程度に絞って実測してから
   40〜50件のバッチへ広げる(README「運用」参照)
 

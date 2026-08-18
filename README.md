@@ -169,7 +169,7 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 | Variable | 既定値 | 説明 |
 |---|---|---|
 | `LLM_MODEL_CHAIN` | `gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
-| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash,gemini-2.5-flash-lite` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照) |
+| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照)。`gemini-2.5-flash-lite`は新規アカウントでは廃止済み(404)のため含めていない |
 | `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 | `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
