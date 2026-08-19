@@ -1,4 +1,22 @@
-https://blog.cloudflare.com/workers-protected-by-access/
+---
+title: Cloudflare Workersを1クリックで保護する新機能
+url: https://blog.cloudflare.com/workers-protected-by-access/
+created: '2026-08-16T14:18:58'
+type: article
+tags:
+- cloudflare
+- セキュリティ
+- 認証
+- サーバーレス
+summary: 'Cloudflare WorkersにCloudflare Accessを直接適用できる機能が追加されました。
+
+  アカウント全体や個別のWorker単位で社内ログインによる認証保護を簡単に設定可能です。
+
+  コード内でのユーザー識別情報の取得やローカル開発でのシミュレーションにも対応しています。'
+read: false
+shelf_life: medium
+---
+
 # Secure all your internal vibe-coded applications — in one click
 2026-08-16
 AI has enabled employees across every team to build applications faster than ever before.
