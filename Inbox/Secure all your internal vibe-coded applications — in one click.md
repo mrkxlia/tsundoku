@@ -1,22 +1,4 @@
----
-title: Cloudflare WorkersのAccess直接保護機能
-url: https://blog.cloudflare.com/workers-protected-by-access/
-created: '2026-08-16T14:18:58'
-type: article
-tags:
-- cloudflare
-- cloudflareworkers
-- セキュリティ
-- ゼロトラスト
-summary: 'CloudflareはWorkersにCloudflare Accessを直接適用できる新機能を発表しました。
-
-  アカウント単位や個別設定により、全ドメインやプレビュー環境をデフォルトで保護可能です。
-
-  コード内でユーザー情報を簡単に取得でき、安全な社内アプリ開発が容易になります。'
-read: false
-shelf_life: medium
----
-
+https://blog.cloudflare.com/workers-protected-by-access/
 # Secure all your internal vibe-coded applications — in one click
 2026-08-16
 AI has enabled employees across every team to build applications faster than ever before.

@@ -310,13 +310,10 @@ def append_slide_section(body: str, pdf_path: Path | None, image_paths: list[Pat
 
 
 def reverify_hook(note: LibraryNote) -> None:
-    """定期再検証機能(scripts/reverify.py)の呼び出し口。現状もno-opのまま。
+    """将来の定期再検証機能の呼び出し口(現状no-op)。
 
-    再検証の実装自体は scripts/reverify.py + .github/workflows/reverify.yml として
-    独立に存在し(手動実行、docs/future-reverification.md 参照)、対象選定は
-    `last_verified`(未設定なら`created`)からの経過日数で行うため、この関数で
-    初期値を書き込む必要はない。organize.py 全体の挙動には影響しない(呼び出し
-    忘れ防止のための予約フック)。
+    詳細設計は docs/future-reverification.md を参照。呼び出しても何もしないため、
+    organize.py 全体の挙動には影響しない(呼び出し忘れ防止のための予約フック)。
     """
 
 
