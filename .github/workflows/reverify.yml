@@ -1,5 +1,7 @@
 name: Reverify
 
+# GitHub Actions側でworkflow登録がdeleted状態になったための再登録用コミット(2026-08-21)。
+#
 # 手動実行専用。docs/future-reverification.md の設計に基づき、古くなった可能性のある
 # ノートをGoogle Searchグラウンディングで再検証する(scripts/reverify.py)。
 # organize.yml / backfill.yml と同じconcurrencyグループに参加する。
