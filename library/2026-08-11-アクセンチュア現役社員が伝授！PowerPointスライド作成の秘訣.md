@@ -15,6 +15,7 @@ summary: 'アクセンチュアのシニア・マネジャーが、PowerPointス
 title: アクセンチュア現役社員が伝授！「PowerPointスライド作成の秘訣」
 read: false
 shelf_life: long
+last_verified: '2026-08-20T15:11:16+00:00'
 ---
 
 # アクセンチュア現役社員が伝授！「PowerPointスライド作成の秘訣」

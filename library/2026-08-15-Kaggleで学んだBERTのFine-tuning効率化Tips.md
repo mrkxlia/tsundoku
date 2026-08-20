@@ -9,6 +9,7 @@ tags:
 - 深層学習
 - pytorch
 - 自然言語処理
+- needs-recheck
 summary: 'Kaggle等で役立つBERT事前学習モデルのFine-tuning効率化手法を解説。
 
   混合精度の利用や文章切り詰め、Dynamic Paddingなどのテクニックを紹介。
@@ -16,6 +17,8 @@ summary: 'Kaggle等で役立つBERT事前学習モデルのFine-tuning効率化�
   さらに勾配累積を用いることでメモリを節約しつつ安定した高速学習を実現する。'
 read: false
 shelf_life: long
+recheck_reason: 記事中で「先日終了したKaggleのコンペティション」と記載されているCommonLit-Readability Prizeは、2021年8月2日に終了しており、現在（2026年8月）から見ると「先日終了した」という表現は古くなっているためです。
+last_verified: '2026-08-20T15:17:57+00:00'
 ---
 
 # 株式会社AI Shift | サイバーエージェントグループ
