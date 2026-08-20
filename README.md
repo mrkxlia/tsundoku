@@ -13,26 +13,28 @@ flowchart LR
     C -->|重複は統合| E[archive/\n閲覧対象外]
 ```
 
-| パス                               | 役割                                                                                                                                                      |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `inbox/`                         | クリップの着地点。ここに溜まったノートが整理対象                                                                                                                                |
-| `library/`                       | 整理済みノート。`YYYY-MM-DD-タイトル.md` に正規化され、frontmatter(url / created / type / tags / summary)付き                                                                |
-| `archive/`                       | 重複などで不要になったノート。閲覧対象外                                                                                                                                    |
-| `assets/`                        | ノートに紐づく画像・PDF・スライド実体の**作業ディレクトリ**(`.gitignore`対象)。このリポジトリはpublicなため、第三者コンテンツの実体はコミットせず、private側(tsundoku-siteの`vault-assets/`)に集約する。CI実行中のみ一時的にここへ同期される |
-| `scripts/organize.py`            | 整理スクリプト本体                                                                                                                                               |
-| `scripts/media_types.py`         | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF / スライドPDF・ページ画像)                                                                                          |
-| `scripts/fetch_slides.py`        | `type: slides`ノートのうちスライド実体(PDF+ページ画像)が未取得のものを取得・保存する独立スクリプト。既存ノートのバックフィルと取得失敗時のリカバリを兼ねる(冪等)                                                             |
-| `scripts/llm_client.py`          | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能)                                                                                                           |
-| `scripts/fm_edit.py`             | frontmatterの単一フィールドを行レベルで編集するヘルパー(既存ノートへの安全なバックフィル用)                                                                                                    |
-| `scripts/build_embeddings.py`    | `library/` 全ノートをチャンク化しGemini埋め込みを生成、`index/embeddings.json` へ出力(tsundoku-siteの `/api/ask` 用)                                                            |
-| `scripts/detect_superseded.py`   | 新規/更新ノートと類似度の高い既存ノートをLLMで突き合わせ、上書き/矛盾と判定されたノートに `status: superseded` を付与                                                                                |
-| `scripts/backfill_shelf_life.py` | 既存ノートに情報の陳腐化目安(`shelf_life`)を一括分類してバックフィル                                                                                                               |
-| `scripts/merge_notes.py`         | 短小ノート・高類似ノートの統合候補を検出(`suggest`、実行はしない)し、人間が承認した組だけを統合実行(`apply`)する。Actionsには組み込まずローカル手動実行専用(下記「運用」参照)                                                   |
-| `scripts/seed_read_flags.py`     | 既存ノートに `read: false` を一括シード(one-off)                                                                                                                    |
-| `scripts/dispatch_site.sh`       | tsundoku-siteへの再ビルド通知(`repository_dispatch`)を、前回送信時からVaultまたはembeddings.jsonに変更がある場合のみ送る(organize.yml / backfill.ymlの最終ステップから呼び出し)                      |
-| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開 → 変更があればサイト再ビルドをdispatch)                                                              |
-| `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル                                                                                                        |
-| `docs/future-reverification.md`  | 将来拡張(定期再検証)の設計メモ。現時点では未実装(`organize.py`の`reverify_hook`はno-opスタブ)                                                                                       |
+| パス | 役割 |
+|---|---|
+| `inbox/` | クリップの着地点。ここに溜まったノートが整理対象 |
+| `library/` | 整理済みノート。`YYYY-MM-DD-タイトル.md` に正規化され、frontmatter(url / created / type / tags / summary)付き |
+| `archive/` | 重複などで不要になったノート。閲覧対象外 |
+| `assets/` | ノートに紐づく画像・PDF・スライド実体の**作業ディレクトリ**(`.gitignore`対象)。このリポジトリはpublicなため、第三者コンテンツの実体はコミットせず、private側(tsundoku-siteの`vault-assets/`)に集約する。CI実行中のみ一時的にここへ同期される |
+| `scripts/organize.py` | 整理スクリプト本体 |
+| `scripts/media_types.py` | URL種別判定とメディア系コンテンツ取得(oEmbed / YouTube字幕 / PDF / スライドPDF・ページ画像) |
+| `scripts/fetch_slides.py` | `type: slides`ノートのうちスライド実体(PDF+ページ画像)が未取得のものを取得・保存する独立スクリプト。既存ノートのバックフィルと取得失敗時のリカバリを兼ねる(冪等) |
+| `scripts/llm_client.py` | LLM呼び出しモジュール(Gemini実装。将来Claude/OpenAIに差し替え可能) |
+| `scripts/fm_edit.py` | frontmatterの単一フィールドを行レベルで編集するヘルパー(既存ノートへの安全なバックフィル用) |
+| `scripts/build_embeddings.py` | `library/` 全ノートをチャンク化しGemini埋め込みを生成、`index/embeddings.json` へ出力(tsundoku-siteの `/api/ask` 用) |
+| `scripts/detect_superseded.py` | 新規/更新ノートと類似度の高い既存ノートをLLMで突き合わせ、上書き/矛盾と判定されたノートに `status: superseded` を付与 |
+| `scripts/backfill_shelf_life.py` | 既存ノートに情報の陳腐化目安(`shelf_life`)を一括分類してバックフィル |
+| `scripts/merge_notes.py` | 短小ノート・高類似ノートの統合候補を検出(`suggest`、実行はしない)し、人間が承認した組だけを統合実行(`apply`)する。Actionsには組み込まずローカル手動実行専用(下記「運用」参照) |
+| `scripts/seed_read_flags.py` | 既存ノートに `read: false` を一括シード(one-off) |
+| `scripts/dispatch_site.sh` | tsundoku-siteへの再ビルド通知(`repository_dispatch`)を、前回送信時からVaultまたはembeddings.jsonに変更がある場合のみ送る(organize.yml / backfill.ymlの最終ステップから呼び出し) |
+| `scripts/reverify.py` | `shelf_life`が経過したノートをGoogle Searchグラウンディングで再検証し、古い疑いがあれば`needs-recheck`タグを付与する(`status`は変更しない、人間レビュー前提)。手動実行専用(下記「運用」参照) |
+| `.github/workflows/organize.yml` | 毎日(3:00 JST)+ 手動実行のワークフロー(整理 → 埋め込み生成 → superseded検知 → Release公開 → 変更があればサイト再ビルドをdispatch) |
+| `.github/workflows/backfill.yml` | 手動実行専用。埋め込み/メタデータ/shelf_life/supersededの一括バックフィル |
+| `.github/workflows/reverify.yml` | 手動実行専用。`scripts/reverify.py`によるノートの再検証 |
+| `docs/future-reverification.md` | 定期再検証の設計と実装状況(実装済み。`scripts/reverify.py`参照) |
 
 ### クリップの形式
 
@@ -66,6 +68,8 @@ flowchart LR
 | `shelf_life` | 情報が陳腐化するまでの目安。`short`(数日〜数週間)/ `medium`(数か月〜1年)/ `long`(長期間陳腐化しない)のいずれか |
 | `status` | `superseded`(他ノートに内容が上書きされた)が付くことがある。`detect_superseded.py` が付与 |
 | `superseded_by` | (`status: superseded`時のみ)上書きした新ノートの相対パス(`library/xxx.md`) |
+| `last_verified` | 最後に`reverify.py`で再検証した日時(ISO8601、UTC offset付き)。未設定 = 一度も再検証されていない |
+| `recheck_reason` | (`needs-recheck`タグ付与時のみ)`reverify.py`による判定理由(日本語1文) |
 
 #### URL種別と処理内容
 
@@ -82,6 +86,7 @@ flowchart LR
 
 - `needs-review`: コンテンツを自動取得できなかったノート。要約はタイトル・URLからの推測のみなので手動確認推奨。`type: slides`の場合を除き、**libraryに入った後に自動で再処理されることはありません**(`type: slides`は`fetch_slides.py`が日次で自動リトライします)
 - `has-media`: 画像・動画添付があるノート。画像はノートから `![](../assets/...)` で参照されますが、実体はこのリポジトリにはコミットされず、private側(tsundoku-siteの`vault-assets/`)で管理されます(下記参照)。動画・PDFの実体は従来どおり非コミット(要約に使った一時データはワークフロー内で破棄)
+- `needs-recheck`: `reverify.py`が「内容が古くなった/誤りの疑いがある」と判定したノート。`status`は変更されず、閲覧・検索からも除外されない。`recheck_reason`(判定理由)を確認し、人間が妥当と判断すれば`archive/`へ移動、誤判定なら`reverify.py --clear`でタグを解除する
 
 #### 画像の内容セクション
 
@@ -163,7 +168,8 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 
 | Variable | 既定値 | 説明 |
 |---|---|---|
-| `LLM_MODEL_CHAIN` | `gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
+| `LLM_MODEL_CHAIN` | `gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
+| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照)。`gemini-2.5-flash-lite`は新規アカウントでは廃止済み(404)のため含めていない |
 | `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 | `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
@@ -208,6 +214,24 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
      残しファイル名は変更しない、統合される側は`archive/`へ)、変更を確認してからcommit・PRする
   5. index/サイトへの反映は次回の `organize.yml` 実行(または手動 `Backfill` の `embeddings`
      タスク)に任せる(このスクリプト自体はindexを更新しない)
+- **古いノートの再検証**(`reverify.py`、`Actions → Reverify → Run workflow`):
+  1. **グラウンディングの無料枠はモデル世代ごとに別枠**であり、通常の生成呼び出しが使えている
+     モデルでも枠0のことがある。実行前に一度 [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)
+     で対象モデルの「検索によるグラウンディング」欄を確認すること(2026-08-18時点でこの
+     アカウントはGemini 3系が枠0、Gemini 2.5系が有効だったため、`GROUNDING_MODEL_CHAIN`の
+     既定値はGemini 2.5系にしてある)
+  2. Google Searchグラウンディングの無料枠は変動しやすいため、**初回は`max_items`を10〜15
+     程度に絞って**実行し、429の出方・所要時間を実測する
+  3. 以後、無料枠に収まりそうであれば`max_items`を40〜50程度に広げ、対象がなくなるまで
+     繰り返し実行する(`last_verified`から古い順に処理されるレジューム設計のため、同じ設定で
+     連続実行すれば自然に全件を舐められる)
+  4. 実行結果はcommitされ、`needs-recheck`タグ付きノートの一覧はジョブのartifact
+     (`reverify_report.json`)とcommit差分の両方で確認できる
+  5. `needs-recheck`が付いたノートをレビューし、妥当なら`archive/`へ手動移動(PR経由)、
+     誤判定なら `python scripts/reverify.py --clear library/xxx.md` でタグを解除してcommit
+  6. Gemini無料枠のTPM(トークン/分)超過を避けるため、`reverify.yml`は生成系より保守的な
+     sleep(30秒)にしている。組織のアカウントで別の制限に当たった場合はワークフロー内の
+     `LLM_SLEEP_SECONDS`/`GROUNDING_MODEL_CHAIN`の値を調整すること
 - **費用**: Gemini無料枠のみを使用(¥0)。無料枠のレート制限
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)
