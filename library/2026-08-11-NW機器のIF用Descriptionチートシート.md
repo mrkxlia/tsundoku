@@ -16,6 +16,7 @@ summary: 'ネットワーク機器のインターフェースに設定するDesc
 title: NW機器のIF用Descriptionチートシート
 read: false
 shelf_life: long
+last_verified: '2026-08-18T14:31:13+00:00'
 ---
 
 # Post by @athlonz on X
