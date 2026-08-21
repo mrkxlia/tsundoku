@@ -195,6 +195,25 @@ CLUSTER_LABEL_TEMPLATE = """あなたはWebクリップのコレクションを�
 {items}
 """
 
+SUGGEST_SIMILAR_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。ユーザーは以下のトピックに関する\
+記事を継続的に収集しています。Google検索を使って、このトピックに似た内容を扱う実在のWebサイト・記事を\
+最大5件探し、次のJSON配列だけを出力してください。前後に説明文やMarkdownのコードフェンスを付けないこと。
+
+[{{"url": "実在するURL", "title": "記事/サイトのタイトル", "reason": "このトピックに関連する理由(日本語1文)"}}]
+
+制約:
+- url は実際に検索で見つかった、実在する具体的な記事・サイトのURLのみとする(推測・一般的なトップページは含めない)
+- 下記「ユーザーが既に持っている代表記事」と重複する内容は避けること
+- 見つからなければ空配列 [] を返すこと(無理に埋めない)
+
+トピック名: {label}
+トピックの説明: {description}
+キーワード: {keywords}
+
+ユーザーが既に持っている代表記事:
+{seed_notes}
+"""
+
 VERIFY_CURRENCY_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事の内容が、\
 Web検索の結果と照らし合わせて現在(今日時点)も正しいかを判定してください。検索結果を根拠に\
 判定し、次のJSONだけを出力してください。前後に説明文やMarkdownのコードフェンスを付けないこと。
@@ -285,6 +304,13 @@ class LLMClient:
     def generate_cluster_label(self, representatives: list[dict]) -> dict:
         """クラスタの代表ノート([{"title": str, "summary": str, "tags": [str]}, ...])から
         {"label": str, "description": str, "keywords": [str]} を返す。"""
+        raise NotImplementedError
+
+    def suggest_similar_sites(
+        self, label: str, description: str, keywords: list[str], seed_notes: list[dict]
+    ) -> list[dict]:
+        """Google Searchグラウンディングで、クラスタ(トピック)に似たサイトを探し
+        [{"url": str, "title": str, "reason": str, "sources": [str]}, ...] を返す(最大5件)。"""
         raise NotImplementedError
 
 
@@ -586,6 +612,69 @@ class GeminiClient(LLMClient):
                 errors.append(f"{model}: {e}")
         raise LLMError("generate_cluster_label失敗: " + "; ".join(errors))
 
+    def suggest_similar_sites(
+        self, label: str, description: str, keywords: list[str], seed_notes: list[dict]
+    ) -> list[dict]:
+        notes_text = (
+            "\n".join(
+                f"- {n.get('title', '')}" + (f" (URL: {n['url']})" if n.get("url") else "")
+                for n in seed_notes
+            )
+            or "(なし)"
+        )
+        prompt = SUGGEST_SIMILAR_TEMPLATE.format(
+            label=label,
+            description=description or "(説明なし)",
+            keywords=", ".join(keywords) or "(なし)",
+            seed_notes=notes_text,
+        )
+        chain = self._grounding_chain()
+        if not chain:
+            raise LLMError("グラウンディングに対応するモデルがチェーンにありません")
+        errors = []
+        for model in chain:
+            # verify_currency と同じ設計: グラウンディング呼び出しは応答形式が不安定なことがあるため
+            # 同一モデルでVERIFY_PARSE_RETRIES回まで再試行してから次のモデルへ進む。
+            for parse_attempt in range(VERIFY_PARSE_RETRIES + 1):
+                try:
+                    candidate = self._call_model_raw(
+                        model,
+                        [{"text": prompt}],
+                        tools=[{"google_search": {}}],
+                        json_mode=False,
+                        max_retries=VERIFY_MAX_RETRIES,
+                        retry_sleep_seconds=VERIFY_RETRY_SLEEP_SECONDS,
+                        timeout=VERIFY_TIMEOUT_SECONDS,
+                    )
+                except urllib.error.HTTPError as e:
+                    errors.append(f"{model}: HTTP {e.code}")
+                    print(
+                        f"    [llm] {model} が HTTP {e.code}(グラウンディング) — 次のモデルへフォールバック",
+                        file=sys.stderr,
+                    )
+                    break
+                except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                    errors.append(f"{model}: {e}")
+                    print(
+                        f"    [llm] {model} で通信エラー(グラウンディング) — 次のモデルへフォールバック: {e}",
+                        file=sys.stderr,
+                    )
+                    break
+
+                text = "".join(p.get("text", "") for p in candidate.get("content", {}).get("parts", []))
+                result = _parse_suggestions_json(text)
+                if result is not None:
+                    sources = _extract_grounding_sources(candidate)
+                    for item in result:
+                        item["sources"] = sources
+                    return result
+                errors.append(
+                    f"{model}: レスポンスのJSON解釈に失敗(試行{parse_attempt + 1}/{VERIFY_PARSE_RETRIES + 1})"
+                )
+                if parse_attempt < VERIFY_PARSE_RETRIES:
+                    print(f"    [llm] {model} の応答形式が不正 — 同一モデルで再試行", file=sys.stderr)
+        raise LLMError("suggest_similar_sites失敗: " + "; ".join(errors))
+
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
         return [m for m in self.model_chain if "gemma" not in m.lower()]
@@ -817,6 +906,22 @@ class MockClient(LLMClient):
             "keywords": keywords[:5] or ["mock"],
         }
 
+    def suggest_similar_sites(
+        self, label: str, description: str, keywords: list[str], seed_notes: list[dict]
+    ) -> list[dict]:
+        # 決定的な検証用: ラベルのハッシュから2件の架空URLを生成する(実URLではないため、
+        # 呼び出し元のURL実在チェックは --no-fetch-check で無効化してテストすること)。
+        digest = hashlib.sha256((label or "").encode("utf-8")).hexdigest()[:8]
+        return [
+            {
+                "url": f"https://example.com/mock-{digest}-{i}",
+                "title": f"モック類似サイト{i}: {label}"[:50],
+                "reason": "(mock判定)",
+                "sources": [],
+            }
+            for i in range(1, 3)
+        ]
+
     @staticmethod
     def _mock_shelf_life(seed: str) -> str:
         digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
@@ -957,6 +1062,38 @@ def _parse_cluster_label_json(text: str) -> dict | None:
             continue
         keywords = [str(k).strip() for k in keywords if str(k).strip()]
         return {"label": label, "description": description, "keywords": keywords[:5]}
+    return None
+
+
+def _extract_json_array_candidates(text: str) -> list[str]:
+    candidates = [text.strip()]
+    m = re.search(r"\[.*\]", text, re.DOTALL)
+    if m:
+        candidates.append(m.group(0))
+    return [re.sub(r"^```(?:json)?\s*|\s*```$", "", c.strip()) for c in candidates]
+
+
+def _parse_suggestions_json(text: str) -> list[dict] | None:
+    """suggest_similar_sites()の出力をパースする。空配列[]は「候補なし」として正しい結果
+    (Noneを返して再試行させるべき失敗とは区別する)。"""
+    for cand in _extract_json_array_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, list):
+            continue
+        items = []
+        for entry in obj:
+            if not isinstance(entry, dict):
+                continue
+            url = str(entry.get("url", "")).strip()
+            if not url or not url.startswith(("http://", "https://")):
+                continue
+            title = str(entry.get("title", "")).strip()
+            reason = str(entry.get("reason", "")).strip()
+            items.append({"url": url, "title": title or url, "reason": reason})
+        return items[:5]
     return None
 
 

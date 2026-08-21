@@ -1,8 +1,8 @@
 name: Suggest similar sites
 
-# 溜め込んだノートを埋め込みクラスタリングでトピック分けし、tsundoku-site の
-# data/suggest/clusters.json を更新する(週次)。ユーザーがサイト上で「興味あり」に
-# 登録したトピックに対する類似サイト調査(suggest_similar.py)は別PRで追加予定。
+# 溜め込んだノートを埋め込みクラスタリングでトピック分けし(clusters.json)、ユーザーが
+# サイト上で「興味あり」に登録したトピックについて類似サイトをGoogle Search groundingで
+# 調査する(suggestions.json / history.json)週次ジョブ。
 #
 # クラスタリング自体は毎回再実行するが、前回centroidを初期値にする+新旧centroidの
 # 類似度でIDを引き継ぐため、通常は構造が大きく動かない(scripts/cluster_notes.py参照)。
@@ -21,6 +21,10 @@ on:
         description: 'クラスタ数を固定する(空なら自動決定)'
         type: string
         default: ''
+      max_clusters:
+        description: '今回調査する興味ありクラスタ数の上限'
+        type: string
+        default: '8'
 
 permissions:
   contents: read
@@ -93,8 +97,18 @@ jobs:
           fi
           python scripts/cluster_notes.py "${args[@]}"
 
-      # TODO(Phase 2): 興味ありクラスタの類似サイト調査(scripts/suggest_similar.py)を
-      # ここに追加する。suggestions.json / history.json の更新もそちらで行う。
+      - name: 興味ありトピックの類似サイトを調査
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GROUNDING_MODEL_CHAIN: ${{ vars.GROUNDING_MODEL_CHAIN }}
+          LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+          MAX_CLUSTERS: ${{ inputs.max_clusters }}
+        run: |
+          args=(--data-dir site-checkout/data/suggest)
+          if [ -n "$MAX_CLUSTERS" ]; then
+            args+=(--max-clusters "$MAX_CLUSTERS")
+          fi
+          python scripts/suggest_similar.py "${args[@]}"
 
       - name: tsundoku-siteへcommit・push(push自体がdeploy.ymlを起動する)
         working-directory: site-checkout
@@ -106,7 +120,7 @@ jobs:
             echo "変更なし"
             exit 0
           fi
-          git commit -m "suggest: トピッククラスタを更新 ($(date -u +%Y-%m-%d))"
+          git commit -m "suggest: トピック・提案を更新 ($(date -u +%Y-%m-%d))"
           for wait in 2 4 8 16 0; do
             if git push origin main; then
               exit 0
