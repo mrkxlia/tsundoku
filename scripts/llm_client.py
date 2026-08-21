@@ -181,6 +181,20 @@ MERGE_META_TEMPLATE = """あなたはWebクリップ記事を整理する司書�
 {merged_body_excerpt}
 """
 
+CLUSTER_LABEL_TEMPLATE = """あなたはWebクリップのコレクションを整理する司書です。以下は、内容が似ている\
+記事のグループ(クラスタ)から抜粋した代表的な記事のタイトル・要約・タグです。このグループ全体を表す\
+短い日本語のトピック名を付けてください。次のJSONだけを出力してください。JSON以外の文字は一切出力しないでください。
+
+{{"label": "グループを表す簡潔な日本語トピック名(15字以内)", "description": "グループの内容を表す説明(日本語1〜2文)", "keywords": ["キーワード1", "キーワード2", "キーワード3"]}}
+
+制約:
+- label は名詞句で簡潔に(例: "LLMエージェント設計と評価")。記号(/ \\ : * ? " < > |)を使わないこと
+- keywords は3〜5個。代表記事のタグ・タイトルから抽出すること
+
+代表記事:
+{items}
+"""
+
 VERIFY_CURRENCY_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。以下の記事の内容が、\
 Web検索の結果と照らし合わせて現在(今日時点)も正しいかを判定してください。検索結果を根拠に\
 判定し、次のJSONだけを出力してください。前後に説明文やMarkdownのコードフェンスを付けないこと。
@@ -266,6 +280,11 @@ class LLMClient:
     def verify_currency(self, title: str, url: str, summary: str, excerpt: str) -> dict:
         """Google Searchグラウンディングでノート内容が現在も正しいかを判定し
         {"verdict": "current"/"outdated"/"uncertain", "reason": str, "sources": [str]} を返す。"""
+        raise NotImplementedError
+
+    def generate_cluster_label(self, representatives: list[dict]) -> dict:
+        """クラスタの代表ノート([{"title": str, "summary": str, "tags": [str]}, ...])から
+        {"label": str, "description": str, "keywords": [str]} を返す。"""
         raise NotImplementedError
 
 
@@ -546,6 +565,27 @@ class GeminiClient(LLMClient):
                     print(f"    [llm] {model} の応答形式が不正 — 同一モデルで再試行", file=sys.stderr)
         raise LLMError("verify_currency失敗: " + "; ".join(errors))
 
+    def generate_cluster_label(self, representatives: list[dict]) -> dict:
+        items = "\n".join(
+            f"{i}. タイトル: {r.get('title', '')}\n   要約: {r.get('summary', '') or '(要約なし)'}\n"
+            f"   タグ: {', '.join(r.get('tags', []) or []) or '(なし)'}"
+            for i, r in enumerate(representatives, 1)
+        )
+        prompt = CLUSTER_LABEL_TEMPLATE.format(items=items)
+        errors = []
+        for model in self.model_chain:
+            try:
+                text = self._call_model(model, [{"text": prompt}])
+                result = _parse_cluster_label_json(text)
+                if result is not None:
+                    return result
+                errors.append(f"{model}: レスポンスのJSON解釈に失敗")
+            except urllib.error.HTTPError as e:
+                errors.append(f"{model}: HTTP {e.code}")
+            except (urllib.error.URLError, TimeoutError, json.JSONDecodeError) as e:
+                errors.append(f"{model}: {e}")
+        raise LLMError("generate_cluster_label失敗: " + "; ".join(errors))
+
     def _multimodal_chain(self) -> list[str]:
         # Gemma系はPDF・動画・画像入力に非対応
         return [m for m in self.model_chain if "gemma" not in m.lower()]
@@ -763,6 +803,20 @@ class MockClient(LLMClient):
         verdict = self._mock_verdict(title)
         return {"verdict": verdict, "reason": "(mock判定)", "sources": []}
 
+    def generate_cluster_label(self, representatives: list[dict]) -> dict:
+        # 決定的な検証用: 先頭代表ノートのタイトルからラベルを作り、タグを集約してkeywordsにする
+        first_title = (representatives[0].get("title") if representatives else "") or "未分類"
+        keywords: list[str] = []
+        for r in representatives:
+            for t in r.get("tags", []) or []:
+                if t not in keywords:
+                    keywords.append(t)
+        return {
+            "label": f"モック: {first_title}"[:15],
+            "description": "(mockクラスタ説明)",
+            "keywords": keywords[:5] or ["mock"],
+        }
+
     @staticmethod
     def _mock_shelf_life(seed: str) -> str:
         digest = hashlib.sha256((seed or "").encode("utf-8")).digest()
@@ -885,6 +939,24 @@ def _parse_verdict_json(text: str) -> dict | None:
         if verdict not in VALID_VERDICTS:
             continue
         return {"verdict": verdict, "reason": str(obj.get("reason", "")).strip()}
+    return None
+
+
+def _parse_cluster_label_json(text: str) -> dict | None:
+    for cand in _extract_json_candidates(text):
+        try:
+            obj = json.loads(cand, strict=False)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(obj, dict):
+            continue
+        label = str(obj.get("label", "")).strip()
+        description = str(obj.get("description", "")).strip()
+        keywords = obj.get("keywords", [])
+        if not label or not isinstance(keywords, list):
+            continue
+        keywords = [str(k).strip() for k in keywords if str(k).strip()]
+        return {"label": label, "description": description, "keywords": keywords[:5]}
     return None
 
 
