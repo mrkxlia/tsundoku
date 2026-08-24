@@ -216,6 +216,49 @@ def fetch_url_meta(url: str) -> tuple[bool, str, str]:
     return True, final_url, extract_published_date(html)
 
 
+def heal_preserved_items(
+    suggestions_by_cluster: dict[str, dict], history_urls: dict[str, dict], now: str
+) -> int:
+    """前回以前に採用された、URL未解決 or 発行日未取得のアイテムをHTTPだけで補修する。
+
+    groundingが失敗(HTTP 429等)したクラスタは「前回分を維持」して温存されるが、その温存分は
+    どのループにも入らないため放置すると永久に古い形式(リダイレクトURL・発行日なし)のまま
+    残ってしまう。補修にLLMは不要なので、調査の成否と無関係にこのパスで直す。
+    """
+    healed = 0
+    for entry in suggestions_by_cluster.values():
+        for item in entry.get("items", []):
+            url = item.get("url", "")
+            if not url:
+                continue
+            # 既に解決済みかつ発行日取得済みなら触らない(publishedAtが空文字なのは
+            # 「発行日を持たないページ」として確定済みなので再取得しない)
+            if "publishedAt" in item and "/grounding-api-redirect/" not in url:
+                continue
+
+            reachable, final_url, published_at = fetch_url_meta(url)
+            if not reachable:
+                # 到達できないだけなら消さない(一時的な障害の可能性)。次回また試す。
+                print(f"  -> 補修できず(到達不能): {url}", file=sys.stderr)
+                continue
+
+            old_norm = item.get("normalizedUrl", "")
+            norm = organize.normalize_url(final_url)
+            item["url"] = final_url
+            item["normalizedUrl"] = norm
+            item["id"] = suggestion_id(norm)
+            item["publishedAt"] = published_at
+            if item.get("title", "") == url:
+                item["title"] = final_url
+
+            # 解決後のURLもhistoryに載せて再提案を防ぐ。初回提案時刻は引き継ぐ。
+            first = history_urls.get(old_norm, {}).get("firstSuggestedAt", now)
+            history_urls[norm] = {"firstSuggestedAt": first, "clusterId": entry.get("clusterId", "")}
+            healed += 1
+            print(f"  -> 補修: {final_url}" + (f" (発行日 {published_at})" if published_at else ""))
+    return healed
+
+
 def select_target_clusters(
     interested_ids: list[str], history_urls: dict[str, dict], max_clusters: int
 ) -> list[str]:
@@ -325,6 +368,12 @@ def main() -> int:
             print(f"  -> {len(accepted)}件を採用")
         else:
             print("  -> 採用できる候補なし(前回分を維持)")
+
+    # 温存分の補修(LLM不要。groundingが全滅した回でもここは効く)
+    if not args.no_fetch_check:
+        healed = heal_preserved_items(suggestions_by_cluster, history_urls, now)
+        if healed:
+            print(f"温存されていた提案{healed}件のURL・発行日を補修しました")
 
     # history上限管理(古い順にLRU削除)
     if len(history_urls) > MAX_HISTORY_ENTRIES:
