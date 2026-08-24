@@ -9,10 +9,16 @@
    feedbackに記録済みの全URL(採用/却下問わず) ∪ historyに記録済みの全URL
 3. 興味ありクラスタを、historyの最終調査時刻が古い順(未調査を最優先)に --max-clusters 件選ぶ
 4. 各クラスタについて、代表ノートのタイトルを種に llm_client.suggest_similar_sites() を1回呼ぶ
-5. 返却候補を normalize_url() で正規化して除外集合と突合し、http(s)チェック
-   (--no-fetch-check指定時を除きHEAD/GETで実在確認)、クラスタあたり最大5件採用
+5. 返却候補を1回のGETで「実在確認 + リダイレクト解決 + 発行日抽出」し、解決後の最終URLを
+   normalize_url() で正規化して除外集合と突合、クラスタあたり最大5件採用
+   (--no-fetch-check指定時はGETを行わず候補URLをそのまま使う)
 6. suggestions.json(調査したクラスタのみ更新。grounding失敗クラスタは前回分を温存)と
    history.json を --data-dir へ書き出す(Vaultへは一切書き込まない)
+
+groundingが返すURLは https://vertexaisearch.cloud.google.com/grounding-api-redirect/... という
+不透明なリダイレクトURLであることが多い。これをそのまま保存すると (a) サイト側のドメイン表示が
+全て vertexaisearch.cloud.google.com になり (b) 発行日が取得できず (c) 正規化URLでの重複判定が
+実URLと噛み合わず機能しない。そのため5.で必ず最終URLまで解決してから採用する。
 
 環境変数:
     DRY_RUN : "1" で外部APIを呼ばずMockClientで動作確認する
@@ -24,10 +30,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 import sys
 import urllib.error
 import urllib.request
 from datetime import datetime, timezone
+from html.parser import HTMLParser
 from pathlib import Path
 
 import llm_client
@@ -35,8 +43,24 @@ import organize
 
 MAX_ITEMS_PER_CLUSTER = 5
 MAX_HISTORY_ENTRIES = 500
-FETCH_CHECK_TIMEOUT = 5
+# 本文取得を伴うGETに変えたためHEADのみだった頃(5秒)より余裕を持たせる
+FETCH_CHECK_TIMEOUT = 10
+# 発行日メタデータは<head>付近にあるため全文は要らない。巨大ページで詰まらないよう上限を設ける
+MAX_HTML_BYTES = 400_000
 DEFAULT_MAX_CLUSTERS = 8
+
+# 発行日を持つmetaタグ名(優先順)。property/name/itemprop のいずれかで一致を見る。
+# modified_timeは「発行日」ではないが、他が無い場合の最後の手がかりとして末尾に置く。
+PUBLISHED_META_KEYS = (
+    "article:published_time",
+    "og:published_time",
+    "datepublished",
+    "pubdate",
+    "citation_publication_date",
+    "date",
+    "article:modified_time",
+)
+DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 def parse_args() -> argparse.Namespace:
@@ -84,29 +108,112 @@ def build_excluded_urls() -> set[str]:
     return excluded
 
 
-def _url_reachable_once(url: str, method: str) -> bool:
-    req = urllib.request.Request(url, method=method, headers={"User-Agent": "tsundoku-suggest/1.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=FETCH_CHECK_TIMEOUT) as resp:
-            return resp.status < 400
-    except urllib.error.HTTPError as e:
-        return e.code < 400
-    except (urllib.error.URLError, TimeoutError, OSError):
-        return False
+class _MetaDateParser(HTMLParser):
+    """<meta>/<time>/JSON-LD から発行日候補を集めるだけのパーサ。
+
+    HTMLParserは属性名を小文字化して渡すため、ZennのようにReact SSR由来で
+    `dateTime` とキャメルケースで出力されるサイトもそのまま `datetime` で拾える。
+    """
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.meta: dict[str, str] = {}
+        self.times: list[str] = []
+        self.ld_blocks: list[str] = []
+        self._in_ld = False
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        a = {k.lower(): (v or "") for k, v in attrs}
+        if tag == "meta":
+            key = (a.get("property") or a.get("name") or a.get("itemprop") or "").lower()
+            if key in PUBLISHED_META_KEYS and a.get("content"):
+                self.meta.setdefault(key, a["content"])
+        elif tag == "time":
+            if a.get("datetime"):
+                self.times.append(a["datetime"])
+        elif tag == "script" and "ld+json" in a.get("type", "").lower():
+            self._in_ld = True
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "script":
+            self._in_ld = False
+
+    def handle_data(self, data: str) -> None:
+        if self._in_ld:
+            self.ld_blocks.append(data)
 
 
-def url_is_reachable(url: str) -> bool:
-    """HEADで確認し、405(HEAD非対応サイト)の場合のみGETで再確認する。"""
-    req = urllib.request.Request(url, method="HEAD", headers={"User-Agent": "tsundoku-suggest/1.0"})
+def _ld_published_date(blocks: list[str]) -> str | None:
+    """JSON-LDブロック群から最初に見つかった datePublished を返す(入れ子・配列も探索)。"""
+    for block in blocks:
+        try:
+            obj = json.loads(block, strict=False)
+        except (json.JSONDecodeError, ValueError):
+            continue
+        stack = [obj]
+        while stack:
+            node = stack.pop()
+            if isinstance(node, dict):
+                value = node.get("datePublished")
+                if isinstance(value, str) and value.strip():
+                    return value
+                stack.extend(node.values())
+            elif isinstance(node, list):
+                stack.extend(node)
+    return None
+
+
+def extract_published_date(html: str) -> str:
+    """HTMLから発行日を "YYYY-MM-DD" で返す。判定できなければ空文字。
+
+    JSON-LDのdatePublished > 発行日系metaタグ > 最初の<time datetime> の順に採用する
+    (構造化データを最優先し、曖昧な<time>は最後の手段にする)。
+    """
+    parser = _MetaDateParser()
+    try:
+        parser.feed(html)
+    except Exception:  # 壊れたHTMLでもそこまでに拾えた分で判定する
+        pass
+
+    candidate = (
+        _ld_published_date(parser.ld_blocks)
+        or next((parser.meta[k] for k in PUBLISHED_META_KEYS if k in parser.meta), None)
+        or (parser.times[0] if parser.times else None)
+    )
+    match = DATE_RE.search(candidate or "")
+    return match.group(0) if match else ""
+
+
+def fetch_url_meta(url: str) -> tuple[bool, str, str]:
+    """1回のGETで (到達可能か, リダイレクト解決後の最終URL, 発行日) を返す。
+
+    groundingが返すリダイレクトURLを実URLへ解決するのが主目的。urlopenは既定で
+    リダイレクトを追うため geturl() が最終URLになる。HTML以外(PDF等)は到達確認だけ行う。
+    """
+    req = urllib.request.Request(url, headers={"User-Agent": "tsundoku-suggest/1.0"})
     try:
         with urllib.request.urlopen(req, timeout=FETCH_CHECK_TIMEOUT) as resp:
-            return resp.status < 400
+            if resp.status >= 400:
+                return False, url, ""
+            final_url = resp.geturl() or url
+            content_type = (resp.headers.get("Content-Type") or "").lower()
+            if "html" not in content_type:
+                return True, final_url, ""
+            raw = resp.read(MAX_HTML_BYTES)
     except urllib.error.HTTPError as e:
-        if e.code == 405:
-            return _url_reachable_once(url, "GET")
-        return False
+        # 4xx/5xx でも「ページは存在するがHEAD/GETを拒否」等がありうるため従来同様 <400 のみ到達扱い
+        return e.code < 400, url, ""
     except (urllib.error.URLError, TimeoutError, OSError):
-        return False
+        return False, url, ""
+
+    charset = "utf-8"
+    if "charset=" in content_type:
+        charset = content_type.split("charset=", 1)[1].split(";", 1)[0].strip() or "utf-8"
+    try:
+        html = raw.decode(charset, errors="replace")
+    except LookupError:
+        html = raw.decode("utf-8", errors="replace")
+    return True, final_url, extract_published_date(html)
 
 
 def select_target_clusters(
@@ -175,21 +282,35 @@ def main() -> int:
         for item in raw_items:
             if len(accepted) >= MAX_ITEMS_PER_CLUSTER:
                 break
-            norm = organize.normalize_url(item["url"])
+            # 生URLの時点で既知なら通信せずに弾く(groundingリダイレクトURLでは通常ヒットしない
+            # ので本命は解決後の再突合。ここは無駄なGETを減らすための安価な前段)。
+            if organize.normalize_url(item["url"]) in excluded:
+                continue
+
+            if args.no_fetch_check:
+                final_url, published_at = item["url"], ""
+            else:
+                reachable, final_url, published_at = fetch_url_meta(item["url"])
+                if not reachable:
+                    print(f"  -> 除外(到達不能): {item['url']}", file=sys.stderr)
+                    continue
+
+            # 重複判定の本命。リダイレクト解決後の実URLで初めて既存ノートと突合できる。
+            norm = organize.normalize_url(final_url)
             if norm in excluded:
+                print(f"  -> 除外(解決後に既知URLと重複): {final_url}", file=sys.stderr)
                 continue
-            if not args.no_fetch_check and not url_is_reachable(item["url"]):
-                print(f"  -> 除外(到達不能): {item['url']}", file=sys.stderr)
-                continue
+
             excluded.add(norm)  # 同一クラスタ内・後続クラスタでの重複提案も防ぐ
             accepted.append(
                 {
                     "id": suggestion_id(norm),
-                    "url": item["url"],
+                    "url": final_url,
                     "normalizedUrl": norm,
-                    "title": item.get("title") or item["url"],
+                    "title": item.get("title") or final_url,
                     "reason": item.get("reason", ""),
                     "sources": item.get("sources", []),
+                    "publishedAt": published_at,
                     "suggestedAt": now,
                 }
             )
