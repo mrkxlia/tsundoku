@@ -14,7 +14,7 @@ summary: 'UX PilotによるAIを活用したUIデザイン生成ツールの紹�
   テキストプロンプトからUIデザインやプロトタイプを迅速に生成します。
 
   デザイナーや開発者のワイヤーフレーム作成や検証を大幅に効率化します。'
-read: false
+read: true
 shelf_life: medium
 ---
 
