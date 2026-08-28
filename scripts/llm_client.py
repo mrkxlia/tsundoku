@@ -31,6 +31,7 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from datetime import datetime, timedelta, timezone
 
 DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it"
 # グラウンディング(Google Search)はモデル世代ごとに別枠のクォータを持つ。アカウントに
@@ -195,14 +196,22 @@ CLUSTER_LABEL_TEMPLATE = """あなたはWebクリップのコレクションを�
 {items}
 """
 
+# suggest_similar_sites がLLMに求める候補数の上限。suggest_similar.py 側はこの候補プールから
+# 発行日(publishedAt、ページ実測)の新しい順に MAX_ITEMS_PER_CLUSTER(5)件を採用するため、
+# 採用枠より多めに集める。DEFAULT_MAX_CLUSTERS(1回に調査するクラスタ数、suggest_similar.py)
+# とはたまたま同値なだけの別概念。
+MAX_SUGGEST_CANDIDATES = 8
+
 SUGGEST_SIMILAR_TEMPLATE = """あなたはWebクリップ記事を整理する司書です。ユーザーは以下のトピックに関する\
-記事を継続的に収集しています。Google検索を使って、このトピックに似た内容を扱う実在のWebサイト・記事を\
-最大5件探し、次のJSON配列だけを出力してください。前後に説明文やMarkdownのコードフェンスを付けないこと。
+記事を継続的に収集しています。今日の日付は {today} です。Google検索を使って、このトピックに似た内容を扱う\
+実在のWebサイト・記事を最大{max_candidates}件探し、次のJSON配列だけを出力してください。\
+前後に説明文やMarkdownのコードフェンスを付けないこと。
 
 [{{"url": "実在するURL", "title": "記事/サイトのタイトル", "reason": "このトピックに関連する理由(日本語1文)"}}]
 
 制約:
 - url は実際に検索で見つかった、実在する具体的な記事・サイトのURLのみとする(推測・一般的なトップページは含めない)
+- できるだけ最近(目安: 直近1年以内)に公開・更新された記事を優先して探すこと。定評ある定番リソースは古くても含めてよい
 - 下記「ユーザーが既に持っている代表記事」と重複する内容は避けること
 - 見つからなければ空配列 [] を返すこと(無理に埋めない)
 
@@ -310,7 +319,8 @@ class LLMClient:
         self, label: str, description: str, keywords: list[str], seed_notes: list[dict]
     ) -> list[dict]:
         """Google Searchグラウンディングで、クラスタ(トピック)に似たサイトを探し
-        [{"url": str, "title": str, "reason": str, "sources": [str]}, ...] を返す(最大5件)。"""
+        [{"url": str, "title": str, "reason": str, "sources": [str]}, ...] を返す
+        (最大MAX_SUGGEST_CANDIDATES件)。"""
         raise NotImplementedError
 
 
@@ -627,6 +637,9 @@ class GeminiClient(LLMClient):
             description=description or "(説明なし)",
             keywords=", ".join(keywords) or "(なし)",
             seed_notes=notes_text,
+            # 「今日」はユーザーのタイムゾーン(JST)基準。鮮度優先の判断基準をモデルに与える
+            today=datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d"),
+            max_candidates=MAX_SUGGEST_CANDIDATES,
         )
         chain = self._grounding_chain()
         if not chain:
@@ -1093,7 +1106,7 @@ def _parse_suggestions_json(text: str) -> list[dict] | None:
             title = str(entry.get("title", "")).strip()
             reason = str(entry.get("reason", "")).strip()
             items.append({"url": url, "title": title or url, "reason": reason})
-        return items[:5]
+        return items[:MAX_SUGGEST_CANDIDATES]
     return None
 
 

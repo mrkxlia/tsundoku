@@ -9,8 +9,9 @@
    feedbackに記録済みの全URL(採用/却下問わず) ∪ historyに記録済みの全URL
 3. 興味ありクラスタを、historyの最終調査時刻が古い順(未調査を最優先)に --max-clusters 件選ぶ
 4. 各クラスタについて、代表ノートのタイトルを種に llm_client.suggest_similar_sites() を1回呼ぶ
-5. 返却候補を1回のGETで「実在確認 + リダイレクト解決 + 発行日抽出」し、解決後の最終URLを
-   normalize_url() で正規化して除外集合と突合、クラスタあたり最大5件採用
+5. 返却候補(最大 llm_client.MAX_SUGGEST_CANDIDATES 件)を全件、1回のGETで
+   「実在確認 + リダイレクト解決 + 発行日抽出」し、解決後の最終URLを normalize_url() で
+   正規化して除外集合と突合、発行日の新しい順(不明は末尾)にクラスタあたり最大5件採用
    (--no-fetch-check指定時はGETを行わず候補URLをそのまま使う)
 6. suggestions.json(調査したクラスタのみ更新。grounding失敗クラスタは前回分を温存)と
    history.json を --data-dir へ書き出す(Vaultへは一切書き込まない)
@@ -321,10 +322,11 @@ def main() -> int:
             print(f"  -> 調査に失敗(前回分を維持、次回再試行): {e}", file=sys.stderr)
             continue
 
-        accepted = []
+        # フェーズ1: 候補全件をGET(実在確認+リダイレクト解決+発行日抽出)。採用枠より多い
+        # 候補プールを先に全件実測してから発行日で選ぶため、従来の「先着で枠まで」と違い
+        # GETは候補全件(最大 MAX_SUGGEST_CANDIDATES 件/クラスタ)に走る。
+        candidates = []
         for item in raw_items:
-            if len(accepted) >= MAX_ITEMS_PER_CLUSTER:
-                break
             # 生URLの時点で既知なら通信せずに弾く(groundingリダイレクトURLでは通常ヒットしない
             # ので本命は解決後の再突合。ここは無駄なGETを減らすための安価な前段)。
             if organize.normalize_url(item["url"]) in excluded:
@@ -337,7 +339,19 @@ def main() -> int:
                 if not reachable:
                     print(f"  -> 除外(到達不能): {item['url']}", file=sys.stderr)
                     continue
+            candidates.append((item, final_url, published_at))
 
+        # フェーズ2: 発行日の新しい順へ。"YYYY-MM-DD" は辞書順=時系列順で、降順ソートにより
+        # 空文字(発行日不明)は自然に末尾。安定ソートなので同日・不明同士はLLM返却順を保つ。
+        candidates.sort(key=lambda c: c[2], reverse=True)
+
+        # フェーズ3: 解決後URLで本命の重複突合をしつつ、新しい順に採用枠まで採用。
+        # excluded への追加は採用確定時のみ: 枠あふれの不採用候補は history にも載らないため
+        # 次回の調査で再び候補になりうる(今回は枠が埋まっただけなので、意図した挙動)。
+        accepted = []
+        for item, final_url, published_at in candidates:
+            if len(accepted) >= MAX_ITEMS_PER_CLUSTER:
+                break
             # 重複判定の本命。リダイレクト解決後の実URLで初めて既存ノートと突合できる。
             norm = organize.normalize_url(final_url)
             if norm in excluded:
