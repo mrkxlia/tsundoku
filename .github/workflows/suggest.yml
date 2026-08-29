@@ -9,7 +9,7 @@ name: Suggest similar sites
 
 on:
   schedule:
-    # 毎週月曜 20:00 UTC = 5:00 JST(organize.yml の 3:00 JST の後方)
+    # 毎週月曜 20:00 UTC = 火曜 5:00 JST(organize.yml の 3:00 JST の後方)
     - cron: '0 20 * * 1'
   workflow_dispatch:
     inputs:
@@ -81,7 +81,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LLM_MODEL_CHAIN: ${{ vars.LLM_MODEL_CHAIN }}
+          LLM_LIGHT_MODEL_CHAIN: ${{ vars.LLM_LIGHT_MODEL_CHAIN }}
           LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+          LLM_SLEEP_OVERRIDES: ${{ vars.LLM_SLEEP_OVERRIDES }}
           RECLUSTER: ${{ inputs.recluster }}
           CLUSTER_K: ${{ inputs.k }}
         run: |

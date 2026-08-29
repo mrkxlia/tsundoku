@@ -166,7 +166,9 @@ jobs:
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           LLM_MODEL_CHAIN: ${{ vars.LLM_MODEL_CHAIN }}
+          LLM_LIGHT_MODEL_CHAIN: ${{ vars.LLM_LIGHT_MODEL_CHAIN }}
           LLM_SLEEP_SECONDS: ${{ vars.LLM_SLEEP_SECONDS }}
+          LLM_SLEEP_OVERRIDES: ${{ vars.LLM_SLEEP_OVERRIDES }}
         run: python scripts/detect_superseded.py
 
       - name: メタデータをindexへ再同期(status/shelf_lifeの最新値を反映)

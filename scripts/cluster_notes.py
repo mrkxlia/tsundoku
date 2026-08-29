@@ -298,7 +298,13 @@ def main() -> int:
         reps = pick_representatives(member_indices, paths, vectors, centroids[c], fm_by_path)
 
         prev_cluster = prev_by_id.get(ids[c])
-        reuse_label = prev_cluster is not None and prev_cluster.get("membersHash") == m_hash
+        # labelPendingは前回ラベル生成が失敗して暫定ラベルで確定したしるし。構成が同じでも
+        # 再利用せず次回実行で再生成する(RPD枯渇runの暫定ラベルが固定化するのを防ぐ)
+        reuse_label = (
+            prev_cluster is not None
+            and prev_cluster.get("membersHash") == m_hash
+            and not prev_cluster.get("labelPending")
+        )
 
         entry = {
             "id": ids[c],
@@ -338,6 +344,7 @@ def main() -> int:
                     "description": "",
                     "keywords": [],
                 }
+                entry["labelPending"] = True  # 次回実行で再生成する(reuse_label参照)
             entry["label"] = label_info["label"]
             entry["description"] = label_info["description"]
             entry["keywords"] = label_info["keywords"]
