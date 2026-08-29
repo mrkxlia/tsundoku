@@ -169,8 +169,10 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
 | Variable | 既定値 | 説明 |
 |---|---|---|
 | `LLM_MODEL_CHAIN` | `gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it` | 使用モデル(カンマ区切り)。先頭から試し、枠超過(429)時に次へフォールバック。AI Studioで使えるモデルを確認したらここを書き換えるだけで反映 |
-| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照)。`gemini-2.5-flash-lite`は新規アカウントでは廃止済み(404)のため含めていない |
+| `LLM_LIGHT_MODEL_CHAIN` | `gemini-3.5-flash-lite,gemma-4-26b-a4b-it,gemini-3.6-flash` | 軽タスク(shelf_life分類・superseded/merge判定・クラスタラベル生成)専用チェーン。出力が短いタスクをflash-lite先頭で処理し、flash系のRPD(日次枠)をメタ生成に温存する。判定品質に問題が出たら`gemini-3.7-flash`先頭に設定するだけでロールバック可(ローカル実行の`merge_notes.py`にはVariablesは届かないため、必要ならローカルで環境変数を設定) |
+| `GROUNDING_MODEL_CHAIN` | `gemini-2.5-flash` | `reverify.py`(グラウンディング)専用のモデルチェーン。グラウンディングの無料枠はモデル世代ごとに別枠で、`LLM_MODEL_CHAIN`の世代が使えていても枠0のことがある(下記「運用」参照)。`gemini-2.5-flash-lite`は新規アカウントでは廃止済み(404)のため含めていない。**注意**: RPD枯渇モデルのrun内スキップ(dead set)はモデル名単位のため、このチェーンと`LLM_MODEL_CHAIN`にモデルを重ねる構成にはしないこと(片方の枠枯渇が他方の生きた枠を誤スキップする) |
 | `LLM_SLEEP_SECONDS` | `13` | API呼び出し間のスリープ秒数(無料枠のRPM対策。Flash系5RPMを想定) |
+| `LLM_SLEEP_OVERRIDES` | `flash-lite=4,gemma=2` | モデル別スリープの上書き(モデル名のsubstring一致)。RPMはモデル別クォータのため、高RPMモデルまで13秒待つ必要はない。既定はflash-lite 15RPM→4秒、gemma 30RPM→2秒。テレメトリ(下記)に429(RPM)が出たら値を増やす。チェーン構成モデルのRPM実測とセットで見直すこと |
 | `MAX_ITEMS_PER_RUN` | `20` | 1回の実行で処理する最大件数。超過分は次回実行へ持ち越し |
 | `EMBEDDING_MODEL` | `gemini-embedding-2` | 埋め込みモデル名 |
 | `EMBED_DIM` | `768` | 埋め込み次元数 |
@@ -236,11 +238,28 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
   (このアカウントの目安: Flash系 5RPM / Flash Lite系 15RPM / Gemma 4系 30RPM。
   [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で確認可)
   に収まるよう、呼び出し間スリープと処理件数上限を設けています。
-  枠を使い切った場合はチェーン後段のモデルへ自動フォールバックし、
+  枠を使い切った場合はチェーン後段のモデルへ自動フォールバックし
+  (429がRPD=日次枠の枯渇なら、そのrun中は当該モデルをスキップして待機を浪費しない)、
   それでも失敗したノートは `inbox/` に残って次回再試行されます。
   ※ RPM以外に1日あたりのリクエスト数(RPD)上限がある場合、backlogが多い日は
   上限に達することがあります。頻発する場合は `MAX_ITEMS_PER_RUN` を下げてください。
   なお画像付きノートは説明生成のためGemini呼び出しが1件につき1回追加されます
+- **日次消費の目安(算術上限)**: `organize.yml` 1回のgenerate系呼び出しは最大
+  「`MAX_ITEMS_PER_RUN`(20)×(メタ生成1+画像説明0〜1)+新規ノート数×2(superseded判定)」
+  ≒ 通常日で数十回。embedContentは別枠で「新規/変更ノート×チャンク数(通常1〜3)」。
+  AI StudioでRPD実測値を確認したら、この式と突き合わせて安全余裕を判断する
+- **手動バッチの推奨実行窓(RPD対策)**: GeminiのRPD(日次枠)は**太平洋時間の深夜=
+  日本時間16〜17時**にリセットされる。`reverify`や`Backfill`など消費の大きい手動実行は
+  **朝4時〜16時JSTの間**に行うこと(当日3:00の日次organizeは完了済みで、消費した枠は
+  16〜17時に全リセットされ翌朝のorganizeへ持ち越さない)。ただし**火曜は週次suggest
+  (5:00 JST)の完了後、6時以降に開始**する。長時間バッチは15時までに開始し16時の
+  リセット境界をまたがない。逆に16時JST以降〜翌3時JSTの大量実行は、翌朝のorganizeと
+  同じPT日の枠を食い合うため避ける
+- **月次チェックリスト(または429急増時)**: [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で
+  各モデルのRPM/RPD/TPMと「検索によるグラウンディング」枠を確認し、変化があれば
+  Variables(`LLM_MODEL_CHAIN`/`LLM_LIGHT_MODEL_CHAIN`/`GROUNDING_MODEL_CHAIN`/
+  `LLM_SLEEP_OVERRIDES`/`LLM_SLEEP_SECONDS`)で調整する(コード変更不要)。
+  確認結果はtsundoku-site側のチューニング台帳(`docs/tuning-2026-08.md`、未commit運用)に記録する
 
 ### ローカルでの動作確認
 
@@ -262,3 +281,17 @@ DRY_RUN=1 python scripts/organize.py
 - **ノートが `inbox/` に残り続ける**: LLM呼び出しが失敗しています。Actionsのログを確認してください。頻発する場合は `LLM_MODEL_CHAIN` を見直すか `MAX_ITEMS_PER_RUN` を減らします
 - **frontmatter付きのノートは処理されない**: 手書きノートを誤って書き換えないための仕様です。整理したい場合はfrontmatterを外してください
 - **モデルが404/429になる**: 無料枠のモデル構成は変わることがあります。[AI Studio](https://aistudio.google.com/)で使えるモデルを確認し、`LLM_MODEL_CHAIN` を更新してください
+- **テレメトリの読み方**: LLMを使う各ジョブのstep summary末尾に「LLM呼び出しテレメトリ」
+  (モデル別の呼出/成功/429(RPM)/429(RPD)/429(不明)/5xx)が出ます
+  (1ジョブ内で複数スクリプトが走る場合はステップごとに最大3表)。
+  - **429(RPM)がflash-liteに出る** → `LLM_SLEEP_OVERRIDES`で`flash-lite=5`に増やす
+  - **429(RPD)がflash系に出る** → 軽タスク振り分けが効いているか確認し、手動バッチの実行窓・件数を見直す
+  - **チェーン2番目以降のモデルに呼出が立っている** → フォールバックが発生している
+  - タイムアウトkill(SIGTERM)時は表が出ないため、ログ中の`[llm] ... HTTP 429(...)`行から復元する
+- **軽チェーンの巻き戻しトリガー**: flash系の429(RPD)が数ヶ月0のまま、superseded/merge判定の
+  誤判定を観測したら、`LLM_LIGHT_MODEL_CHAIN`を`gemini-3.7-flash`先頭に戻す(判定は
+  reason付きでfrontmatterに残るため誤判定は後から発見できます)
+- **クラスタラベルが「(先頭ノートのタイトル15字)」のまま**: ラベル生成の全モデルが
+  失敗(RPD枯渇等)したrunの暫定ラベルです。`labelPending`フラグ付きで保存されるため、
+  次回のsuggest実行(週次、または枠が回復した翌日以降に **Actions → Suggest similar
+  sites → Run workflow** を手動実行)で自動的に再生成されます(`recluster`は不要)

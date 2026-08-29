@@ -8,11 +8,18 @@ create_client() の分岐を変えるだけでよい。
     GEMINI_API_KEY       : Google AI Studio のAPIキー(必須。DRY_RUN時は不要)
     LLM_MODEL_CHAIN      : カンマ区切りのモデル名。先頭から順に試し、
                            枠超過(429)等で次のモデルへフォールバックする
+    LLM_LIGHT_MODEL_CHAIN: 軽タスク(shelf_life分類・supersession/merge判定・クラスタ
+                           ラベル生成)専用のモデルチェーン。出力が短いJSON/enum/短文の
+                           タスクをflash-lite先頭で処理し、flash系のRPD(日次枠)を
+                           メタ生成など重要タスクへ温存する
     GROUNDING_MODEL_CHAIN: グラウンディング(Google Search)呼び出し専用のモデルチェーン。
                            グラウンディングはモデル世代ごとに別枠のクォータを持ち、
                            アカウントによってはLLM_MODEL_CHAINの世代がグラウンディング
                            枠0のことがあるため、既定で別世代(Gemini 2.5系)を使う
     LLM_SLEEP_SECONDS    : API呼び出し後のスリープ秒数(無料枠のRPM対策)
+    LLM_SLEEP_OVERRIDES  : モデル別スリープ秒数の上書き(例: "flash-lite=4,gemma=2"。
+                           モデル名のsubstring一致。RPMはモデル別クォータのため、
+                           高RPMモデルまで既定の13秒待つ必要はない)
     EMBEDDING_MODEL      : 埋め込みモデル名(既定 gemini-embedding-2)
     EMBED_DIM            : 埋め込み次元数(既定 768)
     EMBED_SLEEP_SECONDS  : 埋め込みAPI呼び出し後のスリープ秒数(生成系とは別枠のため独立変数)
@@ -21,6 +28,7 @@ create_client() の分岐を変えるだけでよい。
 
 from __future__ import annotations
 
+import atexit
 import base64
 import hashlib
 import json
@@ -34,6 +42,13 @@ import urllib.request
 from datetime import datetime, timedelta, timezone
 
 DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,gemma-4-26b-a4b-it"
+# 軽タスク(shelf_life分類・supersession/merge判定・クラスタラベル生成)専用チェーン。
+# 出力が短いJSON/enum/短文ラベルのためflash-lite級で品質は許容範囲とし、flash系のRPD
+# (日次枠)をメタ生成など重要タスクへ温存する。末尾のフォールバックは重チェーン先頭の
+# 3.7ではなく3.6にする(軽タスクの全滅時に最重要バケットを食わないため)。
+# 注意: judge系は出力こそ軽いが入力は最大約16K字(MAX_BODY_CHARS×2)あり、flash-liteは
+# TPM超過ぎみの実績がある(reverify.yml冒頭コメント参照)。テレメトリの429(RPM)列を観測。
+DEFAULT_LIGHT_MODEL_CHAIN = "gemini-3.5-flash-lite,gemma-4-26b-a4b-it,gemini-3.6-flash"
 # グラウンディング(Google Search)はモデル世代ごとに別枠のクォータを持つ。アカウントに
 # よってはGemini 3系のグラウンディング枠が0のことがある(2026-08-18実地確認、AI Studioの
 # レート制限ページで要確認)。Gemini 2.5系は通常の生成枠とは別に、グラウンディング専用の
@@ -42,6 +57,11 @@ DEFAULT_MODEL_CHAIN = "gemini-3.7-flash,gemini-3.6-flash,gemini-3.5-flash-lite,g
 # 促すエラー)になるため含めない(2026-08-18実地確認)。
 DEFAULT_GROUNDING_MODEL_CHAIN = "gemini-2.5-flash"
 DEFAULT_SLEEP_SECONDS = 13.0  # Flash系無料枠(5RPM)に収まる間隔
+# モデル別スリープの上書き既定値(substring一致)。RPMはモデル別クォータのため、フォール
+# バック先の高RPMモデルまで13秒待つ必要はない。flash-lite 4.0秒は15RPMの境界値(テレメトリ
+# に429(RPM)が出たら環境変数LLM_SLEEP_OVERRIDESで5.0へ)。flash系は既定13秒のまま
+# (「LLM_SLEEP_SECONDSを下げない」運用ルールの対象はそちら)。
+DEFAULT_SLEEP_OVERRIDES = {"flash-lite": 4.0, "gemma": 2.0}
 GEMINI_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 MAX_BODY_CHARS = 8000  # トークン消費を抑えるため本文は先頭のみ渡す
 
@@ -348,6 +368,8 @@ class GeminiClient(LLMClient):
         embed_dim: int = DEFAULT_EMBED_DIM,
         embed_sleep_seconds: float = DEFAULT_EMBED_SLEEP_SECONDS,
         grounding_model_chain: list[str] | None = None,
+        light_model_chain: list[str] | None = None,
+        sleep_overrides: dict[str, float] | None = None,
     ):
         if not api_key:
             raise LLMError("GEMINI_API_KEY が設定されていません")
@@ -363,6 +385,17 @@ class GeminiClient(LLMClient):
         # 専用チェーンを持つ(既定は通常チェーンと同じにしておき、create_client()側の
         # 環境変数GROUNDING_MODEL_CHAINで上書きできるようにする)。
         self.grounding_model_chain = grounding_model_chain if grounding_model_chain is not None else model_chain
+        # 軽タスク専用チェーン(DEFAULT_LIGHT_MODEL_CHAINのコメント参照)。未指定時は
+        # 通常チェーンと同じにして従来挙動を保つ。
+        self.light_model_chain = light_model_chain if light_model_chain is not None else model_chain
+        self.sleep_overrides = dict(DEFAULT_SLEEP_OVERRIDES) if sleep_overrides is None else sleep_overrides
+        # このプロセス実行中にRPD(日次枠)枯渇を検出したモデルの集合。RPDは当日中回復
+        # しないため、以後のチェーン走査では_active()でスキップし待機の浪費を防ぐ。
+        self._exhausted_models: set[str] = set()
+        self._embed_exhausted = False
+        # テレメトリ: モデル別の呼び出し数・結果種別(_report_stats参照)
+        self._stats: dict[str, dict[str, int]] = {}
+        self._stats_reported = False
 
     def generate_note_meta(self, url: str, title_hint: str, body: str) -> dict:
         prompt = PROMPT_TEMPLATE.format(
@@ -409,6 +442,10 @@ class GeminiClient(LLMClient):
         return self._generate_text_with_parts(parts, self._multimodal_chain())
 
     def embed_content(self, parts: list[dict]) -> list[float]:
+        if self._embed_exhausted:
+            # 埋め込みモデルのRPD枯渇を検出済み。呼び出し元(build_embeddings等)は
+            # ノート単位でcontinueする構造のため、残件への無駄撃ちをここで短絡する。
+            raise LLMError("embed_content失敗: 埋め込みモデルがRPD枯渇(このrunでは以後スキップ)")
         payload = {
             "content": {"parts": parts},
             "outputDimensionality": self.embed_dim,
@@ -425,19 +462,40 @@ class GeminiClient(LLMClient):
         last_err: Exception | None = None
         for attempt in range(2):  # 一時的な429/503は1回だけ待って再試行
             try:
+                self._record(self.embedding_model, "calls")
                 with urllib.request.urlopen(req, timeout=90) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
+                self._record(self.embedding_model, "success")
                 if self.embed_sleep_seconds > 0:
                     time.sleep(self.embed_sleep_seconds)
                 values = data["embedding"]["values"]
                 return l2_normalize(values)
             except urllib.error.HTTPError as e:
                 last_err = e
+                kind: str | None = None
+                retry_delay: float | None = None
+                if e.code == 429:
+                    kind, retry_delay = _parse_429(_read_http_error_body(e))
+                self._record_http_error(self.embedding_model, e.code, kind)
+                if kind == "rpd":
+                    # 日次枠枯渇は待っても回復しない。フラグを立てて以降の呼び出しを短絡
+                    self._embed_exhausted = True
+                    print(
+                        f"    [llm] {self.embedding_model} が HTTP 429(RPD枯渇) — このrunの埋め込みは以後スキップ",
+                        file=sys.stderr,
+                    )
+                    raise LLMError("embed_content失敗: HTTP 429(RPD枯渇)")
+                if e.code in (429, 500, 503) and attempt == 0:
+                    # リトライ待機が次呼び出しへのペーシングを兼ねる(下限10秒)
+                    if kind == "rpm" and retry_delay is not None:
+                        time.sleep(max(min(retry_delay + 1.0, 65.0), 10.0))
+                    else:
+                        time.sleep(max(self.embed_sleep_seconds, 10))
+                    continue
+                # 最終失敗時も1回分のペーシングを残す(連続429時にノーウェイトで
+                # 次ノートのembedが走りRPMを悪化させるのを防ぐ)
                 if self.embed_sleep_seconds > 0:
                     time.sleep(self.embed_sleep_seconds)
-                if e.code in (429, 500, 503) and attempt == 0:
-                    time.sleep(max(self.embed_sleep_seconds, 10))
-                    continue
                 raise LLMError(f"embed_content失敗: HTTP {e.code}")
             except (KeyError, IndexError) as e:
                 raise LLMError(f"embed_content失敗: 想定外のレスポンス形式: {e}")
@@ -450,7 +508,8 @@ class GeminiClient(LLMClient):
             shelf_life_instruction=SHELF_LIFE_INSTRUCTION, title=title, summary=summary or "(要約なし)"
         )
         errors = []
-        for model in self.model_chain:
+        # 短いenum出力のみの軽タスクのため軽チェーン(flash-lite先頭)を使う
+        for model in self._active(self.light_model_chain, "classify_shelf_life"):
             try:
                 text = self._call_model(model, [{"text": prompt}])
                 value = _parse_shelf_life_json(text)
@@ -481,7 +540,9 @@ class GeminiClient(LLMClient):
             old_excerpt=(old_excerpt or "")[:MAX_BODY_CHARS],
         )
         errors = []
-        for model in self.model_chain:
+        # boolean+短文reason出力の軽タスクのため軽チェーンを使う(入力は最大約16K字ある
+        # 点に注意 — DEFAULT_LIGHT_MODEL_CHAINのコメント参照)
+        for model in self._active(self.light_model_chain, "judge_supersession"):
             try:
                 text = self._call_model(model, [{"text": prompt}])
                 result = _parse_supersession_json(text)
@@ -512,7 +573,8 @@ class GeminiClient(LLMClient):
             b_excerpt=(b_excerpt or "")[:MAX_BODY_CHARS],
         )
         errors = []
-        for model in self.model_chain:
+        # boolean+短文reason出力の軽タスクのため軽チェーンを使う
+        for model in self._active(self.light_model_chain, "judge_merge"):
             try:
                 text = self._call_model(model, [{"text": prompt}])
                 result = _parse_merge_json(text)
@@ -534,7 +596,8 @@ class GeminiClient(LLMClient):
             merged_body_excerpt=(merged_body_excerpt or "")[:MAX_BODY_CHARS],
         )
         errors = []
-        for model in self.model_chain:
+        # マージ後ノートに永続するタイトル・要約の生成なので通常チェーン(品質優先)
+        for model in self._active(self.model_chain, "generate_merged_meta"):
             try:
                 text = self._call_model(model, [{"text": prompt}])
                 meta = _parse_merged_meta_json(text, candidate_tags)
@@ -558,7 +621,7 @@ class GeminiClient(LLMClient):
         if not chain:
             raise LLMError("グラウンディングに対応するモデルがチェーンにありません")
         errors = []
-        for model in chain:
+        for model in self._active(chain, "verify_currency"):
             # グラウンディング呼び出しは応答形式が指示どおりにならないことがあるため、
             # 同一モデルでVERIFY_PARSE_RETRIES回まで再試行してから次のモデルへ進む。
             for parse_attempt in range(VERIFY_PARSE_RETRIES + 1):
@@ -609,7 +672,8 @@ class GeminiClient(LLMClient):
         )
         prompt = CLUSTER_LABEL_TEMPLATE.format(items=items)
         errors = []
-        for model in self.model_chain:
+        # 15字ラベル+短文説明出力の軽タスクのため軽チェーンを使う
+        for model in self._active(self.light_model_chain, "generate_cluster_label"):
             try:
                 text = self._call_model(model, [{"text": prompt}])
                 result = _parse_cluster_label_json(text)
@@ -645,7 +709,7 @@ class GeminiClient(LLMClient):
         if not chain:
             raise LLMError("グラウンディングに対応するモデルがチェーンにありません")
         errors = []
-        for model in chain:
+        for model in self._active(chain, "suggest_similar_sites"):
             # verify_currency と同じ設計: グラウンディング呼び出しは応答形式が不安定なことがあるため
             # 同一モデルでVERIFY_PARSE_RETRIES回まで再試行してから次のモデルへ進む。
             for parse_attempt in range(VERIFY_PARSE_RETRIES + 1):
@@ -697,13 +761,77 @@ class GeminiClient(LLMClient):
         # model_chainとは別物(上記__init__のコメント参照)
         return [m for m in self.grounding_model_chain if "gemma" not in m.lower()]
 
+    def _active(self, chain: list[str], op: str) -> list[str]:
+        """RPD枯渇を検出済みのモデル(dead set)を除いたチェーンを返す。
+
+        全モデルが枯渇していれば明示メッセージ付きLLMErrorを投げる(呼び出し元の
+        既存のLLMErrorハンドリングで1件保留・次回再試行などの処理に乗る)。
+
+        既知の制約: dead setのキーはモデル名のみで、クォータ種別(通常生成/グラウン
+        ディング/埋め込み)を区別しない。現構成では1プロセス内で通常生成とグラウン
+        ディングの両方を呼ぶスクリプトが無く、チェーンも互いに素のため実害はないが、
+        将来LLM_MODEL_CHAINとGROUNDING_MODEL_CHAINにモデルを重ねる場合は
+        (モデル×クォータ種別)キーへの拡張が必要。
+        """
+        active = [m for m in chain if m not in self._exhausted_models]
+        if chain and not active:
+            raise LLMError(f"{op}失敗: 全モデルがRPD枯渇でスキップされました({', '.join(chain)})")
+        return active
+
+    def _record(self, model: str, key: str) -> None:
+        stats = self._stats.setdefault(model, {})
+        stats[key] = stats.get(key, 0) + 1
+
+    def _record_http_error(self, model: str, code: int, kind_429: str | None) -> None:
+        if code == 429:
+            key = {"rpd": "429_rpd", "rpm": "429_rpm"}.get(kind_429 or "", "429_unknown")
+        elif 500 <= code < 600:
+            key = "5xx"
+        else:
+            key = "other_error"
+        self._record(model, key)
+
+    def _report_stats(self) -> None:
+        """終了時テレメトリ。GITHUB_STEP_SUMMARYがあればMarkdownテーブル、無ければstderrへ。
+
+        atexitから呼ばれるため、いかなる例外も外へ出さない(書き込み失敗で終了コードを
+        汚すと、本体処理が成功しているのにジョブが落ち、当日のLLM消費が無駄になる)。
+        SIGTERM(timeout-minutes超過等)ではatexitが走らない点に注意 — その場合は
+        _call_model_raw等が429発生時に都度stderrへ出す行から復元する。
+        """
+        if self._stats_reported:
+            return
+        self._stats_reported = True
+        try:
+            if not self._stats:
+                return
+            keys = ["calls", "success", "429_rpm", "429_rpd", "429_unknown", "5xx", "other_error"]
+            lines = [
+                "### LLM呼び出しテレメトリ",
+                "",
+                "| モデル | 呼出 | 成功 | 429(RPM) | 429(RPD) | 429(不明) | 5xx | 他 |",
+                "|---|---|---|---|---|---|---|---|",
+            ]
+            for model, stats in self._stats.items():
+                cells = " | ".join(str(stats.get(k, 0)) for k in keys)
+                lines.append(f"| {model} | {cells} |")
+            lines.append("")
+            summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
+            if summary_path:
+                with open(summary_path, "a", encoding="utf-8") as f:
+                    f.write("\n".join(lines) + "\n")
+            else:
+                print("\n".join(lines), file=sys.stderr)
+        except Exception:
+            pass
+
     def _generate_with_parts(
         self, parts: list[dict], chain: list[str], media_resolution: str | None = None
     ) -> dict:
         if not chain:
             raise LLMError("PDF/動画入力に対応するモデルがチェーンにありません")
         errors = []
-        for model in chain:
+        for model in self._active(chain, "生成"):
             try:
                 text = self._call_model(model, parts, media_resolution=media_resolution)
                 meta = _parse_meta_json(text)
@@ -725,7 +853,7 @@ class GeminiClient(LLMClient):
         if not chain:
             raise LLMError("マルチモーダル入力に対応するモデルがチェーンにありません")
         errors = []
-        for model in chain:
+        for model in self._active(chain, "生成"):
             try:
                 text = self._call_model(
                     model, parts, media_resolution=media_resolution, json_mode=False
@@ -798,9 +926,11 @@ class GeminiClient(LLMClient):
         last_err: Exception | None = None
         for attempt in range(max_retries + 1):  # 一時的な429/503は既定1回だけ待って再試行
             try:
+                self._record(model, "calls")
                 with urllib.request.urlopen(req, timeout=timeout) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
-                self._sleep()
+                self._record(model, "success")
+                self._sleep(model)
                 try:
                     return data["candidates"][0]
                 except (KeyError, IndexError) as e:
@@ -808,8 +938,44 @@ class GeminiClient(LLMClient):
                     raise json.JSONDecodeError(f"unexpected response shape: {e}", "", 0)
             except urllib.error.HTTPError as e:
                 last_err = e
-                self._sleep()
-                if e.code in (429, 500, 503) and attempt < max_retries:
+                if e.code == 429:
+                    # 429はボディのquotaId/retryDelayで質的に区別する(判別できた場合のみ
+                    # 挙動を変え、unknownは従来どおりの固定待機リトライへフォールバック)。
+                    kind, retry_delay = _parse_429(_read_http_error_body(e))
+                    self._record_http_error(model, e.code, kind)
+                    if kind == "rpd":
+                        # 日次枠(RPD)枯渇は待っても回復しない。リトライもsleepもせず即raise
+                        # し(チェーンループが次モデルへ進む)、以後このプロセスでは_active()
+                        # のdead setで当該モデルをスキップする。
+                        # 生のHTTPErrorのままraiseすること: チェーンループのexcept節は
+                        # urllib.error.HTTPErrorを前提に次モデルへ進むため、LLMError等への
+                        # ラップはフォールバック経路を壊す。
+                        self._exhausted_models.add(model)
+                        print(
+                            f"    [llm] {model} が HTTP 429(RPD枯渇) — このrunでは以後スキップ",
+                            file=sys.stderr,
+                        )
+                        raise
+                    print(
+                        f"    [llm] {model} が HTTP 429({kind}"
+                        + (f", retryDelay={retry_delay:g}s" if retry_delay is not None else "")
+                        + ")",
+                        file=sys.stderr,
+                    )
+                    self._sleep(model)
+                    if attempt < max_retries:
+                        if kind == "rpm" and retry_delay is not None:
+                            # RPM/TPM超過はサーバー指示のretryDelayを尊重する。下限10秒:
+                            # retryDelay="0s"が返る報告例があり、即再試行は従来の10秒待ち
+                            # より回復確率が下がるため。上限65秒で巨大値の待ちすぎを防ぐ。
+                            time.sleep(max(min(retry_delay + 1.0, 65.0), 10.0))
+                        else:
+                            time.sleep(sleep_on_retry)
+                        continue
+                    raise
+                self._record_http_error(model, e.code, None)
+                self._sleep(model)
+                if e.code in (500, 503) and attempt < max_retries:
                     time.sleep(sleep_on_retry)
                     continue
                 raise
@@ -817,15 +983,21 @@ class GeminiClient(LLMClient):
                 # ネットワーク層のタイムアウト・接続エラー(グラウンディング等、応答に
                 # 時間がかかる呼び出しで発生しうる)。429と同様に同一モデルで再試行する。
                 last_err = e
+                self._record(model, "other_error")
                 if attempt < max_retries:
                     time.sleep(sleep_on_retry)
                     continue
                 raise
         raise last_err  # 到達しないが型のため
 
-    def _sleep(self):
-        if self.sleep_seconds > 0:
-            time.sleep(self.sleep_seconds)
+    def _sleep(self, model: str):
+        seconds = self.sleep_seconds
+        for pattern, override in self.sleep_overrides.items():
+            if pattern in model:
+                seconds = override
+                break
+        if seconds > 0:
+            time.sleep(seconds)
 
 
 class MockClient(LLMClient):
@@ -1123,6 +1295,77 @@ def _extract_grounding_sources(candidate: dict) -> list[str]:
     return uris
 
 
+def _read_http_error_body(e: urllib.error.HTTPError) -> str:
+    """HTTPErrorのボディを読む。1回しか読めないため、呼び出し側は結果を変数に保持すること。"""
+    try:
+        return e.read().decode("utf-8", errors="replace")
+    except Exception:
+        return ""
+
+
+def _parse_429(body_text: str) -> tuple[str, float | None]:
+    """429レスポンスボディからクォータ種別とretryDelayを判別する。
+
+    返り値は ("rpd" | "rpm" | "unknown", retryDelay秒 | None)。
+    - google.rpc.QuotaFailure の quotaId に "PerDay" を含めば "rpd"(日次枠。当日中は
+      回復しない)、"PerMinute" を含めば "rpm"(RPM/TPM。待てば回復する)
+    - google.rpc.RetryInfo の retryDelay("58s"/"3.5s"形式)を秒数として返す
+    - 判別できない場合(空・非JSON・details欠落・形式変更)は ("unknown", None)。
+      呼び出し側は従来動作(固定待機リトライ)へフォールバックする防御的設計で、
+      Googleがボディ形式を変えても現行挙動への自然退行に留まる。
+
+    想定するボディ形式(実地の429レスポンス例):
+        {"error": {"code": 429, "status": "RESOURCE_EXHAUSTED", "details": [
+          {"@type": "type.googleapis.com/google.rpc.QuotaFailure", "violations": [
+            {"quotaId": "GenerateRequestsPerDayPerProjectPerModel-FreeTier", ...}]},
+          {"@type": "type.googleapis.com/google.rpc.RetryInfo", "retryDelay": "58s"}]}}
+    """
+    kind = "unknown"
+    delay: float | None = None
+    try:
+        details = json.loads(body_text).get("error", {}).get("details", [])
+    except (json.JSONDecodeError, AttributeError, TypeError):
+        return kind, delay
+    if not isinstance(details, list):
+        return kind, delay
+    for detail in details:
+        if not isinstance(detail, dict):
+            continue
+        type_name = str(detail.get("@type", ""))
+        if type_name.endswith("QuotaFailure"):
+            violations = detail.get("violations")
+            for violation in violations if isinstance(violations, list) else []:
+                if not isinstance(violation, dict):
+                    continue
+                quota_id = str(violation.get("quotaId", ""))
+                if "PerDay" in quota_id:
+                    kind = "rpd"  # RPD枯渇が1つでもあれば当日中は無駄なのでrpd優先
+                    break
+                if "PerMinute" in quota_id and kind != "rpd":
+                    kind = "rpm"
+        elif type_name.endswith("RetryInfo"):
+            m = re.fullmatch(r"([0-9]+(?:\.[0-9]+)?)s", str(detail.get("retryDelay", "")))
+            if m:
+                delay = float(m.group(1))
+    return kind, delay
+
+
+def _parse_sleep_overrides(raw: str | None) -> dict[str, float] | None:
+    """LLM_SLEEP_OVERRIDES(例: "flash-lite=4,gemma=2")をdictへ。未設定はNone(=既定値を使う)。"""
+    if not raw or not raw.strip():
+        return None
+    overrides: dict[str, float] = {}
+    for pair in raw.split(","):
+        name, sep, value = pair.partition("=")
+        if not sep:
+            continue
+        try:
+            overrides[name.strip()] = float(value.strip())
+        except ValueError:
+            continue
+    return overrides or None
+
+
 def create_client() -> LLMClient:
     """環境変数に基づいてLLMクライアントを生成する。"""
     if os.environ.get("DRY_RUN") == "1":
@@ -1137,11 +1380,16 @@ def create_client() -> LLMClient:
         for m in (os.environ.get("GROUNDING_MODEL_CHAIN") or DEFAULT_GROUNDING_MODEL_CHAIN).split(",")
         if m.strip()
     ]
+    light_chain = [
+        m.strip()
+        for m in (os.environ.get("LLM_LIGHT_MODEL_CHAIN") or DEFAULT_LIGHT_MODEL_CHAIN).split(",")
+        if m.strip()
+    ]
     sleep_seconds = float(os.environ.get("LLM_SLEEP_SECONDS") or DEFAULT_SLEEP_SECONDS)
     embedding_model = os.environ.get("EMBEDDING_MODEL") or DEFAULT_EMBEDDING_MODEL
     embed_dim = int(os.environ.get("EMBED_DIM") or DEFAULT_EMBED_DIM)
     embed_sleep_seconds = float(os.environ.get("EMBED_SLEEP_SECONDS") or DEFAULT_EMBED_SLEEP_SECONDS)
-    return GeminiClient(
+    client = GeminiClient(
         os.environ.get("GEMINI_API_KEY", ""),
         chain,
         sleep_seconds,
@@ -1149,4 +1397,10 @@ def create_client() -> LLMClient:
         embed_dim,
         embed_sleep_seconds,
         grounding_chain,
+        light_model_chain=light_chain,
+        sleep_overrides=_parse_sleep_overrides(os.environ.get("LLM_SLEEP_OVERRIDES")),
     )
+    # プロセス終了時にモデル別テレメトリをstep summary/stderrへ出す(GeminiClientのみ。
+    # MockClientは対象外)。_report_stats自体が冪等かつ例外を外へ出さない設計。
+    atexit.register(client._report_stats)
+    return client
