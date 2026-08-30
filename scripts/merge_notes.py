@@ -42,6 +42,7 @@ import detect_superseded
 import fm_edit
 import llm_client
 import organize
+import page_meta
 
 ROOT = organize.ROOT
 LIBRARY = organize.LIBRARY
@@ -372,6 +373,22 @@ def merge_shelf_life(keep_fm: dict, merge_fm: dict) -> str:
     return SHELF_LIFE_BY_ORDER[min(ka, kb)]
 
 
+def merge_published(keep_fm: dict, merge_fm: dict) -> str:
+    """published_at の統合: keep側の実日付を優先、無ければmerge側。どちらも無ければ ''。
+
+    createdのような blind str() 強制はしない — iPhoneのObsidianが `published_at: ''` を
+    YAML null(値なし)に書き換えることがあり、str(None) だと文字列 'None' が焼き付く。
+    日付形状の文字列だけを採用し、それ以外は ''(確定不明)へ落とす。
+    """
+    for fm in (keep_fm, merge_fm):
+        v = fm.get("published_at")
+        if isinstance(v, str):
+            m = page_meta.DATE_RE.match(v)
+            if m:
+                return m.group(0)
+    return ""
+
+
 def resolve_merged_meta(
     client: llm_client.LLMClient | None,
     keep_fm: dict,
@@ -417,6 +434,8 @@ def apply_pair(entry: dict, client: llm_client.LLMClient | None) -> Path:
     new_fm["tags"] = list(dict.fromkeys(list(content_tags) + system_tags))
     new_fm["shelf_life"] = merge_shelf_life(keep_fm, merge_fm)
     new_fm["created"] = str(keep_fm.get("created", ""))  # YAMLのdatetime化を防ぐ(str強制)
+    if "published_at" in keep_fm or "published_at" in merge_fm:
+        new_fm["published_at"] = merge_published(keep_fm, merge_fm)
     sources = merge_sources(keep_fm, merge_fm)
     if sources:
         new_fm["sources"] = sources

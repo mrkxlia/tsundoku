@@ -1,8 +1,9 @@
 name: Backfill
 
 # 手動実行専用。初回埋め込みバックフィル(複数日かかる想定でレジューム前提)、メタデータのみの
-# 一括再同期、shelf_life一括分類、superseded一括検知に使う。organize.yml と同じconcurrency
-# グループに参加し、通常実行やモバイルからのpushと衝突しないようにする。
+# 一括再同期、shelf_life一括分類、superseded一括検知、発行日(published_at)一括取得に使う。
+# organize.yml と同じconcurrency グループに参加し、通常実行やモバイルからのpushと
+# 衝突しないようにする。
 on:
   workflow_dispatch:
     inputs:
@@ -16,9 +17,10 @@ on:
           - shelf_life
           - superseded
           - slides
+          - published
         default: embeddings
       max_embeds:
-        description: "このジョブで新規に処理する件数の上限(embeddings/shelf_life/slidesタスクのみ有効)"
+        description: "このジョブで新規に処理する件数の上限(embeddings/shelf_life/slides/publishedタスクのみ有効)"
         required: false
         type: string
         default: "50"
@@ -108,6 +110,8 @@ jobs:
           exit 1
 
       - name: 前回の埋め込みindexをダウンロード(Releaseアセット、初回は無くて良い)
+        # publishedタスクは埋め込みindexに触れない(published_atはRAG検索対象外のため)
+        if: inputs.task != 'published'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -154,6 +158,12 @@ jobs:
           INPUT_MAX_EMBEDS: ${{ inputs.max_embeds }}
         run: python scripts/backfill_shelf_life.py --max-items "$INPUT_MAX_EMBEDS"
 
+      - name: backfill_published.py を実行(publishedタスクのみ。LLM・secrets不要)
+        if: inputs.task == 'published'
+        env:
+          INPUT_MAX_EMBEDS: ${{ inputs.max_embeds }}
+        run: python scripts/backfill_published.py --max-items "$INPUT_MAX_EMBEDS" --sleep 1
+
       - name: detect_superseded.py を実行(supersededタスクのみ、全ノート対象)
         if: inputs.task == 'superseded'
         env:
@@ -164,8 +174,8 @@ jobs:
           LLM_SLEEP_OVERRIDES: ${{ vars.LLM_SLEEP_OVERRIDES }}
         run: python scripts/detect_superseded.py --all
 
-      - name: frontmatterの変更をcommit・push(shelf_life/superseded/slidesタスクのみ)
-        if: inputs.task == 'shelf_life' || inputs.task == 'superseded' || inputs.task == 'slides'
+      - name: frontmatterの変更をcommit・push(shelf_life/superseded/slides/publishedタスクのみ)
+        if: inputs.task == 'shelf_life' || inputs.task == 'superseded' || inputs.task == 'slides' || inputs.task == 'published'
         env:
           GH_TOKEN: ${{ github.token }}
           INPUT_TASK: ${{ inputs.task }}
@@ -203,6 +213,8 @@ jobs:
         run: python scripts/build_embeddings.py --metadata-only
 
       - name: 埋め込みindexをReleaseアセットとして公開
+        # publishedタスクはindexをダウンロードも更新もしないため対象外
+        if: inputs.task != 'published'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |

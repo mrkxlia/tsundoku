@@ -42,6 +42,7 @@ import yaml
 
 import llm_client
 import media_types
+import page_meta
 
 ROOT = Path(__file__).resolve().parent.parent
 INBOX = ROOT / "inbox"
@@ -365,12 +366,21 @@ def process_clip(
         "title": meta["title"],
         "url": clip.url,
         "created": clip.created,
-        "type": info.type,
-        "tags": list(dict.fromkeys(meta["tags"] + info.extra_tags)),
-        "summary": meta["summary"],
-        "read": False,
-        "shelf_life": meta.get("shelf_life", "medium"),
     }
+    # published_at は3状態: None=未取得/到達不能(キーを書かない → backfill_published.py が
+    # 後日再試行)、''=到達したが発行日なしと確定、'YYYY-MM-DD'=取得成功。
+    # 一時的なfetch失敗を''で書くと恒久封印になるため、Noneのときはキー自体を省略する。
+    if info.published_at is not None:
+        fm["published_at"] = page_meta.sanitize_published(info.published_at, clip.created)
+    fm.update(
+        {
+            "type": info.type,
+            "tags": list(dict.fromkeys(meta["tags"] + info.extra_tags)),
+            "summary": meta["summary"],
+            "read": False,
+            "shelf_life": meta.get("shelf_life", "medium"),
+        }
+    )
     date = clip.created[:10]
     filename = f"{date}-{slugify(meta['title'])}.md"
 
@@ -405,6 +415,15 @@ def process_clip(
         sources = [u for u in dict.fromkeys(sources) if normalize_url(u) != url_norm]
         if sources:
             fm["sources"] = sources
+        # 既存ノートがバックフィル済みの実発行日を持ち、新クリップ側の取得が失敗(キー無し)
+        # または不明('')だった場合は既存の値を引き継ぐ(一時的なfetch失敗で実日付を壊さない)
+        dup_published = dup.fm.get("published_at")
+        if (
+            isinstance(dup_published, str)
+            and page_meta.DATE_RE.match(dup_published)
+            and not fm.get("published_at")
+        ):
+            fm["published_at"] = dup_published
         archived = unique_path(ARCHIVE, dup.path.name)
         dup.path.rename(archived)
         new_path = unique_path(LIBRARY, filename)

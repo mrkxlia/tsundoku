@@ -31,37 +31,20 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
-import re
 import sys
-import urllib.error
-import urllib.request
 from datetime import datetime, timezone
-from html.parser import HTMLParser
 from pathlib import Path
 
 import llm_client
 import organize
+import page_meta
 
 MAX_ITEMS_PER_CLUSTER = 5
 MAX_HISTORY_ENTRIES = 500
-# 本文取得を伴うGETに変えたためHEADのみだった頃(5秒)より余裕を持たせる
-FETCH_CHECK_TIMEOUT = 10
-# 発行日メタデータは<head>付近にあるため全文は要らない。巨大ページで詰まらないよう上限を設ける
-MAX_HTML_BYTES = 400_000
 DEFAULT_MAX_CLUSTERS = 8
 
-# 発行日を持つmetaタグ名(優先順)。property/name/itemprop のいずれかで一致を見る。
-# modified_timeは「発行日」ではないが、他が無い場合の最後の手がかりとして末尾に置く。
-PUBLISHED_META_KEYS = (
-    "article:published_time",
-    "og:published_time",
-    "datepublished",
-    "pubdate",
-    "citation_publication_date",
-    "date",
-    "article:modified_time",
-)
-DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
+# 発行日抽出(HTMLパース・GET・採用metaキー)は page_meta.py に共用化した。
+# suggest用途は従来どおり modified_time も最後の手がかりに使う(ADVISORY、既定値)。
 
 
 def parse_args() -> argparse.Namespace:
@@ -109,114 +92,6 @@ def build_excluded_urls() -> set[str]:
     return excluded
 
 
-class _MetaDateParser(HTMLParser):
-    """<meta>/<time>/JSON-LD から発行日候補を集めるだけのパーサ。
-
-    HTMLParserは属性名を小文字化して渡すため、ZennのようにReact SSR由来で
-    `dateTime` とキャメルケースで出力されるサイトもそのまま `datetime` で拾える。
-    """
-
-    def __init__(self) -> None:
-        super().__init__(convert_charrefs=True)
-        self.meta: dict[str, str] = {}
-        self.times: list[str] = []
-        self.ld_blocks: list[str] = []
-        self._in_ld = False
-
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
-        a = {k.lower(): (v or "") for k, v in attrs}
-        if tag == "meta":
-            key = (a.get("property") or a.get("name") or a.get("itemprop") or "").lower()
-            if key in PUBLISHED_META_KEYS and a.get("content"):
-                self.meta.setdefault(key, a["content"])
-        elif tag == "time":
-            if a.get("datetime"):
-                self.times.append(a["datetime"])
-        elif tag == "script" and "ld+json" in a.get("type", "").lower():
-            self._in_ld = True
-
-    def handle_endtag(self, tag: str) -> None:
-        if tag == "script":
-            self._in_ld = False
-
-    def handle_data(self, data: str) -> None:
-        if self._in_ld:
-            self.ld_blocks.append(data)
-
-
-def _ld_published_date(blocks: list[str]) -> str | None:
-    """JSON-LDブロック群から最初に見つかった datePublished を返す(入れ子・配列も探索)。"""
-    for block in blocks:
-        try:
-            obj = json.loads(block, strict=False)
-        except (json.JSONDecodeError, ValueError):
-            continue
-        stack = [obj]
-        while stack:
-            node = stack.pop()
-            if isinstance(node, dict):
-                value = node.get("datePublished")
-                if isinstance(value, str) and value.strip():
-                    return value
-                stack.extend(node.values())
-            elif isinstance(node, list):
-                stack.extend(node)
-    return None
-
-
-def extract_published_date(html: str) -> str:
-    """HTMLから発行日を "YYYY-MM-DD" で返す。判定できなければ空文字。
-
-    JSON-LDのdatePublished > 発行日系metaタグ > 最初の<time datetime> の順に採用する
-    (構造化データを最優先し、曖昧な<time>は最後の手段にする)。
-    """
-    parser = _MetaDateParser()
-    try:
-        parser.feed(html)
-    except Exception:  # 壊れたHTMLでもそこまでに拾えた分で判定する
-        pass
-
-    candidate = (
-        _ld_published_date(parser.ld_blocks)
-        or next((parser.meta[k] for k in PUBLISHED_META_KEYS if k in parser.meta), None)
-        or (parser.times[0] if parser.times else None)
-    )
-    match = DATE_RE.search(candidate or "")
-    return match.group(0) if match else ""
-
-
-def fetch_url_meta(url: str) -> tuple[bool, str, str]:
-    """1回のGETで (到達可能か, リダイレクト解決後の最終URL, 発行日) を返す。
-
-    groundingが返すリダイレクトURLを実URLへ解決するのが主目的。urlopenは既定で
-    リダイレクトを追うため geturl() が最終URLになる。HTML以外(PDF等)は到達確認だけ行う。
-    """
-    req = urllib.request.Request(url, headers={"User-Agent": "tsundoku-suggest/1.0"})
-    try:
-        with urllib.request.urlopen(req, timeout=FETCH_CHECK_TIMEOUT) as resp:
-            if resp.status >= 400:
-                return False, url, ""
-            final_url = resp.geturl() or url
-            content_type = (resp.headers.get("Content-Type") or "").lower()
-            if "html" not in content_type:
-                return True, final_url, ""
-            raw = resp.read(MAX_HTML_BYTES)
-    except urllib.error.HTTPError as e:
-        # 4xx/5xx でも「ページは存在するがHEAD/GETを拒否」等がありうるため従来同様 <400 のみ到達扱い
-        return e.code < 400, url, ""
-    except (urllib.error.URLError, TimeoutError, OSError):
-        return False, url, ""
-
-    charset = "utf-8"
-    if "charset=" in content_type:
-        charset = content_type.split("charset=", 1)[1].split(";", 1)[0].strip() or "utf-8"
-    try:
-        html = raw.decode(charset, errors="replace")
-    except LookupError:
-        html = raw.decode("utf-8", errors="replace")
-    return True, final_url, extract_published_date(html)
-
-
 def heal_preserved_items(
     suggestions_by_cluster: dict[str, dict], history_urls: dict[str, dict], now: str
 ) -> int:
@@ -237,7 +112,7 @@ def heal_preserved_items(
             if "publishedAt" in item and "/grounding-api-redirect/" not in url:
                 continue
 
-            reachable, final_url, published_at = fetch_url_meta(url)
+            reachable, final_url, published_at = page_meta.fetch_url_meta(url)
             if not reachable:
                 # 到達できないだけなら消さない(一時的な障害の可能性)。次回また試す。
                 print(f"  -> 補修できず(到達不能): {url}", file=sys.stderr)
@@ -335,7 +210,7 @@ def main() -> int:
             if args.no_fetch_check:
                 final_url, published_at = item["url"], ""
             else:
-                reachable, final_url, published_at = fetch_url_meta(item["url"])
+                reachable, final_url, published_at = page_meta.fetch_url_meta(item["url"])
                 if not reachable:
                     print(f"  -> 除外(到達不能): {item['url']}", file=sys.stderr)
                     continue

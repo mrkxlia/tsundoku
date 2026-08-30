@@ -27,6 +27,7 @@ oEmbed等でタイトル・本文・要約用コンテンツを取得する。
 from __future__ import annotations
 
 import html
+import datetime
 import json
 import math
 import re
@@ -35,6 +36,8 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from dataclasses import dataclass, field
+
+import page_meta
 
 FETCH_TIMEOUT = 15
 PDF_TIMEOUT = 60
@@ -97,6 +100,12 @@ class MediaInfo:
     images: list[ImageAsset] = field(default_factory=list)  # assets/保存用(organize.py側で書き出す)
     slide_pdf: bytes | None = None  # スライドPDF原本(vault-assets/への保存用。pdfとは別枠)
     slide_images: list[ImageAsset] = field(default_factory=list)  # スライドのページ画像(同上)
+    # 元コンテンツの発行日(ページ実測)。3状態:
+    #   None = 未取得/到達不能(frontmatterにキーを書かない → backfill_published.py が後日再試行)
+    #   ""   = 到達したが発行日なしと確定(キーは書く。再取得しない)
+    #   "YYYY-MM-DD" = 取得成功(organize.py側で page_meta.sanitize_published を通してから書く)
+    # 一時的なfetch失敗を""で書くと恒久封印になるため、到達不能は必ずNoneのままにすること。
+    published_at: str | None = None
 
 
 # ---------------------------------------------------------------- 種別判定
@@ -251,6 +260,21 @@ def _download_slide_images(urls: list[str], limit: int) -> list[ImageAsset]:
         if asset:
             images.append(asset)
     return images
+
+
+def _pdf_published_date(pdf_bytes: bytes) -> str:
+    """PDFメタデータのcreationDateから発行日を得る(エクスポート日=発行日とみなす近似)。
+
+    重い依存(pymupdf)はこの関数の中でのみ遅延importする(_render_pdf_pagesと同じ方針)。
+    メタデータが無い・形式不正なら ''(確定不明)。
+    """
+    try:
+        import pymupdf
+
+        with pymupdf.open(stream=pdf_bytes, filetype="pdf") as doc:
+            return page_meta.parse_pdf_date(str(doc.metadata.get("creationDate") or ""))
+    except Exception:
+        return ""
 
 
 def _render_pdf_pages(pdf_bytes: bytes, source_url: str) -> list[ImageAsset]:
@@ -438,6 +462,13 @@ def _enrich_youtube(url: str, info: MediaInfo) -> None:
         info.llm_body = _compose(context, info.note_body)
         _add_tag(info, "needs-review")
         return
+    # 発行日は視聴ページの datePublished meta から。クラウドIPブロックで取れなければ
+    # published_at は None のまま(=キー省略、backfill_published.py が後日再試行)
+    watch_html = _fetch_text(f"https://www.youtube.com/watch?v={video_id}", "YouTube視聴ページ")
+    if watch_html:
+        info.published_at = page_meta.extract_published_date(
+            watch_html, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+        )
     transcript = fetch_youtube_transcript(video_id)
     if transcript:
         info.llm_body = _compose(context, info.note_body, "字幕:\n" + transcript)
@@ -466,6 +497,9 @@ def _enrich_video(url: str, info: MediaInfo) -> None:
             author = str(oe.get("author_name", "")).strip()
             if author:
                 context.append(f"作者: {author}")
+            # oEmbedに到達できた時点で発行日の判定は確定できる(upload_dateが無ければ不明)
+            m = page_meta.DATE_RE.search(str(oe.get("upload_date", "")))
+            info.published_at = m.group(0) if m else ""
     else:  # ニコニコ動画
         m = NICONICO_ID_RE.search(url)
         if m:
@@ -474,6 +508,10 @@ def _enrich_video(url: str, info: MediaInfo) -> None:
             if tm:
                 info.title_hint = html.unescape(tm.group(1)).strip()
                 context.append(f"動画タイトル: {info.title_hint}")
+            if xml:
+                dm = re.search(r"<first_retrieve>([^<]+)</first_retrieve>", xml)
+                pm = page_meta.DATE_RE.search(dm.group(1)) if dm else None
+                info.published_at = pm.group(0) if pm else ""
     # Gemini動画入力はYouTube専用のため、タイトル情報のみで needs-review
     info.llm_body = _compose(context, info.note_body)
     _add_tag(info, "needs-review")
@@ -481,10 +519,14 @@ def _enrich_video(url: str, info: MediaInfo) -> None:
 
 # ---------------------------------------------------------------- スライド
 
-def _find_speakerdeck_pdf_url(page_url: str) -> str | None:
-    page = _fetch_text(page_url, "SpeakerDeckページ")
+def _find_speakerdeck_pdf_url(page_html: str) -> str | None:
+    """取得済みのSpeakerDeckページHTMLからPDF直リンクを探す。
+
+    以前はこの関数がページを取得していたが、発行日抽出とfetchを共用するため
+    呼び出し側(_enrich_slides)が1回だけ取得してHTMLを渡す形に変えた。
+    """
     for pattern in SPEAKERDECK_PDF_RES:
-        m = pattern.search(page)
+        m = pattern.search(page_html)
         if m:
             return html.unescape(m.group(1))
     return None
@@ -516,7 +558,12 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
     info.llm_body = _compose(context, info.note_body)
 
     if host == "speakerdeck.com":
-        pdf_url = _find_speakerdeck_pdf_url(url)
+        page_html = _fetch_text(url, "SpeakerDeckページ")
+        if page_html:
+            info.published_at = page_meta.extract_published_date(
+                page_html, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+            )
+        pdf_url = _find_speakerdeck_pdf_url(page_html)
         info.pdf = _download_pdf(pdf_url) if pdf_url else None
         if info.pdf is None:
             _add_tag(info, "needs-review")
@@ -530,6 +577,10 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
         # ライブ取得はbot対策でほぼ常にブロックされる(実測確認済み)ため、まず試したうえで
         # 取れなければクリップ済み本文(取得元ブラウザが保存した画像URL)から拾う。
         page_html = _fetch_text(url, "SlideShareページ")
+        if page_html:
+            info.published_at = page_meta.extract_published_date(
+                page_html, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+            )
         image_urls = _find_slideshare_image_urls(page_html)
         if not image_urls:
             image_urls = _find_slideshare_image_urls(info.note_body)
@@ -538,6 +589,10 @@ def _enrich_slides(url: str, info: MediaInfo) -> None:
             _add_tag(info, "needs-review")
     else:  # docswell.com
         page_html = _fetch_text(url, "Docswellページ")
+        if page_html:
+            info.published_at = page_meta.extract_published_date(
+                page_html, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+            )
         download_url = _find_docswell_download_url(page_html) if page_html else None
         if download_url:
             info.slide_pdf = _download_pdf(download_url, method="POST", post_data=b"_token=")
@@ -576,6 +631,29 @@ def fetch_slide_assets(url: str, note_body: str) -> MediaInfo:
 def extract_tweet_id(url: str) -> str | None:
     m = re.search(r"/status/(\d+)", urllib.parse.urlsplit(url).path)
     return m.group(1) if m else None
+
+
+# Snowflake ID のエポック(2010-11-04T01:42:54.657Z)。上位ビットがミリ秒タイムスタンプ。
+_TWITTER_EPOCH_MS = 1288834974657
+_JST = datetime.timezone(datetime.timedelta(hours=9))
+
+
+def _tweet_published_date(tweet_id: str) -> str:
+    """ツイートIDのSnowflakeタイムスタンプから投稿日(JST)をオフライン算出する。
+
+    ネットワーク不要で「到達不能」の失敗モードがない。Snowflake導入(2010-11-04)以前の
+    連番IDは全てエポック付近(2010-11-04)に写像されてしまうため、算出結果がその日以前なら
+    ''(確定不明)を返す(本物の2010-11-04のツイートも失うが実害はない)。
+    """
+    try:
+        ms = int(tweet_id) >> 22
+    except ValueError:
+        return ""
+    if ms <= 0:
+        return ""
+    dt = datetime.datetime.fromtimestamp((ms + _TWITTER_EPOCH_MS) / 1000, tz=_JST)
+    date = dt.strftime("%Y-%m-%d")
+    return "" if date <= "2010-11-04" else date
 
 
 def _scan_pbs_urls(body: str) -> list[str]:
@@ -699,6 +777,9 @@ def x_text_from_html(raw: str) -> str:
 
 
 def _enrich_post(url: str, info: MediaInfo) -> None:
+    # 投稿の発行日=ツイート日時。IDからオフラインで確定できる(プロフィール等のURLは不明扱い)
+    tweet_id = extract_tweet_id(url)
+    info.published_at = _tweet_published_date(tweet_id) if tweet_id else ""
     if not info.note_body:
         oe = fetch_x_oembed(url)
         raw = (oe or {}).get("html", "")
@@ -734,7 +815,19 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
     if info.type == "post" and "pic.twitter.com" in body:
         # クリップ済み本文にメディアリンクが含まれる場合はネットワーク不要で判定できる
         _add_tag(info, "has-media")
-    if dry_run or info.type == "article":
+    if dry_run:
+        return info
+    if info.type == "article":
+        # 記事は本文を保存しない方針のまま、発行日メタだけを軽量GET(<head>付近)で実測する。
+        # fetch_url_meta は例外を投げない設計: 到達不能なら published_at は None のまま
+        # (キー省略 = backfill_published.py が後日再試行)、到達できたが日付なしなら ''。
+        # enrich() の catch-all try の外に置くのは、発行日の取得失敗で needs-review を
+        # 付けないため(日付が無いだけでノート自体は正常)。
+        reachable, _final_url, published = page_meta.fetch_url_meta(
+            url, user_agent=USER_AGENT, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+        )
+        if reachable:
+            info.published_at = published
         return info
 
     try:
@@ -748,6 +841,8 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
             info.pdf = _download_pdf(url)
             if info.pdf is None:
                 _add_tag(info, "needs-review")
+            else:
+                info.published_at = _pdf_published_date(info.pdf)
     except Exception as e:  # 取得系の想定外エラーでもワークフローは落とさない
         print(f"    [media] 種別処理でエラー(needs-reviewで続行): {e}", file=sys.stderr)
         info.pdf = None
@@ -757,3 +852,31 @@ def enrich(url: str, body: str, dry_run: bool = False) -> MediaInfo:
         info.slide_images = []
         _add_tag(info, "needs-review")
     return info
+
+
+def fetch_published_date(url: str, note_type: str) -> str | None:
+    """既存ノート1件の発行日を取得する(backfill_published.py用の公開エントリポイント)。
+
+    戻り値の3状態は MediaInfo.published_at と同じ:
+      "YYYY-MM-DD" = 取得成功(呼び出し側で page_meta.sanitize_published を通すこと)
+      ""           = 到達できたが発行日なし(確定不明。frontmatterに''を書き、再取得しない)
+      None         = 到達不能(frontmatterに書かない。次回のバックフィル実行で再試行)
+    例外は投げない。
+    """
+    if note_type == "post":
+        tweet_id = extract_tweet_id(url)
+        return _tweet_published_date(tweet_id) if tweet_id else ""
+    if note_type == "image":
+        # 画像バイナリ単体に発行日メタデータは無い。GETするだけ無駄なので確定不明で封止する
+        return ""
+    if note_type == "pdf":
+        pdf = _download_pdf(url)
+        if pdf is None:
+            return None
+        return _pdf_published_date(pdf)
+    # article / slides / video / deepdive以外の未知type: ページの発行日メタを実測する。
+    # YouTubeは視聴ページ、SpeakerDeck等はスライドページのHTMLがそのまま対象になる
+    reachable, _final_url, published = page_meta.fetch_url_meta(
+        url, user_agent=USER_AGENT, keys=page_meta.PUBLISHED_META_KEYS_STRICT
+    )
+    return published if reachable else None

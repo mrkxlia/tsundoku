@@ -10,7 +10,7 @@ organize.py の dump_note() は fm 辞書全体を毎回YAML再シリアライ�
 git の行単位マージが素直に効くようにするための最小限のヘルパー。
 
 対応するのは常に1行に収まる単純なスカラー値のフィールドのみ
-(read: bool, title/shelf_life/status/superseded_by: 文字列)。
+(read: bool, title/shelf_life/status/superseded_by/published_at: 文字列)。
 tags・sources・summary のような複数行/リスト値のフィールドは対象外 — それらは
 引き続き organize.py の dump_note() 経由(ノート新規作成時のみ)で扱う。
 """
