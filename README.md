@@ -60,6 +60,7 @@ flowchart LR
 |---|---|
 | `url` | 元URL(クリップ1行目から抽出) |
 | `created` | クリップの作成日時(ファイル名 → git履歴 → mtime の順で解決) |
+| `published_at` | 元コンテンツの発行日(ページ実測。JSON-LD/metaタグ/`<time>`の優先順で抽出、LLMには聞かない)。**3状態**: キー無し=未取得/到達不能(`backfill_published.py`が後日再試行)/ `''`=到達したが発行日なしと確定(再取得しない)/ `'YYYY-MM-DD'`(**必ずクォート付き** — 素の日付だとPyYAMLがdatetime化する)。`page_meta.sanitize_published`(収集日+2日以内・1995年以降)を通してから書く。tsundoku-site側は表示・期間フィルタ・ソートに使う(RAGの鮮度判定は従来どおり`created`) |
 | `type` | URL種別。`video` / `slides` / `post` / `image` / `pdf` / `article` のいずれか |
 | `tags` | LLM生成タグ(3〜5個)+ 必要に応じてシステムタグ(下記) |
 | `summary` | 3行程度の要約 |
