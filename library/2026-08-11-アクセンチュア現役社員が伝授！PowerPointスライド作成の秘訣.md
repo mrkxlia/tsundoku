@@ -16,6 +16,7 @@ title: アクセンチュア現役社員が伝授！「PowerPointスライド作
 read: false
 shelf_life: long
 last_verified: '2026-08-20T15:11:16+00:00'
+published_at: ''
 ---
 
 # アクセンチュア現役社員が伝授！「PowerPointスライド作成の秘訣」

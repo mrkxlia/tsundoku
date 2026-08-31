@@ -15,6 +15,7 @@ summary: '大規模なコードベースやレガシーシステムでClaude Cod
 title: 'How Claude Code works in large codebases: Best practices and where to start'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # How Claude Code works in large codebases: Best practices and where to start

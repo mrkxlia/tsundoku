@@ -15,6 +15,7 @@ summary: 'Claude Codeの活用において多くの人が陥りがちな7つの�
 title: 正直に言う。お前のClaude Codeの使い方は間違っている
 read: false
 shelf_life: medium
+published_at: '2026-06-25'
 ---
 
 # 正直に言う。お前のClaude Codeの使い方は間違っている

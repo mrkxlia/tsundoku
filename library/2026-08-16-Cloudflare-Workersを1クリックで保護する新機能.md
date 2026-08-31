@@ -15,6 +15,7 @@ summary: 'Cloudflare WorkersにCloudflare Accessを直接適用できる機能�
   コード内でのユーザー識別情報の取得やローカル開発でのシミュレーションにも対応しています。'
 read: false
 shelf_life: medium
+published_at: '2026-08-14'
 ---
 
 # Secure all your internal vibe-coded applications — in one click

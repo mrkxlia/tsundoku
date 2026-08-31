@@ -16,6 +16,7 @@ summary: 'Claude Codeでの同じ指摘の繰り返しを防ぐため、指摘�
   読ませる・やらせない・終わらせないの3段階hookでAIの行動を自動的に制御している。'
 read: false
 shelf_life: medium
+published_at: '2026-08-10'
 ---
 
 # Claude Code に「同じ指摘を二度させない」仕組みを hook で作った

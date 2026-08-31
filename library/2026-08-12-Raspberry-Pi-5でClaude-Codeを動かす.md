@@ -16,6 +16,7 @@ summary: 'Raspberry Pi 5とNixOS環境を用いて、Claude Codeを24時間常�
 title: Raspberry Pi 5でClaude Codeを動かす
 read: false
 shelf_life: medium
+published_at: '2026-08-08'
 ---
 
 # Raspberry Pi 5でClaude Codeを動かす

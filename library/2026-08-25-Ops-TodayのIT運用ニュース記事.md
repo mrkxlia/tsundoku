@@ -14,6 +14,7 @@ summary: 'ops-today.comに掲載されたトピック記事です。
   詳細は元のURLをご確認ください。'
 read: false
 shelf_life: short
+published_at: '2024-09-10'
 ---
 
 

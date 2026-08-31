@@ -14,6 +14,7 @@ summary: 'note上に投稿された個別記事ページです。
   必要に応じて元リンク先を確認してください。'
 read: false
 shelf_life: medium
+published_at: '2026-04-20'
 ---
 
 

@@ -19,6 +19,7 @@ read: false
 shelf_life: long
 recheck_reason: 記事中で「先日終了したKaggleのコンペティション」と記載されているCommonLit-Readability Prizeは、2021年8月2日に終了しており、現在（2026年8月）から見ると「先日終了した」という表現は古くなっているためです。
 last_verified: '2026-08-20T15:17:57+00:00'
+published_at: ''
 ---
 
 # 株式会社AI Shift | サイバーエージェントグループ

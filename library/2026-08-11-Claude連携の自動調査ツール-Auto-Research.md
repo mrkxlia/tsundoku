@@ -16,6 +16,7 @@ summary: 'GitHub ActionsとClaude Codeを組み合わせた自動リサーチツ
 title: 'INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # INDXDev/autoresearch: Auto Research — automated multi-domain research pipeline (GitHub Actions + Claude Code)

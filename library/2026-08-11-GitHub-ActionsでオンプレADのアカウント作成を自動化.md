@@ -15,6 +15,7 @@ summary: 'kintoneから入社データを取得し、GitHub Actionsとself-hoste
 title: 閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化
 read: false
 shelf_life: medium
+published_at: '2026-07-17'
 ---
 
 # 閉域のオンプレADをGitHub Actionsで操作する ── self-hosted runnerによるアカウント作成の自動化

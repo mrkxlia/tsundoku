@@ -15,6 +15,7 @@ summary: 'LINEヤフーにおけるインフラ運用の効率化を目指した
 title: LINEヤフーにおけるAIOpsの現在地
 read: false
 shelf_life: medium
+published_at: '2026-03-19'
 ---
 
 # LINEヤフーにおけるAIOpsの現在地

@@ -16,6 +16,7 @@ summary: 'Microsoftが開発したオープンソースの音声AIフレーム�
 title: 'microsoft/VibeVoice: Open-Source Frontier Voice AI'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # microsoft/VibeVoice: Open-Source Frontier Voice AI

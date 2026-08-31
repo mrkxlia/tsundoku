@@ -15,6 +15,7 @@ summary: 'GenRecはユーザーの行動履歴を文章化してLLMに入力す�
 title: GenRecの技術的詳細
 read: false
 shelf_life: medium
+published_at: '2026-08-01'
 ---
 
 # GenRecの技術的詳細

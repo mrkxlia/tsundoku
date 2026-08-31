@@ -16,6 +16,7 @@ summary: 'AWS LambdaからBedrock AgentCoreを実行するIAMポリシー設定�
   AWS CDKを用いた具体的なポリシー付与コード例も紹介している。'
 read: false
 shelf_life: medium
+published_at: '2025-09-14'
 ---
 
 # AWS Lambda から AgentCore を実行する際の IAM ポリシー設定と CDK での設定方法

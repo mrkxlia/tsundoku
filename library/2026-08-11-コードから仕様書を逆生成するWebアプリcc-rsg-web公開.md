@@ -15,6 +15,7 @@ summary: 'コードベースからAIと対話しながら仕様書のたたき�
 title: コードから仕様書を逆生成するWebアプリ「cc-rsg-web」を公開しました
 read: false
 shelf_life: medium
+published_at: '2026-06-23'
 ---
 
 # コードから仕様書を逆生成するWebアプリ「cc-rsg-web」を公開しました

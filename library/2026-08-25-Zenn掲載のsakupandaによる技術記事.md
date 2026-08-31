@@ -14,6 +14,7 @@ summary: 'Zennに投稿されたsakupanda氏による技術関連記事です。
   Web開発やプログラミングに関する知見と推測されます。'
 read: false
 shelf_life: medium
+published_at: '2025-08-10'
 ---
 
 

@@ -14,6 +14,7 @@ summary: 'noteプラットフォームに投稿されたsiraga氏のWEB記事で
   内容を確認するには元のURLにアクセスする必要があります。'
 read: false
 shelf_life: medium
+published_at: '2025-07-01'
 ---
 
 

@@ -16,6 +16,7 @@ summary: 'ZOZOはAWSでの最小権限原則を徹底するため、JITアクセ
 title: AWSの強い権限は使い捨てに ── ZOZOがJITアクセスを全社導入した設計と運用
 read: false
 shelf_life: medium
+published_at: '2026-07-10'
 ---
 
 # AWSの強い権限は使い捨てに ── ZOZOがJITアクセスを全社導入した設計と運用

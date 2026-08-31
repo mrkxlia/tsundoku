@@ -15,6 +15,7 @@ summary: 'TISが提供するデジタルインフラサービス「DIOS」の案
   デジタルトランスフォーメーションを支える基盤構築サービスについての情報。'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 

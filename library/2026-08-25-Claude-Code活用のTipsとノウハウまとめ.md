@@ -15,6 +15,7 @@ summary: 'Zennで公開されたClaude Codeの活用に関するTips記事です
   CLIでのAI支援機能を使いこなし開発効率を高めるノウハウが学べます。'
 read: false
 shelf_life: medium
+published_at: '2026-04-14'
 ---
 
 

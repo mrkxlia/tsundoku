@@ -16,6 +16,7 @@ summary: 'DynamoDBでリアルタイムベクトル検索機能が一般提供�
   既存のテーブルにも後からインデックスを追加できるため、手軽にRAG機能を統合できます。'
 read: false
 shelf_life: medium
+published_at: '2026-08-11'
 ---
 
 # DynamoDBのベクトル検索で簡単にRAGができるようになったぞ！

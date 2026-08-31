@@ -16,6 +16,7 @@ summary: 'Microsoftが開発したSkillOptは、LLMのモデル重みを変更�
 title: 'microsoft/SkillOpt: SkillOpt is a text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates, and deployable best_skill.md artifacts.'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # microsoft/SkillOpt: SkillOpt is a text-space optimizer that trains reusable natural-language skills for frozen LLM agents through trajectory-driven edits, validation-gated updates, and deployable best_skill.md artifacts.

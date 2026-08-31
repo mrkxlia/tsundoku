@@ -15,6 +15,7 @@ summary: '仕様書やスペック文書を人間が読みやすいHTMLレポー
 title: スペック文書を「読みたくなるHTML」に変換するClaude Codeスキルを作った話（スキル本文付き）
 read: false
 shelf_life: medium
+published_at: '2026-05-28'
 ---
 
 # スペック文書を「読みたくなるHTML」に変換するClaude Codeスキルを作った話（スキル本文付き）

@@ -15,6 +15,7 @@ summary: 'AnthropicのCLIツール「Claude Code」の活用事例について�
   AIを活用した効率的なソフトウェア開発の具体的なユースケースを掲載。'
 read: false
 shelf_life: medium
+published_at: '2026-03-26'
 ---
 
 

@@ -16,6 +16,7 @@ summary: 'AWS Lambdaにおけるサーバーレス環境のセキュリティ保
   クラウドネイティブ環境での脅威に対処し、安全な関数運用を実現するためのガイドです。'
 read: false
 shelf_life: long
+published_at: '2025-10-22'
 ---
 
 

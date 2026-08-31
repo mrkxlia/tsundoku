@@ -15,6 +15,7 @@ summary: '株式会社カンリーが全エンジニア向けに実施したClau
 title: カンリー社内Claude Code勉強会の資料を公開します
 read: false
 shelf_life: medium
+published_at: '2026-02-12'
 ---
 
 # カンリー社内Claude Code勉強会の資料を公開します
