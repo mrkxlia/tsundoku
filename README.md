@@ -251,11 +251,10 @@ API呼び出しは発生しません。既存ノートへのバックフィル�
   AI StudioでRPD実測値を確認したら、この式と突き合わせて安全余裕を判断する
 - **手動バッチの推奨実行窓(RPD対策)**: GeminiのRPD(日次枠)は**太平洋時間の深夜=
   日本時間16〜17時**にリセットされる。`reverify`や`Backfill`など消費の大きい手動実行は
-  **朝4時〜16時JSTの間**に行うこと(当日3:00の日次organizeは完了済みで、消費した枠は
-  16〜17時に全リセットされ翌朝のorganizeへ持ち越さない)。ただし**火曜は週次suggest
-  (5:00 JST)の完了後、6時以降に開始**する。長時間バッチは15時までに開始し16時の
-  リセット境界をまたがない。逆に16時JST以降〜翌3時JSTの大量実行は、翌朝のorganizeと
-  同じPT日の枠を食い合うため避ける
+  **朝6時〜16時JSTの間**に行うこと(当日3:00の日次organize・5:00の日次suggestは完了済みで、
+  消費した枠は16〜17時に全リセットされ翌朝のorganizeへ持ち越さない)。長時間バッチは
+  15時までに開始し16時のリセット境界をまたがない。逆に16時JST以降〜翌3時JSTの大量実行は、
+  翌朝のorganize・suggestと同じPT日の枠を食い合うため避ける
 - **月次チェックリスト(または429急増時)**: [AI Studioのレート制限ページ](https://aistudio.google.com/rate-limit)で
   各モデルのRPM/RPD/TPMと「検索によるグラウンディング」枠を確認し、変化があれば
   Variables(`LLM_MODEL_CHAIN`/`LLM_LIGHT_MODEL_CHAIN`/`GROUNDING_MODEL_CHAIN`/
@@ -294,5 +293,5 @@ DRY_RUN=1 python scripts/organize.py
   reason付きでfrontmatterに残るため誤判定は後から発見できます)
 - **クラスタラベルが「(先頭ノートのタイトル15字)」のまま**: ラベル生成の全モデルが
   失敗(RPD枯渇等)したrunの暫定ラベルです。`labelPending`フラグ付きで保存されるため、
-  次回のsuggest実行(週次、または枠が回復した翌日以降に **Actions → Suggest similar
+  次回のsuggest実行(毎日5:00 JST。急ぐ場合は枠の回復後に **Actions → Suggest similar
   sites → Run workflow** を手動実行)で自動的に再生成されます(`recluster`は不要)

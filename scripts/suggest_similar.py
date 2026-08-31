@@ -40,8 +40,13 @@ import organize
 import page_meta
 
 MAX_ITEMS_PER_CLUSTER = 5
-MAX_HISTORY_ENTRIES = 500
-DEFAULT_MAX_CLUSTERS = 8
+# 日次実行では最大 DEFAULT_MAX_CLUSTERS×MAX_ITEMS_PER_CLUSTER=15件/日のペースでhistoryが
+# 増えるため、500のままだとLRUが1〜2ヶ月で一巡し同じURLが再提案されやすくなる。
+# 2000なら最速ペースでも4ヶ月超は保持できる
+MAX_HISTORY_ENTRIES = 2000
+# 週次(8クラスタ/週)から日次(3クラスタ/日)へ変更。1日の新提案を最大15件に抑えつつ
+# 興味ありトピック全体を数日で一巡する。suggest.yml の max_clusters 既定値と揃えること
+DEFAULT_MAX_CLUSTERS = 3
 
 # 発行日抽出(HTMLパース・GET・採用metaキー)は page_meta.py に共用化した。
 # suggest用途は従来どおり modified_time も最後の手がかりに使う(ADVISORY、既定値)。
