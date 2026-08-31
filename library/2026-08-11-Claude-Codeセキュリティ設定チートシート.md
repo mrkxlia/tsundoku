@@ -16,6 +16,7 @@ summary: 'Claude Codeを安全に運用するための日本語のセキュリ�
 title: 'okdt/claude-code-hardening-cheatsheet: A minimal, opinionated security hardening template for Claude Code settings.json'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # okdt/claude-code-hardening-cheatsheet: A minimal, opinionated security hardening template for Claude Code settings.json

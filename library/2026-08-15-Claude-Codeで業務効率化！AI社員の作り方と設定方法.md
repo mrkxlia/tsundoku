@@ -16,6 +16,7 @@ summary: 'Claude Codeにルールを持たせる「AI社員」の設計・活用
   毎回プロンプトを書く手間を省き、業務指示や修正時間を大幅に削減できる。'
 read: false
 shelf_life: medium
+published_at: '2026-08-12'
 ---
 
 # AI社員を活用すれば、日々の業務が格段に楽できる！保存推奨！

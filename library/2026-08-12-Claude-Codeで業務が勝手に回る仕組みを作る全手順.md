@@ -16,6 +16,7 @@ summary: 'AI活用の最新手法であるループエンジニアリングの�
   安全に試せるClaude Codeの「/loop」を使った実践手順を紹介している。'
 read: false
 shelf_life: short
+published_at: '2026-08-11'
 ---
 
 # Claude Codeで業務が「勝手に回る仕組み」を作る全手順

@@ -16,6 +16,7 @@ summary: 'Anthropic公式ガイドを参考にAIエージェントの構成を�
 title: ClaudeのSKILL.md最適化とトークン節約術
 read: false
 shelf_life: medium
+published_at: '2026-03-09'
 ---
 
 # Post by @shocolt on X

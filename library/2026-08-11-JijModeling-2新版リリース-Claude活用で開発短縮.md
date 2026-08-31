@@ -16,6 +16,7 @@ summary: '数理最適化モデリングツール「JijModeling 2」の新版が
 title: JijModeling 2新版リリース Claude活用で開発短縮
 read: false
 shelf_life: medium
+published_at: '2026-08-06'
 ---
 
 数理最適化モデリングツール「JijModeling 2」の新バージョンをリリースしました 🚀

@@ -17,6 +17,7 @@ title: NW機器のIF用Descriptionチートシート
 read: false
 shelf_life: long
 last_verified: '2026-08-18T14:31:13+00:00'
+published_at: '2024-10-01'
 ---
 
 # Post by @athlonz on X

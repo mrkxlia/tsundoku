@@ -16,6 +16,7 @@ summary: 'Anthropic公式がClaude Codeで重い処理を行う際のベスト�
 title: Anthropic公式のClaude Code活用ベストプラクティス
 read: false
 shelf_life: medium
+published_at: '2026-05-19'
 ---
 
 # Post by @ClaudeCode_love on X

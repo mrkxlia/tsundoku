@@ -15,6 +15,7 @@ summary: 'Claude Codeを活用した開発のエージェント的エンジニ�
 title: 'shanraisshan/claude-code-best-practice: from vibe coding to agentic engineering - practice makes claude perfect'
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # shanraisshan/claude-code-best-practice: from vibe coding to agentic engineering - practice makes claude perfect

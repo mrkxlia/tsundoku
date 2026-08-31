@@ -15,6 +15,7 @@ summary: 'AIによる図解作成でよくある画一的な見た目を改善�
 title: AIで多様な図解を作成できるdiagram design
 read: false
 shelf_life: medium
+published_at: '2026-08-09'
 ---
 
 # Post by @trendtech33566 on X

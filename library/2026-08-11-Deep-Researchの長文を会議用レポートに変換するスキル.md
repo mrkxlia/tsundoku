@@ -15,6 +15,7 @@ summary: 'AIのDeep Researchが出力する読みにくい長文を、会議で�
 title: Deep Researchの長文を会議用レポートに変換するスキル
 read: false
 shelf_life: medium
+published_at: '2026-08-10'
 ---
 
 # Post by @kotetsu_0321 on X

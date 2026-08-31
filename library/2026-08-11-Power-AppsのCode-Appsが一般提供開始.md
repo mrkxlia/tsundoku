@@ -16,6 +16,7 @@ summary: 'Power Appsの新機能「Code Apps」が一般提供を開始しまし
 title: Power AppsのCode Appsが一般提供開始
 read: false
 shelf_life: medium
+published_at: '2026-02-10'
 ---
 
 # Post by @geekfujiwara on X

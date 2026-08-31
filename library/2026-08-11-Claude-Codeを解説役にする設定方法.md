@@ -16,6 +16,7 @@ summary: 'CLAUDEmdに1行追加することでClaude Codeにプロジェクト�
 title: Claude Codeを解説役にする設定方法
 read: false
 shelf_life: medium
+published_at: '2026-01-25'
 ---
 
 # Post by @AI_masaou on X

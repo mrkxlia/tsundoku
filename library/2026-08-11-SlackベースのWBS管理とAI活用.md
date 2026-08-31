@@ -15,6 +15,7 @@ summary: '誰も更新しなくなってしまうWBSの課題を解決するた�
 title: SlackベースのWBS管理とAI活用
 read: false
 shelf_life: medium
+published_at: '2026-06-21'
 ---
 
 # Post by @suh_sunaneko on X

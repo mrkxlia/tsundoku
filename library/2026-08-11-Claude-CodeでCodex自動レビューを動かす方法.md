@@ -16,6 +16,7 @@ summary: 'Claude CodeがPlanを提示する前に自動でCodexにレビュー�
 title: Claude CodeでCodex自動レビューを動かす方法
 read: false
 shelf_life: medium
+published_at: '2026-02-21'
 ---
 
 # Post by @MLBear2 on X

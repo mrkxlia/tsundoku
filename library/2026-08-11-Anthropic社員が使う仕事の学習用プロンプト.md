@@ -16,6 +16,7 @@ title: Anthropic社員が使う仕事の学習用プロンプト
 read: false
 shelf_life: long
 last_verified: '2026-08-20T15:18:46+00:00'
+published_at: '2026-06-02'
 ---
 
 # Post by @oikon48 on X

@@ -15,6 +15,7 @@ summary: 'Claude Codeのcompact機能による会話履歴の要約は非可逆�
 title: claude codeのcompactの問題点と対策
 read: false
 shelf_life: medium
+published_at: '2026-07-04'
 ---
 
 # claude codeのcompactの問題点と対策

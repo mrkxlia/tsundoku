@@ -15,6 +15,7 @@ summary: 'draw.io公式のClaude Code向けSkillを導入し、AWSアーキテ�
 title: Claude Code × draw.io公式Skillで、AWSアーキテクチャ図の生成を自動化してみた
 read: false
 shelf_life: medium
+published_at: ''
 ---
 
 # Claude Code × draw.io公式Skillで、AWSアーキテクチャ図の生成を自動化してみた

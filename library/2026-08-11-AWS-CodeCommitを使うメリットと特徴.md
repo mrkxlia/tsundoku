@@ -15,6 +15,7 @@ summary: 'CodeCommitはAWSのIAMやKMSと統合されたフルマネージドGit
 title: AWS Code シリーズで CodeCommit を使うメリット
 read: false
 shelf_life: medium
+published_at: '2026-07-09'
 ---
 
 # AWS Code シリーズで CodeCommit を使うメリット

@@ -15,6 +15,7 @@ summary: 'NDLOCR-LiteをWebブラウザに移植した「NDLOCR-Lite Web」が�
 title: NDLOCR Lite Webの公開
 read: false
 shelf_life: medium
+published_at: '2026-02-26'
 ---
 
 # Post by @yuta1984 on X

@@ -15,6 +15,7 @@ summary: 'Warpやtmuxの代替として使えるWorktreeベースのADE「orca A
 title: AI開発環境 orca ADEの紹介
 read: false
 shelf_life: medium
+published_at: '2026-06-25'
 ---
 
 # Post by @_mantaroh_ on X

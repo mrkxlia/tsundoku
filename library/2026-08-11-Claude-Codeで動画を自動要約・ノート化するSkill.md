@@ -15,6 +15,7 @@ summary: 'Claude Codeの「/watch-video」で動画処理を自動化できま�
 title: Claude Codeで動画を自動要約・ノート化するSkill
 read: false
 shelf_life: medium
+published_at: '2026-08-06'
 ---
 
 【発見】  

@@ -16,6 +16,7 @@ summary: 'Claude CodeのHTML出力をコンサル風の美しいデザインに�
 title: Claude CodeのHTML出力をコンサル資料級にするskills
 read: false
 shelf_life: medium
+published_at: '2026-08-09'
 ---
 
 # Post by @kotetsu_0321 on X

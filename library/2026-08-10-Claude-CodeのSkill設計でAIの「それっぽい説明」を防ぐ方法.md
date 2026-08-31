@@ -17,6 +17,7 @@ sources:
 title: '[Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話'
 read: false
 shelf_life: medium
+published_at: '2026-08-07'
 ---
 
 # [Claude Code] AIの説明が「それっぽいだけ」で終わる問題を、Skill設計で解決した話

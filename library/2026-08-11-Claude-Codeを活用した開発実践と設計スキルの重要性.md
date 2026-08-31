@@ -15,6 +15,7 @@ summary: 'Claude Codeは実装を自動化しエンジニアの役割を設計�
 title: Claude Code どこまでも/ Claude Code Everywhere
 read: false
 shelf_life: medium
+published_at: '2025-06-18'
 ---
 
 # Claude Code どこまでも/ Claude Code Everywhere

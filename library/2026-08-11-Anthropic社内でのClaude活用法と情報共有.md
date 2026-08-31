@@ -16,6 +16,7 @@ summary: 'Anthropicの社員がClaudeに関する最新情報をどのように�
 title: Anthropic社内でのClaude活用法と情報共有
 read: false
 shelf_life: medium
+published_at: '2026-06-02'
 ---
 
 # Post by @trq212 on X

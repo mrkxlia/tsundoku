@@ -17,6 +17,7 @@ summary: 'Claude Codeを使った前端開発でAI特有のテンプレート感
 title: Claude Code用前端デザインツールキット
 read: false
 shelf_life: medium
+published_at: '2026-05-25'
 ---
 
 # Post by @wsl8297 on X

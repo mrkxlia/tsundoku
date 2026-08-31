@@ -15,6 +15,7 @@ summary: '話題性や権威に惑わされず技術やAIツール等を敵対�
   主張の検証や反証、代替手段の検討から最終評価のフォーマットまでを規定しています。'
 read: false
 shelf_life: medium
+published_at: '2026-07-04'
 ---
 
 # Skill: Hype Killer (驚き屋殺し)

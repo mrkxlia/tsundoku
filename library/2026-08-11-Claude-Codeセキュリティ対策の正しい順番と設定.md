@@ -16,6 +16,7 @@ summary: 'Claude Codeのセキュリティはサンドボックスや権限ル�
   記事では公式プラグインの検証結果に基づき、最優先で設定すべき具体的なコードや手順を解説している。'
 read: false
 shelf_life: medium
+published_at: '2026-07-28'
 ---
 
 # Claude Codeのセキュリティ、やる順番を全部書く（Claude公式推奨法）

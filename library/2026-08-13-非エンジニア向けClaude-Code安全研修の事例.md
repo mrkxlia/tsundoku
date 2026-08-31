@@ -16,6 +16,7 @@ summary: 'サイバーエージェントグループのWINTICKETが実施した�
   GitHubでの共有やサプライチェーン攻撃対策などを組み込んだカリキュラム設計の工夫を紹介している。'
 read: false
 shelf_life: medium
+published_at: '2026-08-12'
 ---
 
 # サイバーエージェントはどうやって社内でClaude Codeを安全に使わせたのか

@@ -15,6 +15,7 @@ summary: 'voluntas氏によるX（旧Twitter）でのポスト。
   最新の技術情報や外部リンクの共有と推測される。'
 read: false
 shelf_life: short
+published_at: '2026-08-14'
 ---
 
 # Post by @voluntas on X

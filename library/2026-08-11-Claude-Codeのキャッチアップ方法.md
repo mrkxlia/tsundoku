@@ -15,6 +15,7 @@ summary: 'Oikon氏によるZennfes Spring 2026での登壇スライド資料で�
 title: Claude Codeをどのように キャッチアップしているか
 read: false
 shelf_life: medium
+published_at: '2026-06-20'
 ---
 
 # Claude Codeをどのように キャッチアップしているか

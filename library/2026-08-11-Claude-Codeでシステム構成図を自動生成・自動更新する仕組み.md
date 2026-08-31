@@ -16,6 +16,7 @@ summary: 'Claude Codeを活用してシステム構成図を自動生成・自�
 title: システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み
 read: false
 shelf_life: medium
+published_at: '2026-07-06'
 ---
 
 # システム構成図、もう手で描くのやめました ── Claude Codeで構成図を自動生成・自動更新する仕組み

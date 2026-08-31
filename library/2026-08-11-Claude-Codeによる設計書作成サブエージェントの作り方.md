@@ -15,6 +15,7 @@ summary: 'Claude Codeを用いた設計書作成におけるサブエージェ�
 title: Claude Codeで設計書作成に使えるサブエージェントの作り方｜要件定義から詳細設計まで
 read: false
 shelf_life: medium
+published_at: '2026-06-20'
 ---
 
 # Claude Codeで設計書作成に使えるサブエージェントの作り方｜要件定義から詳細設計まで
