@@ -2,15 +2,18 @@ name: Suggest similar sites
 
 # 溜め込んだノートを埋め込みクラスタリングでトピック分けし(clusters.json)、ユーザーが
 # サイト上で「興味あり」に登録したトピックについて類似サイトをGoogle Search groundingで
-# 調査する(suggestions.json / history.json)週次ジョブ。
+# 調査する(suggestions.json / history.json)日次ジョブ。
 #
 # クラスタリング自体は毎回再実行するが、前回centroidを初期値にする+新旧centroidの
 # 類似度でIDを引き継ぐため、通常は構造が大きく動かない(scripts/cluster_notes.py参照)。
 
 on:
   schedule:
-    # 毎週月曜 20:00 UTC = 火曜 5:00 JST(organize.yml の 3:00 JST の後方)
-    - cron: '0 20 * * 1'
+    # 毎日 20:00 UTC = 翌 5:00 JST(organize.yml の 3:00 JST の後方)。
+    # 日次化に伴い1回あたりの調査クラスタ数は3に抑える(下記 max_clusters と
+    # scripts/suggest_similar.py の DEFAULT_MAX_CLUSTERS)。grounding枠は
+    # 日1,500件(2026-08-31実測)に対し日3呼び出し程度で余裕が大きい
+    - cron: '0 20 * * *'
   workflow_dispatch:
     inputs:
       recluster:
@@ -24,7 +27,7 @@ on:
       max_clusters:
         description: '今回調査する興味ありクラスタ数の上限'
         type: string
-        default: '8'
+        default: '3'
 
 permissions:
   contents: read
