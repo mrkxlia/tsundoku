@@ -6,13 +6,19 @@
 1. --data-dir から clusters.json / interests.json / feedback.json / history.json を読む
    (このスクリプトはtsundoku-siteリポジトリのsparse-checkout先を指す想定)
 2. 除外集合を構築: library全ノートのurl+sources(正規化済み) ∪ Inbox未処理クリップのURL ∪
-   feedbackに記録済みの全URL(採用/却下問わず) ∪ historyに記録済みの全URL
+   feedbackに記録済みのURL(却下取り消し unrejected を除く) ∪ historyに記録済みのURL。
+   ただし「unrejected かつ 取り消し後まだ再提案していない(historyのfirstSuggestedAtが
+   取り消しtsより古い)」URLはhistory除外をワンショットでバイパスし、再提案可能に戻す
 3. 興味ありクラスタを、historyの最終調査時刻が古い順(未調査を最優先)に --max-clusters 件選ぶ
-4. 各クラスタについて、代表ノートのタイトルを種に llm_client.suggest_similar_sites() を1回呼ぶ
+4. 各クラスタについて、代表ノートのタイトルを種に llm_client.suggest_similar_sites() を1回呼ぶ。
+   却下済み(rejected)titleを負例としてプロンプトに注入し、似た傾向の候補の優先度を下げる
+   (完全排除はしない。対象クラスタの却下を優先し、不足分は他クラスタの直近却下で補充)
 5. 返却候補(最大 llm_client.MAX_SUGGEST_CANDIDATES 件)を全件、1回のGETで
    「実在確認 + リダイレクト解決 + 発行日抽出」し、解決後の最終URLを normalize_url() で
    正規化して除外集合と突合、発行日の新しい順(不明は末尾)にクラスタあたり最大5件採用
-   (--no-fetch-check指定時はGETを行わず候補URLをそのまま使う)
+   (--no-fetch-check指定時はGETを行わず候補URLをそのまま使う)。却下が多いドメイン
+   (却下数>=DOMAIN_PENALTY_THRESHOLD かつ 却下数>採用数)の候補は採用順を後ろへ回し、
+   クラスタあたり最大 PENALIZED_ADOPT_MAX 件だけ採用する(探索の幅を保つ「突然変異」枠)
 6. suggestions.json(調査したクラスタのみ更新。grounding失敗クラスタは前回分を温存)と
    history.json を --data-dir へ書き出す(Vaultへは一切書き込まない)
 
@@ -34,6 +40,7 @@ import json
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
+from urllib.parse import urlsplit
 
 import llm_client
 import organize
@@ -47,6 +54,13 @@ MAX_HISTORY_ENTRIES = 2000
 # 週次(8クラスタ/週)から日次(3クラスタ/日)へ変更。1日の新提案を最大15件に抑えつつ
 # 興味ありトピック全体を数日で一巡する。suggest.yml の max_clusters 既定値と揃えること
 DEFAULT_MAX_CLUSTERS = 3
+# ドメイン減点: 同一ホストの却下(rejected)がこの回数以上、かつ却下数>採用数のホストは
+# 候補の採用順を非減点候補の後ろへ回す(完全排除はしない)。「却下数>採用数」条件は、
+# よく読む媒体(zenn等)を数回の却下で恒久減点しないための保険。値を大きくすれば実質無効化
+# できる(切り戻しレバー)。負例注入側のレバーは llm_client.NEGATIVE_EXAMPLES_MAX。
+DOMAIN_PENALTY_THRESHOLD = 2
+# 減点ドメイン候補のクラスタあたり採用上限(探索の幅を保つための「突然変異」枠)
+PENALIZED_ADOPT_MAX = 1
 
 # 発行日抽出(HTMLパース・GET・採用metaキー)は page_meta.py に共用化した。
 # suggest用途は従来どおり modified_time も最後の手がかりに使う(ADVISORY、既定値)。
@@ -95,6 +109,94 @@ def build_excluded_urls() -> set[str]:
         if clip:
             excluded.add(organize.normalize_url(clip.url))
     return excluded
+
+
+def parse_ts(value) -> datetime | None:
+    """history(isoformatの+00:00形式)とfeedback(JS toISOString()の.sssZ形式)のISO時刻を
+    比較可能な形でパースする。両者は文字列比較では順序が壊れる('+' < '.')ため必須。
+    naive(tz情報なし)はaware値との比較がTypeErrorになるためNone扱い(=安全側)。"""
+    if not isinstance(value, str):
+        return None
+    try:
+        dt = datetime.fromisoformat(value)
+    except ValueError:
+        return None
+    return dt if dt.tzinfo is not None else None
+
+
+def sanitize_negative_title(title) -> str:
+    """負例titleをプロンプトへ入れる前のサニタイズ。titleはsite側でsuggestions.json照合済み
+    だが元はWebページ由来の文字列なので、制御文字(改行含む)除去+長さ上限で注入面を絞る。"""
+    if not isinstance(title, str):
+        return ""
+    cleaned = "".join(ch if ch.isprintable() else " " for ch in title)
+    return " ".join(cleaned.split())[: llm_client.NEGATIVE_TITLE_MAX_CHARS].strip()
+
+
+def collect_negative_titles(feedback_items: dict, cluster_id: str) -> list[str]:
+    """却下済み(action=="rejected")のtitleを負例として最大 NEGATIVE_EXAMPLES_MAX 件集める。
+
+    対象クラスタの却下を新しい順に優先し、不足分は他クラスタの直近却下で補充する
+    (マーカー付き)。補充するのは、類似コンテンツがクラスタを跨いで現れることと、
+    re-clusterでclusterIdが変わると旧却下のクラスタ紐付けが外れて負例が消えてしまうため。"""
+    if llm_client.NEGATIVE_EXAMPLES_MAX <= 0:
+        return []
+    epoch = datetime.min.replace(tzinfo=timezone.utc)
+    rejected: list[tuple[datetime, str, str]] = []
+    for v in feedback_items.values():
+        if v.get("action") != "rejected":
+            continue
+        title = sanitize_negative_title(v.get("title"))
+        if not title:
+            continue
+        rejected.append((parse_ts(v.get("ts")) or epoch, v.get("clusterId") or "", title))
+    rejected.sort(key=lambda r: r[0], reverse=True)
+    picked = [t for _, cid, t in rejected if cid == cluster_id][: llm_client.NEGATIVE_EXAMPLES_MAX]
+    for _, cid, title in rejected:
+        if len(picked) >= llm_client.NEGATIVE_EXAMPLES_MAX:
+            break
+        if cid != cluster_id:
+            picked.append(f"[別トピックでの却下] {title}")
+    return picked
+
+
+def penalized_hosts(feedback_items: dict) -> tuple[set[str], dict[str, tuple[int, int]]]:
+    """ホスト別の却下/採用件数を集計し、(減点対象ホスト集合, 対象ホストの(却下,採用)件数)を返す。
+
+    判定式は「rejected >= DOMAIN_PENALTY_THRESHOLD かつ rejected > adopted」。キーは正規化URL
+    なので同一URLの重複カウントは起きない(閾値2=同一ドメインの別URL2件の却下)。
+    unrejected(却下取り消し)はどちら側にも数えない。件数はログ出力(減点の可視化)用。"""
+    counts: dict[str, list[int]] = {}
+    for url, v in feedback_items.items():
+        action = v.get("action")
+        if action not in ("rejected", "adopted"):
+            continue
+        host = urlsplit(url).hostname
+        if not host:
+            continue
+        pair = counts.setdefault(host, [0, 0])
+        pair[0 if action == "rejected" else 1] += 1
+    penalized = {
+        host
+        for host, (rej, ado) in counts.items()
+        if rej >= DOMAIN_PENALTY_THRESHOLD and rej > ado
+    }
+    return penalized, {h: (r, a) for h, (r, a) in counts.items() if h in penalized}
+
+
+def partition_candidates(candidates: list[tuple], penalized: set[str]) -> list[tuple[tuple, bool]]:
+    """発行日降順ソート済みの候補を「非減点→減点」の2区画に並べ替える。
+
+    各区画内は元の順序(発行日降順、PR #24の鮮度優先)を維持する。区画間では鮮度が反転する
+    (減点ドメインの新記事より非減点の旧記事が先)が、これは意図したトレードオフ。
+    減点判定は解決後URLの正規化ホスト名(feedback.jsonのキーと同じ正規化系)。"""
+
+    def is_penalized(cand: tuple) -> bool:
+        host = urlsplit(organize.normalize_url(cand[1])).hostname
+        return host is not None and host in penalized
+
+    flagged = [(c, is_penalized(c)) for c in candidates]
+    return [(c, p) for c, p in flagged if not p] + [(c, p) for c, p in flagged if p]
 
 
 def heal_preserved_items(
@@ -183,8 +285,46 @@ def main() -> int:
     )
 
     excluded = build_excluded_urls()
-    excluded |= set(feedback_data.get("items", {}))
-    excluded |= set(history_urls)
+    feedback_items = {
+        u: v for u, v in feedback_data.get("items", {}).items() if isinstance(v, dict)
+    }
+    excluded |= {u for u, v in feedback_items.items() if v.get("action") != "unrejected"}
+    # 却下取り消し(unrejected)後、まだ再提案していないURLだけhistory除外をワンショットで
+    # バイパスして再提案可能に戻す。再提案されると採用時のhistory上書き(firstSuggestedAt=now)
+    # でこの条件が偽になり、次回から通常の除外へ自動復帰する(取り消したURLが毎回再提案されて
+    # 枠を占有し続けるループを防ぐ)。ts比較不能(形式不正・naive)は安全側=除外維持。
+    revivable = set()
+    for u, v in feedback_items.items():
+        if v.get("action") != "unrejected":
+            continue
+        hist = history_urls.get(u)
+        if hist is None:
+            continue
+        h_ts, f_ts = parse_ts(hist.get("firstSuggestedAt")), parse_ts(v.get("ts"))
+        if h_ts and f_ts and h_ts < f_ts:
+            revivable.add(u)
+    excluded |= set(history_urls) - revivable
+    if revivable:
+        print(f"却下取り消しにより再提案可能に戻したURL: {len(revivable)}件", file=sys.stderr)
+
+    # 減点ドメインとre-cluster宙吊り却下の可視化(どのドメインがなぜ減点中かをActionsログに残す。
+    # UI・台帳のどこにも出ない「静かな恒久ペナルティ」にしないため)
+    penalized, penalized_stats = penalized_hosts(feedback_items)
+    if penalized:
+        stats = ", ".join(f"{h}(却下{r}/採用{a})" for h, (r, a) in sorted(penalized_stats.items()))
+        print(f"減点対象ドメイン: {stats}", file=sys.stderr)
+    dangling = sum(
+        1
+        for v in feedback_items.values()
+        if v.get("action") == "rejected"
+        and v.get("clusterId")
+        and v.get("clusterId") not in clusters_by_id
+    )
+    if dangling:
+        print(
+            f"現行クラスタに紐付かない却下記録: {dangling}件(負例はグローバル補充で利用)",
+            file=sys.stderr,
+        )
 
     client = llm_client.create_client()
     suggestions_by_cluster = {c["clusterId"]: c for c in suggestions_data.get("clusters", [])}
@@ -194,9 +334,16 @@ def main() -> int:
         cluster = clusters_by_id[cid]
         seed_notes = [{"title": r.get("title", "")} for r in cluster.get("representatives", [])[:5]]
         print(f"* {cid}: {cluster.get('label', cid)}")
+        negatives = collect_negative_titles(feedback_items, cid)
+        if negatives:
+            print(f"  負例{len(negatives)}件をプロンプトに注入", file=sys.stderr)
         try:
             raw_items = client.suggest_similar_sites(
-                cluster.get("label", ""), cluster.get("description", ""), cluster.get("keywords", []), seed_notes
+                cluster.get("label", ""),
+                cluster.get("description", ""),
+                cluster.get("keywords", []),
+                seed_notes,
+                rejected_titles=negatives,
             )
         except llm_client.LLMError as e:
             print(f"  -> 調査に失敗(前回分を維持、次回再試行): {e}", file=sys.stderr)
@@ -229,11 +376,23 @@ def main() -> int:
         # 空文字(発行日不明)は自然に末尾。安定ソートなので同日・不明同士はLLM返却順を保つ。
         candidates.sort(key=lambda c: c[2], reverse=True)
 
+        # フェーズ2.5: 却下多発ドメインの候補を採用順の後ろへ回す(各区画内は発行日降順を維持)。
+        # 候補のホスト分布もログに残す(負例・減点が効いているかの事後検証用)。
+        ordered = partition_candidates(candidates, penalized)
+        if candidates:
+            hosts = ", ".join(
+                urlsplit(organize.normalize_url(c[1])).hostname or "?" for c in candidates
+            )
+            print(f"  候補{len(candidates)}件: {hosts}", file=sys.stderr)
+
         # フェーズ3: 解決後URLで本命の重複突合をしつつ、新しい順に採用枠まで採用。
         # excluded への追加は採用確定時のみ: 枠あふれの不採用候補は history にも載らないため
         # 次回の調査で再び候補になりうる(今回は枠が埋まっただけなので、意図した挙動)。
+        # 減点ドメイン候補は非減点候補の後にのみ、最大 PENALIZED_ADOPT_MAX 件(突然変異枠)。
+        # 枠の予約はしない: 非減点候補で5枠が埋まれば減点候補は採用されない。
         accepted = []
-        for item, final_url, published_at in candidates:
+        penalized_adopted = 0
+        for (item, final_url, published_at), is_penalized in ordered:
             if len(accepted) >= MAX_ITEMS_PER_CLUSTER:
                 break
             # 重複判定の本命。リダイレクト解決後の実URLで初めて既存ノートと突合できる。
@@ -241,6 +400,12 @@ def main() -> int:
             if norm in excluded:
                 print(f"  -> 除外(解決後に既知URLと重複): {final_url}", file=sys.stderr)
                 continue
+            if is_penalized:
+                if penalized_adopted >= PENALIZED_ADOPT_MAX:
+                    print(f"  -> 見送り(却下多発ドメイン、突然変異枠超過): {final_url}", file=sys.stderr)
+                    continue
+                penalized_adopted += 1
+                print(f"  -> 却下多発ドメインだが突然変異枠で採用: {final_url}", file=sys.stderr)
 
             excluded.add(norm)  # 同一クラスタ内・後続クラスタでの重複提案も防ぐ
             accepted.append(
