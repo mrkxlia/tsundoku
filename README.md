@@ -276,6 +276,15 @@ DRY_RUN=1 python scripts/organize.py
 `merge_notes.py apply`も同様にfrontmatter/本文を書き換えるため、隔離環境での検証を推奨します
 (このリポジトリ自身に対しては`DRY_RUN=1`のまま`apply`しようとするとガードにより拒否されます)。
 
+### テスト
+
+`tests/` に純関数・契約(例: `page_meta.fetch_url_meta` が例外を投げないこと)の単体テストがあります。
+外部API・ネットワークは使いません(追加の依存もありません)。
+
+```bash
+python -m unittest discover -s tests -t .
+```
+
 ### トラブルシューティング
 
 - **ノートが `inbox/` に残り続ける**: LLM呼び出しが失敗しています。Actionsのログを確認してください。頻発する場合は `LLM_MODEL_CHAIN` を見直すか `MAX_ITEMS_PER_RUN` を減らします

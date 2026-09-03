@@ -215,7 +215,11 @@ def main() -> int:
             if args.no_fetch_check:
                 final_url, published_at = item["url"], ""
             else:
-                reachable, final_url, published_at = page_meta.fetch_url_meta(item["url"])
+                try:
+                    reachable, final_url, published_at = page_meta.fetch_url_meta(item["url"])
+                except Exception as e:  # 契約上は投げないが、1URLの想定外で run 全体(grounding枠・履歴)を失わない
+                    print(f"  -> 除外(取得エラー): {item['url']} ({type(e).__name__}: {e})", file=sys.stderr)
+                    continue
                 if not reachable:
                     print(f"  -> 除外(到達不能): {item['url']}", file=sys.stderr)
                     continue

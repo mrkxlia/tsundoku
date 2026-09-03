@@ -21,6 +21,7 @@ import datetime
 import json
 import re
 import urllib.error
+import urllib.parse
 import urllib.request
 from html.parser import HTMLParser
 
@@ -54,6 +55,11 @@ MIN_PUBLISHED_DATE = "1995-01-01"
 FUTURE_TOLERANCE_DAYS = 2
 
 _PDF_DATE_RE = re.compile(r"D:(\d{4})(\d{2})(\d{2})")
+
+# to_ascii_url() で path/query に残す文字: RFC 3986 の pchar/sub-delims と既存の %XX エスケープ
+# ('%' を safe に含めることで、既に percent-encode 済みの部分を二重エンコードしない)。
+_PATH_SAFE = "/%:@!$&'()*+,;=~"
+_QUERY_SAFE = _PATH_SAFE + "?"
 
 
 class _MetaDateParser(HTMLParser):
@@ -134,6 +140,43 @@ def extract_published_date(html: str, keys: tuple[str, ...] = PUBLISHED_META_KEY
     return match.group(0) if match else ""
 
 
+def to_ascii_url(url: str) -> str:
+    """非ASCII文字を含むURL(IRI)を、urllib が送信できるASCIIのURLへ変換する。
+
+    ホストは IDNA(punycode)、path/query/fragment は UTF-8 で percent-encode する。既に %XX で
+    エスケープされた部分は二重エンコードしない。ASCIIのみのURLは文字列として不変
+    (既存の挙動を変えない)。urlsplit/IDNA が受け付けないURLは ValueError を投げる
+    (fetch_url_meta 側で到達不能として扱う)。
+
+    背景: urllib.request は URL をエンコードせずそのまま http.client へ渡すため、非ASCIIの
+    ホストは Host ヘッダの latin-1 化で、非ASCIIの path は request line の ascii 化で
+    UnicodeEncodeError になる(2026-08-31・09-01 の suggest 日次実行がこれで落ちた)。
+    """
+    if url.isascii():
+        return url
+    p = urllib.parse.urlsplit(url)
+    host = p.hostname or ""
+    if not host.isascii():
+        host = host.encode("idna").decode("ascii")
+    if ":" in host:  # IPv6 リテラルは hostname プロパティで [] が外れるので戻す
+        host = f"[{host}]"
+    netloc = host if p.port is None else f"{host}:{p.port}"
+    if p.username is not None:
+        userinfo = urllib.parse.quote(p.username, safe="")
+        if p.password is not None:
+            userinfo += ":" + urllib.parse.quote(p.password, safe="")
+        netloc = f"{userinfo}@{netloc}"
+    return urllib.parse.urlunsplit(
+        (
+            p.scheme,
+            netloc,
+            urllib.parse.quote(p.path, safe=_PATH_SAFE),
+            urllib.parse.quote(p.query, safe=_QUERY_SAFE),
+            urllib.parse.quote(p.fragment, safe=_QUERY_SAFE),
+        )
+    )
+
+
 def fetch_url_meta(
     url: str,
     user_agent: str = "tsundoku-suggest/1.0",
@@ -143,14 +186,23 @@ def fetch_url_meta(
 
     groundingが返すリダイレクトURLを実URLへ解決するのが主目的。urlopenは既定で
     リダイレクトを追うため geturl() が最終URLになる。HTML以外(PDF等)は到達確認だけ行う。
-    例外を外へ投げない(到達不能は (False, url, "") で表現する)。
+    例外を外へ投げない(到達不能は (False, url, "") で表現する)。呼び出し元(suggest_similar /
+    media_types.enrich の article 経路 / backfill_published)はこの契約に依存しており、
+    ここで例外が漏れると1URLでジョブ全体が落ちる。
+
+    非ASCIIのURLは to_ascii_url() で変換して送信し、リダイレクトが無ければ呼び出し元の
+    表記(変換前のURL)をそのまま最終URLとして返す(history/除外集合のキーは
+    organize.normalize_url(URL文字列) なので、表記を勝手に変えると既知URLと突合できなくなる)。
     """
-    req = urllib.request.Request(url, headers={"User-Agent": user_agent})
     try:
+        # Request() 自体も scheme 無し等で ValueError を投げるので try の内側で組み立てる
+        req = urllib.request.Request(to_ascii_url(url), headers={"User-Agent": user_agent})
         with urllib.request.urlopen(req, timeout=FETCH_CHECK_TIMEOUT) as resp:
             if resp.status >= 400:
                 return False, url, ""
             final_url = resp.geturl() or url
+            if final_url == req.full_url:
+                final_url = url  # リダイレクト無し: 変換前の表記を返す
             content_type = (resp.headers.get("Content-Type") or "").lower()
             if "html" not in content_type:
                 return True, final_url, ""
@@ -158,7 +210,10 @@ def fetch_url_meta(
     except urllib.error.HTTPError as e:
         # 4xx/5xx でも「ページは存在するがHEAD/GETを拒否」等がありうるため従来同様 <400 のみ到達扱い
         return e.code < 400, url, ""
-    except (urllib.error.URLError, TimeoutError, OSError):
+    except (urllib.error.URLError, TimeoutError, OSError, ValueError):
+        # ValueError: 不正なURL(scheme無し・IPv6括弧不整合・非数値ポート=http.client.InvalidURL)、
+        # IDNA変換不能(UnicodeError)、ヘッダ/リクエスト行のエンコード失敗(UnicodeEncodeError)。
+        # いずれも「このURLは取得できない」であり、ジョブを落とす理由にはならない。
         return False, url, ""
 
     charset = "utf-8"
