@@ -119,14 +119,51 @@ private側(`mrkxlia/tsundoku-site` の `vault-assets/`)へ既に移管済み(tsu
 
 ## 未確認事項(着手前に確認すべきこと)
 
-- 現在のGitHubアカウントのプラン(Free/Pro等)と、privateリポジトリのActions無料分数の正確な上限
-- `tsundoku-site` の `deploy.yml` が `tsundoku` をpublicとして無認証checckoutしているか
-  (private化した場合の対応要否)
-- iPhoneのObsidian Gitが、privateリポジトリに対しても現状のPAT設定のまま問題なく動作するか
-  (実機での動作確認が必要)
+**2026-09-04 追記: 3件のうち2件を実測・確認で解消した。** 残るのは iPhone の実機確認のみ。
+
+### 1. Actions 消費分数(解消) — 選択肢Bは無料枠に十分収まる
+
+直近30日(2026-08-05〜09-04)の `run_duration_ms` 実測:
+
+| ワークフロー | 回数 | 合計 | 平均 |
+|---|---|---|---|
+| Backfill | 23 | 438分 | 19.1分 |
+| Organize inbox | 41 | 252分 | 6.1分 |
+| Suggest similar sites | 12 | 106分 | 8.9分 |
+| Reverify | 6 | 76分 | 12.7分 |
+| Backfill images | 2 | 18分 | 8.9分 |
+| Test | 5 | 2分 | 0.3分 |
+| **合計** | **89** | **892分** | |
+
+- **定常運用(organize+suggest+test)は 359分/月** = 個人アカウント無料枠2,000分の **18%**。
+- backfill・reverify を多用したこの1か月の実績値でも **892分 = 45%**。
+- `tsundoku-site`(既にprivate)は deploy が 171回・1回あたり約1分で概ね 200〜300分/月。
+  vault を private 化しても合算で定常 **約600分 = 30%** に収まる。
+- 注: この30日は published_at バックフィル(Stage⑨)で Backfill を大量に回した月であり、
+  平常月はさらに少ない。大規模バックフィルを再度行う月でも枠内。
+
+**結論**: 「無料枠に収まるか」を理由に選択肢Bを避ける必要はない。実装コストが最小のBを
+まず採る判断が、コスト面からは正当化できる(著作権リスクの低減幅はB=Cで同じ。
+Cが優るのは「Vaultをpublicに保ったまま」という点だけ)。
+
+### 2. deploy.yml の checkout(解消) — private化しても壊れない
+
+`tsundoku-site/.github/workflows/deploy.yml` は既に vault を
+`token: ${{ secrets.VAULT_REPO_TOKEN }}` 付きで checkout しており(埋め込みindexの
+`gh release download` も同トークン)、無認証 checkout には依存していない。
+vault を private 化してもワークフロー側の変更は不要
+(トークンのスコープが当該 private リポジトリを含むことだけ確認する)。
+
+### 3. iPhone の Obsidian Git(未確認・残件)
+
+private リポジトリでも書き込み権限のあるPATがあれば動作するはずだが、実機確認が必要。
+確認手順の目安: private化 → iPhoneで pull/push を1往復 → 失敗する場合はPATの
+リポジトリ選択(fine-grained PATは対象リポジトリを明示指定するため、visibility変更自体では
+権限は変わらないが、設定を見直す)。切り戻しは visibility を public に戻すだけで済む。
 
 **Why**: 画像・PDF実体は既にprivate化済みだが、本文テキストは同じ論点が未検討のまま残って
 いた。統合作業でこの非対称性に気づいたのを機に、今後の判断材料として整理した。
-**How to apply**: このドキュメントは提案のみで実装を促すものではない。着手する場合は
-まず「未確認事項」を解消し、選択肢B(privateリポジトリ化)を試して実際のActions消費を
-計測してから、選択肢Cへ進むかどうかを判断する。
+**How to apply**: このドキュメントは提案のみで実装を促すものではない。
+2026-09-04時点で「未確認事項」のうちActions分数とdeploy.ymlの2件は解消済み
+(選択肢Bの障害にならないことを実測で確認)。着手する場合の残作業は
+iPhone実機確認のみで、あとは visibility の変更判断そのもの。
