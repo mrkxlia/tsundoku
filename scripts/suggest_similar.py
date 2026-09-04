@@ -111,10 +111,32 @@ def build_excluded_urls() -> set[str]:
     return excluded
 
 
+def normalize_or_none(url) -> str | None:
+    """organize.normalize_url の「落ちない」版。feedback.json のキー(サイト側JSの normalizeUrl)や
+    LLM が返した生URLを Python 側の正規化へ寄せる。両者は www./x.com/トラッキング除去は同規則だが、
+    YouTube の watch 統一は Python 側にしか無く、youtu.be / shorts / m.youtube.com が別キーになる。
+    history.json のキーと候補側のホスト判定は Python 正規化なので、突合前に必ずこれを通す。
+    URLとして解釈できない値(手編集で壊れたキー、LLM出力の '[' 混入など)は None(呼び出し側で除外)。
+    日次の無人実行なので、1件の不正値で run 全体を落とさないことを優先する。"""
+    if not isinstance(url, str) or not url.strip():
+        return None
+    try:
+        return organize.normalize_url(url)
+    except ValueError:  # urlsplit の "Invalid IPv6 URL" 等
+        return None
+
+
+def normalized_host(url) -> str | None:
+    """正規化後URLのホスト名(判定・ログ用)。解釈不能なら None。"""
+    key = normalize_or_none(url)
+    return urlsplit(key).hostname if key else None
+
+
 def parse_ts(value) -> datetime | None:
     """history(isoformatの+00:00形式)とfeedback(JS toISOString()の.sssZ形式)のISO時刻を
     比較可能な形でパースする。両者は文字列比較では順序が壊れる('+' < '.')ため必須。
-    naive(tz情報なし)はaware値との比較がTypeErrorになるためNone扱い(=安全側)。"""
+    naive(tz情報なし)はaware値との比較がTypeErrorになるためNone扱い(=安全側)。
+    末尾 'Z' の解釈は Python 3.11+ が必要(suggest.yml は 3.12 固定)。"""
     if not isinstance(value, str):
         return None
     try:
@@ -131,6 +153,10 @@ def sanitize_negative_title(title) -> str:
         return ""
     cleaned = "".join(ch if ch.isprintable() else " " for ch in title)
     return " ".join(cleaned.split())[: llm_client.NEGATIVE_TITLE_MAX_CHARS].strip()
+
+
+# 対象クラスタ外の却下を負例へ補充するときの接頭辞(ログの内訳集計にも使う)
+GLOBAL_NEGATIVE_MARKER = "[別トピックでの却下] "
 
 
 def collect_negative_titles(feedback_items: dict, cluster_id: str) -> list[str]:
@@ -156,7 +182,7 @@ def collect_negative_titles(feedback_items: dict, cluster_id: str) -> list[str]:
         if len(picked) >= llm_client.NEGATIVE_EXAMPLES_MAX:
             break
         if cid != cluster_id:
-            picked.append(f"[別トピックでの却下] {title}")
+            picked.append(f"{GLOBAL_NEGATIVE_MARKER}{title}")
     return picked
 
 
@@ -165,13 +191,15 @@ def penalized_hosts(feedback_items: dict) -> tuple[set[str], dict[str, tuple[int
 
     判定式は「rejected >= DOMAIN_PENALTY_THRESHOLD かつ rejected > adopted」。キーは正規化URL
     なので同一URLの重複カウントは起きない(閾値2=同一ドメインの別URL2件の却下)。
-    unrejected(却下取り消し)はどちら側にも数えない。件数はログ出力(減点の可視化)用。"""
+    unrejected(却下取り消し)はどちら側にも数えない。件数はログ出力(減点の可視化)用。
+    ホストは normalized_host()(Python 正規化)で取る: feedback のキーはサイト側正規化で
+    youtu.be 等が残りうるが、候補側の判定(partition_candidates)と同じ youtube.com に寄せる。"""
     counts: dict[str, list[int]] = {}
     for url, v in feedback_items.items():
         action = v.get("action")
         if action not in ("rejected", "adopted"):
             continue
-        host = urlsplit(url).hostname
+        host = normalized_host(url)
         if not host:
             continue
         pair = counts.setdefault(host, [0, 0])
@@ -189,10 +217,11 @@ def partition_candidates(candidates: list[tuple], penalized: set[str]) -> list[t
 
     各区画内は元の順序(発行日降順、PR #24の鮮度優先)を維持する。区画間では鮮度が反転する
     (減点ドメインの新記事より非減点の旧記事が先)が、これは意図したトレードオフ。
-    減点判定は解決後URLの正規化ホスト名(feedback.jsonのキーと同じ正規化系)。"""
+    減点判定は解決後URLの正規化ホスト名(penalized_hosts 側も同じ Python 正規化に寄せてある)。
+    解釈不能なURLは減点なし扱い(後段の重複突合で除外される)。"""
 
     def is_penalized(cand: tuple) -> bool:
-        host = urlsplit(organize.normalize_url(cand[1])).hostname
+        host = normalized_host(cand[1])
         return host is not None and host in penalized
 
     flagged = [(c, is_penalized(c)) for c in candidates]
@@ -240,6 +269,29 @@ def heal_preserved_items(
             healed += 1
             print(f"  -> 補修: {final_url}" + (f" (発行日 {published_at})" if published_at else ""))
     return healed
+
+
+def revivable_history_keys(feedback_items: dict, history_urls: dict[str, dict]) -> set[str]:
+    """却下取り消し(unrejected)のうち、まだ再提案していないURLの history キー集合を返す。
+
+    条件は history.firstSuggestedAt < 取り消しts(再提案されると採用時の history 上書きで
+    偽になり、次回から通常の除外へ自動復帰する)。feedback のキーはサイト側(JS)正規化、
+    history のキーは Python 正規化なので normalize_or_none で history 側へ寄せて突合し、
+    返すのも history キー(呼び出し側が history 除外から差し引く単位)。履歴に無いURL
+    (LRU で失効済み等)・ts比較不能(形式不正・naive)は安全側=復活させない。前者はログに残す。"""
+    revivable: set[str] = set()
+    for u, v in feedback_items.items():
+        if v.get("action") != "unrejected":
+            continue
+        key = normalize_or_none(u)
+        hist = history_urls.get(key) if key else None
+        if not isinstance(hist, dict):
+            print(f"却下取り消しURLが調査履歴に無いため復活対象外: {u}", file=sys.stderr)
+            continue
+        h_ts, f_ts = parse_ts(hist.get("firstSuggestedAt")), parse_ts(v.get("ts"))
+        if h_ts and f_ts and h_ts < f_ts:
+            revivable.add(key)
+    return revivable
 
 
 def select_target_clusters(
@@ -293,16 +345,7 @@ def main() -> int:
     # バイパスして再提案可能に戻す。再提案されると採用時のhistory上書き(firstSuggestedAt=now)
     # でこの条件が偽になり、次回から通常の除外へ自動復帰する(取り消したURLが毎回再提案されて
     # 枠を占有し続けるループを防ぐ)。ts比較不能(形式不正・naive)は安全側=除外維持。
-    revivable = set()
-    for u, v in feedback_items.items():
-        if v.get("action") != "unrejected":
-            continue
-        hist = history_urls.get(u)
-        if hist is None:
-            continue
-        h_ts, f_ts = parse_ts(hist.get("firstSuggestedAt")), parse_ts(v.get("ts"))
-        if h_ts and f_ts and h_ts < f_ts:
-            revivable.add(u)
+    revivable = revivable_history_keys(feedback_items, history_urls)
     excluded |= set(history_urls) - revivable
     if revivable:
         print(f"却下取り消しにより再提案可能に戻したURL: {len(revivable)}件", file=sys.stderr)
@@ -336,7 +379,11 @@ def main() -> int:
         print(f"* {cid}: {cluster.get('label', cid)}")
         negatives = collect_negative_titles(feedback_items, cid)
         if negatives:
-            print(f"  負例{len(negatives)}件をプロンプトに注入", file=sys.stderr)
+            filled = sum(1 for t in negatives if t.startswith(GLOBAL_NEGATIVE_MARKER))
+            print(
+                f"  負例{len(negatives)}件をプロンプトに注入(対象クラスタ{len(negatives) - filled}/他クラスタ補充{filled})",
+                file=sys.stderr,
+            )
         try:
             raw_items = client.suggest_similar_sites(
                 cluster.get("label", ""),
@@ -356,7 +403,11 @@ def main() -> int:
         for item in raw_items:
             # 生URLの時点で既知なら通信せずに弾く(groundingリダイレクトURLでは通常ヒットしない
             # ので本命は解決後の再突合。ここは無駄なGETを減らすための安価な前段)。
-            if organize.normalize_url(item["url"]) in excluded:
+            raw_norm = normalize_or_none(item["url"])
+            if raw_norm is None:
+                print(f"  -> 除外(URLとして解釈不能): {item['url']!r}", file=sys.stderr)
+                continue
+            if raw_norm in excluded:
                 continue
 
             if args.no_fetch_check:
@@ -380,9 +431,7 @@ def main() -> int:
         # 候補のホスト分布もログに残す(負例・減点が効いているかの事後検証用)。
         ordered = partition_candidates(candidates, penalized)
         if candidates:
-            hosts = ", ".join(
-                urlsplit(organize.normalize_url(c[1])).hostname or "?" for c in candidates
-            )
+            hosts = ", ".join(normalized_host(c[1]) or "?" for c in candidates)
             print(f"  候補{len(candidates)}件: {hosts}", file=sys.stderr)
 
         # フェーズ3: 解決後URLで本命の重複突合をしつつ、新しい順に採用枠まで採用。
@@ -396,7 +445,10 @@ def main() -> int:
             if len(accepted) >= MAX_ITEMS_PER_CLUSTER:
                 break
             # 重複判定の本命。リダイレクト解決後の実URLで初めて既存ノートと突合できる。
-            norm = organize.normalize_url(final_url)
+            norm = normalize_or_none(final_url)
+            if norm is None:
+                print(f"  -> 除外(解決後URLが解釈不能): {final_url!r}", file=sys.stderr)
+                continue
             if norm in excluded:
                 print(f"  -> 除外(解決後に既知URLと重複): {final_url}", file=sys.stderr)
                 continue
