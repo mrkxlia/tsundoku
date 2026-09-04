@@ -60,6 +60,22 @@ URL_RE = re.compile(r"https?://[^\s)\]\">]+")
 TIMESTAMP_RE = re.compile(r"(\d{4})-(\d{2})-(\d{2})(?:[-_T ]?(\d{2}))?(?:[:\-]?(\d{2}))?(?:[:\-]?(\d{2}))?")
 TRACKING_PARAMS = {"fbclid", "gclid", "yclid", "si", "ref", "ref_src", "s", "t", "igshid"}
 
+# 内容とは無関係に機械が付与する運用系タグ(READMEの「システムタグ」)。cluster_notes は
+# ラベル生成のkeywordsから外し、merge_notes はLLMに渡さず機械的に温存する。両者が別々の
+# 集合を持っていて `deepdive` がどちらにも入っていなかったため、ここへ集約した。
+OPERATIONAL_TAGS = frozenset({"has-media", "needs-review", "needs-recheck"})
+# `deepdive` と `deepdive/<モード>`(/api/deepdive が生成する調査ノート)のように、
+# 階層タグを前方一致でまとめて運用系とみなす接頭辞。
+OPERATIONAL_TAG_PREFIXES = ("deepdive",)
+
+
+def is_operational_tag(tag) -> bool:
+    """タグが運用系(機械付与)か。内容タグとして扱ってはいけないものを True で返す。"""
+    t = str(tag)
+    return t in OPERATIONAL_TAGS or any(
+        t == p or t.startswith(f"{p}/") for p in OPERATIONAL_TAG_PREFIXES
+    )
+
 
 def env_int(name: str, default: int) -> int:
     raw = os.environ.get(name) or ""
