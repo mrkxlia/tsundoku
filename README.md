@@ -285,6 +285,9 @@ DRY_RUN=1 python scripts/organize.py
 python -m unittest discover -s tests -t .
 ```
 
+PR と main への push では `.github/workflows/test.yml` が同じテストを自動実行します
+(`scripts/`・`tests/`・`requirements.txt` に触れた場合のみ)。
+
 ### トラブルシューティング
 
 - **ノートが `inbox/` に残り続ける**: LLM呼び出しが失敗しています。Actionsのログを確認してください。頻発する場合は `LLM_MODEL_CHAIN` を見直すか `MAX_ITEMS_PER_RUN` を減らします

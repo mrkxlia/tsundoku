@@ -1,0 +1,46 @@
+name: Test
+
+# scripts/ の単体テスト(tests/、標準ライブラリの unittest)。外部API・ネットワークは使わない。
+# public リポジトリなので Actions 分数は無料。ワークフロー自体の変更も対象に含める。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/**"
+      - "tests/**"
+      - "requirements.txt"
+      - ".github/workflows/test.yml"
+  pull_request:
+    paths:
+      - "scripts/**"
+      - "tests/**"
+      - "requirements.txt"
+      - ".github/workflows/test.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10 # 通常は1分未満。ハング時の課金事故防止(publicでも習慣として揃える)
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Byte-compile all scripts (import-time SyntaxError の検出)
+        run: python -m py_compile scripts/*.py
+
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -t . -v
