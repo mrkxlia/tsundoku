@@ -77,3 +77,20 @@ class SlugifyTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class IsOperationalTagTest(unittest.TestCase):
+    def test_machine_assigned_tags_are_operational(self):
+        for tag in ("has-media", "needs-review", "needs-recheck", "deepdive", "deepdive/related"):
+            with self.subTest(tag=tag):
+                self.assertTrue(organize.is_operational_tag(tag))
+
+    def test_content_tags_are_not(self):
+        # 前方一致は "deepdive/" 区切りのみ。似た名前の内容タグを巻き込まない
+        for tag in ("ai", "deepdive-tips", "deepdiver", "review", "media"):
+            with self.subTest(tag=tag):
+                self.assertFalse(organize.is_operational_tag(tag))
+
+    def test_non_string_values_do_not_crash(self):
+        self.assertFalse(organize.is_operational_tag(42))
+        self.assertFalse(organize.is_operational_tag(None))

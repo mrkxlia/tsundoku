@@ -87,7 +87,11 @@ flowchart LR
 
 - `needs-review`: コンテンツを自動取得できなかったノート。要約はタイトル・URLからの推測のみなので手動確認推奨。`type: slides`の場合を除き、**libraryに入った後に自動で再処理されることはありません**(`type: slides`は`fetch_slides.py`が日次で自動リトライします)
 - `has-media`: 画像・動画添付があるノート。画像はノートから `![](../assets/...)` で参照されますが、実体はこのリポジトリにはコミットされず、private側(tsundoku-siteの`vault-assets/`)で管理されます(下記参照)。動画・PDFの実体は従来どおり非コミット(要約に使った一時データはワークフロー内で破棄)
+- `deepdive` / `deepdive/<モード>`: `/api/deepdive`(サイト側)が生成した深掘り調査ノートに付く。`type: deepdive` と対で、内容タグではなく種別を表す
 - `needs-recheck`: `reverify.py`が「内容が古くなった/誤りの疑いがある」と判定したノート。`status`は変更されず、閲覧・検索からも除外されない。`recheck_reason`(判定理由)を確認し、人間が妥当と判断すれば`archive/`へ移動、誤判定なら`reverify.py --clear`でタグを解除する
+
+これらは「内容と無関係に機械が付与するタグ」として `organize.is_operational_tag()` が一元的に判定し、
+`cluster_notes.py`(クラスタラベル生成のkeywords)と `merge_notes.py`(統合時のタグ絞り込み)が共用する。
 
 #### 画像の内容セクション
 

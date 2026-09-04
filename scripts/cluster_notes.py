@@ -44,9 +44,10 @@ MATCH_THRESHOLD = 0.6  # 新旧centroidをコサイン類似度で照合する�
 KMEANS_MAX_ITER = 50
 KMEANS_SEED = 42  # 実行のたびに結果が揺れないよう固定(--prevによる初期値が主な安定化要因)
 
-# organize.pyが内容とは無関係に自動付与する運用系タグ。ラベル生成のkeywordsに混入させない
-# (tsundoku-site側 plugins/*/src/util/fm.ts の OPERATIONAL_TAGS と同じ意図・同じ値)。
-OPERATIONAL_TAGS = {"has-media", "needs-review"}
+# 運用系タグの定義は organize.is_operational_tag() に集約(以前はここと merge_notes.py で
+# 別々の集合を持ち、deepdive がどちらからも漏れていた)。ラベル生成のkeywordsには混入させない。
+# 注: tsundoku-site 側 plugins/tsundoku-library-cards/src/util/fm.ts の OPERATIONAL_TAGS は
+# 「フィルタチップに出さないタグ」で用途が異なり、needs-recheck を意図的に含めない(絞り込み手段のため)。
 
 
 def parse_args() -> argparse.Namespace:
@@ -330,7 +331,7 @@ def main() -> int:
                     "summary": fm_by_path.get(r["path"], {}).get("summary", ""),
                     "tags": [
                         t for t in (fm_by_path.get(r["path"], {}).get("tags", []) or [])
-                        if t not in OPERATIONAL_TAGS
+                        if not organize.is_operational_tag(t)
                     ],
                 }
                 for r in entry["representatives"]

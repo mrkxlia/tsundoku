@@ -55,9 +55,8 @@ DEFAULT_SHORT_THRESHOLD = 0.60
 DEFAULT_PAIR_THRESHOLD = 0.85
 DEFAULT_PAIR_THRESHOLD_NO_LLM = 0.90  # LLMゲートが無い分、閾値側を厳しくする
 
-# organize.py が内容とは無関係に自動付与する運用系タグ。統合時のタグ絞り込みでは
+# 運用系(システム)タグの定義は organize.is_operational_tag() に集約。統合時のタグ絞り込みでは
 # LLMに渡さず機械的に温存する(README「システムタグ」を参照)。
-SYSTEM_TAGS = {"has-media", "needs-review", "needs-recheck"}
 
 SHELF_LIFE_ORDER = {"short": 0, "medium": 1, "long": 2}
 SHELF_LIFE_BY_ORDER = {v: k for k, v in SHELF_LIFE_ORDER.items()}
@@ -346,7 +345,7 @@ def split_system_tags(tags: object) -> tuple[list[str], list[str]]:
     content, system = [], []
     for t in tags or []:
         t = str(t)
-        (system if t in SYSTEM_TAGS else content).append(t)
+        (system if organize.is_operational_tag(t) else content).append(t)
     return content, system
 
 
